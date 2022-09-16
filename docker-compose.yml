@@ -1,0 +1,26 @@
+version: "3.9"
+   
+services:
+  web:
+    build: .
+    command: dotnet SlotWebApp.dll --server.urls http://localhost:80;https://localhost:443
+    ports:
+      - "8000:80"
+      - "4430:443"
+    volumes:
+      - .:/code
+    environment:
+      - "AppDbName=${DB_NAME_APP}"
+      - "UserDbName=${DB_NAME_USR}"
+      - "DbPass=${DB_PASS}"
+      - "DbUser=${DB_USER}"
+    depends_on:
+      - db
+  db:
+    image: postgres:14.3
+    environment:
+      - "POSTGRES_DB=${DB_NAME}"
+      - "POSTGRES_PASSWORD=${DB_PASS}"
+      - "POSTGRES_USER=${DB_USER}"
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
