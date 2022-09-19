@@ -1,0 +1,87 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+<!DOCTYPE html>
+<html lang="lv">
+    <head>
+        <title>@ViewData["Title"]</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/main.css" />
+    </head>
+    <body>
+    <header class="container-fluid border-bottom">
+        <nav class="navbar navbar-expand-sm">
+          <div class="container-fluid px-3">
+            <a class="navbar-brand fs-4 m-0 text-black fw-bold" href="#">Brand</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSelection" aria-controls="navbarSelection" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarSelection">
+                <ul class="navbar-nav">
+                    @* <li class="nav-item p-0 m-0"> *@
+                    @*     <a class="nav-link fw-bold text-black px-1" asp-page="/Index"> *@
+                    @*         <span aria-hidden="true"></span> Home1 *@
+                    @*     </a> *@
+                    @* </li> *@
+                    @* <li class="nav-item p-0 m-0"> *@
+                    @*     <a class="nav-link fw-bold text-black px-1" asp-page="/Index"> *@
+                    @*         <span aria-hidden="true"></span> Home2 *@
+                    @*     </a> *@
+                    @* </li> *@
+                    <li class="nav-item p-0 m-0">
+                        <a class="nav-link fw-bold text-black px-1" asp-page="/Index">
+                            <span aria-hidden="true"></span> Izveidot sludinājumu
+                        </a>
+                    </li>
+                    <li class="nav-item p-0 m-0">
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "RequireUserLogin")).Succeeded)
+                        {
+                            <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Logout">
+                                <span aria-hidden="true"></span> Lietotājs <em>@User.Identity.Name</em>
+                            </a>
+                            <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Index">
+                                <span aria-hidden="true"></span> Mani sludinājumi
+                            </a>
+                            <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Settings">
+                                <span aria-hidden="true"></span> Iestatījumi
+                            </a>
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdminLogin")).Succeeded)
+                            {
+                                <a class="nav-link fw-bold text-black px-1" asp-page="/Account/AdminDashboard">
+                                    <span aria-hidden="true"></span> Admin dashboard
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Login">
+                                <span aria-hidden="true"></span> Pieslēgties
+                            </a>   
+                        }
+                    </li>
+                </ul>
+            </div>
+          </div>
+        </nav>
+    </header>
+    <main class="container-fluid">
+        @RenderBody()
+    </main>
+    <footer class="container-fluid">
+        <div class="d-flex flex-wrap justify-content-between align-items-center px-2">
+            <p class="col-md-4 mb-0 text-black">© 2021 Company, Inc</p>
+
+            <ul class="nav col-md-4 justify-content-end">
+              <li class="nav-item"><a asp-area="" asp-page="/Index" class="nav-link px-2 text-black">Home</a></li>
+                <li class="nav-item"><a asp-area="" asp-page="/Privacy" class="nav-link px-2 text-black">Privacy</a></li>
+              <li class="nav-item"><a asp-area="" asp-page="/About" class="nav-link px-2 text-black">About</a></li>
+            </ul>
+        </div>
+    </footer>
+    </body>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/main.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</html>

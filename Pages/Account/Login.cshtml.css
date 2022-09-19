@@ -1,0 +1,12 @@
+﻿html, body {
+    height: 100%;
+}
+.login-form-container {
+    display: flex;
+    width: 25% !important;
+}
+@media (min-width: 768px) {
+    .login-form-container {
+        width: 100% !important;
+    }
+}

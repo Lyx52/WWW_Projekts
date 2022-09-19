@@ -67,8 +67,8 @@ namespace WebProject
             // Add authorization policies
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("RequireAdmin", c => c.RequireRole("Admin"));
-                options.AddPolicy("RequireModerator", c => c.RequireRole("Admin", "Moderator"));
+                options.AddPolicy("RequireUserLogin", c => c.RequireRole("User", "Admin"));
+                options.AddPolicy("RequireAdminLogin", c => c.RequireRole("Admin"));
             });
             services.ConfigureApplicationCookie(options =>
             {
@@ -81,6 +81,7 @@ namespace WebProject
                 options.SlidingExpiration = true;
             });
             services.AddRazorPages();
+            //services.AddScoped<IRepository<Zombie>, EfRepository<Zombie>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

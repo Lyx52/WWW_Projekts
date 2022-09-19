@@ -1,21 +1,25 @@
 @page
 @model WebProject.Pages.Account.Login
+<div class="container-fluid">
+  <div class="row justify-content-center">
+      <form class="card col-lg-6 px-4 py-4 mt-5 border-0">
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
-@{
-    Layout = null;
-}
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title>
-        TestLogin
-    </title>
-</head>
-<body>
-<div>
-    
+        <div class="form-floating">
+          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+          <label for="floatingInput">Email address</label>
+        </div>
+        <div class="form-floating">
+          <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+          <label for="floatingPassword">Password</label>
+        </div>
+        <div class="mb-3 d-flex justify-content-between">
+          <label class="checkbox">
+            <input type="checkbox" value="remember-me"> Atcerēties mani
+          </label>
+          <a asp-page="/Account/Register" class="link-info">Nav izveidots konts? Reģistrēties šeit</a>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary bg-filler border-0 text-black" type="submit">Pieslēgties</button>
+      </form>
+  </div>
 </div>
-</body>
-</html>
