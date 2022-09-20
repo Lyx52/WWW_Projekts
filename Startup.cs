@@ -15,8 +15,10 @@ using Microsoft.EntityFrameworkCore.InMemory;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
+using WebProject.Core.Interfaces;
 using WebProject.Core.Models;
 using WebProject.Infastructure.Data;
+using WebProject.Infastructure.Services;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
 
 namespace WebProject
@@ -36,10 +38,15 @@ namespace WebProject
             services.AddDbContext<AppDbContext>(optionsBuilder =>
             {
                 #if USING_INMEMORYDB
-                optionsBuilder.UseInMemoryDatabase("appDb");
+                optionsBuilder.UseInMemoryDatabase("AppDb");
                 #endif
             });
-
+            services.AddDbContext<UserDbContext>(optionsBuilder =>
+            {
+                #if USING_INMEMORYDB
+                optionsBuilder.UseInMemoryDatabase("UserDb");
+                #endif
+            });
             services.AddMvc()
             .AddRazorOptions(options =>
             {
@@ -49,10 +56,10 @@ namespace WebProject
             {
                 options.Conventions.AddPageRoute("/Pages/Shared/Error", "/Error");
             });
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 // TODO: Proper password configuration...
-                options.Password.RequiredLength = 4;
+                options.Password.RequiredLength = 6;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
@@ -61,7 +68,7 @@ namespace WebProject
                 options.SignIn.RequireConfirmedEmail = false;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
             })
-            .AddEntityFrameworkStores<AppDbContext>()
+            .AddEntityFrameworkStores<UserDbContext>()
             .AddDefaultTokenProviders();
 
             // Add authorization policies
@@ -81,13 +88,15 @@ namespace WebProject
                 options.SlidingExpiration = true;
             });
             services.AddRazorPages();
+            services.AddSingleton<IEmailSenderService, EmailSenderService>();
             //services.AddScoped<IRepository<Zombie>, EfRepository<Zombie>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, AppDbContext dbContext, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, UserDbContext userDb, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            
+            InitializeAuthorization(userDb, userManager, roleManager).GetAwaiter().GetResult();
+         
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -104,8 +113,24 @@ namespace WebProject
             app.UseEndpoints(options =>
             {
                 options.MapRazorPages();
-                options.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                options.MapDefaultControllerRoute();
             });
+        }
+
+        private static async Task InitializeAuthorization(UserDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            await db.Database.EnsureCreatedAsync();
+            
+            // Izveidojam lietotāja konta tipu
+            if (!await roleManager.RoleExistsAsync("User"))
+            {
+                await roleManager.CreateAsync(new IdentityRole("User"));
+            }
+            // Izveidojam administratora konta tipu
+            if (!await roleManager.RoleExistsAsync("Admin"))
+            {
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNetCore.Authorization
-@inject IAuthorizationService AuthorizationService
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="lv">
     <head>
         <title>@ViewData["Title"]</title>
@@ -34,32 +32,7 @@
                             <span aria-hidden="true"></span> Izveidot sludinājumu
                         </a>
                     </li>
-                    <li class="nav-item p-0 m-0">
-                        @if ((await AuthorizationService.AuthorizeAsync(User, "RequireUserLogin")).Succeeded)
-                        {
-                            <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Logout">
-                                <span aria-hidden="true"></span> Lietotājs <em>@User.Identity.Name</em>
-                            </a>
-                            <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Index">
-                                <span aria-hidden="true"></span> Mani sludinājumi
-                            </a>
-                            <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Settings">
-                                <span aria-hidden="true"></span> Iestatījumi
-                            </a>
-                            @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdminLogin")).Succeeded)
-                            {
-                                <a class="nav-link fw-bold text-black px-1" asp-page="/Account/AdminDashboard">
-                                    <span aria-hidden="true"></span> Admin dashboard
-                                </a>
-                            }
-                        }
-                        else
-                        {
-                            <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Login">
-                                <span aria-hidden="true"></span> Pieslēgties
-                            </a>   
-                        }
-                    </li>
+                    @await Html.PartialAsync("LoginPartial")
                 </ul>
             </div>
           </div>
