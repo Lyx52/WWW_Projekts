@@ -23,6 +23,11 @@
   font-size: 14px;
   color: var(--main-secondary-color) !important;
 }
+.form-submit-error {
+  color: red;
+  font-weight: bold;
+  list-style: none;
+}
 
 html {
   font-size: 14px;

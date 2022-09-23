@@ -55,6 +55,10 @@ namespace WebProject
             .AddRazorPagesOptions(options =>
             {
                 options.Conventions.AddPageRoute("/Pages/Shared/Error", "/Error");
+                // TODO: Finish implementing error pages
+                options.Conventions.AddPageRoute("/Pages/Shared/Error/Status400", "/400");
+                options.Conventions.AddPageRoute("/Pages/Shared/Error/Status404", "/404");
+                options.Conventions.AddPageRoute("/Pages/Shared/Error/Status500", "/500");
             });
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -91,8 +95,7 @@ namespace WebProject
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
             //services.AddScoped<IRepository<Zombie>, EfRepository<Zombie>>();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, UserDbContext userDb, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             InitializeAuthorization(userDb, userManager, roleManager).GetAwaiter().GetResult();
@@ -130,6 +133,18 @@ namespace WebProject
             if (!await roleManager.RoleExistsAsync("Admin"))
             {
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
+            // Izveidojam testa kontus
+            var user = await userManager.FindByEmailAsync("admin@email.com");
+            if (user is null)
+            {
+                await userManager.CreateAsync(new ApplicationUser() {
+                    UserName = "admin",
+                    Email = "admin@email.com",
+                    EmailConfirmed = true
+                }, "parole123");
+                user = await userManager.FindByEmailAsync("admin@email.com");
+                await userManager.AddToRoleAsync(user, "Admin");
             }
         }
     }

@@ -17,7 +17,6 @@ public class Register : PageModel
     private readonly IEmailSenderService _emailSenderSender;
     [BindProperty]
     public RegistrationInputModel Input { get; set; }
-    
     public string ReturnUrl { get; set; }
 
     public Register(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<Register> logger, IEmailSenderService emailSenderService)
@@ -31,11 +30,9 @@ public class Register : PageModel
     {
         
     }
-    public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+    public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
-        // Noklusēti atgriešanās lapa ir "home"
-        returnUrl = returnUrl ?? Url.Content("~/");
-        
+        returnUrl = returnUrl ?? Url.Content("~/Index");
         // Validējam vai ievade ir pareiza
         if (ModelState.IsValid)
         {
@@ -53,7 +50,7 @@ public class Register : PageModel
                 
                 // Izveidojam e-pasta verifikācijas kodu
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-                var callbackUrl = Url.Action(
+                var confirmationUrl = Url.Action(
                     "ConfirmEmail", "Account",
                     values: new { userId = newUser.Id, code = code },
                     protocol: Request.Scheme);
@@ -61,7 +58,7 @@ public class Register : PageModel
                 // Aizsūtam e-pastu
                 // TODO: Make a proper email structure.
                 await _emailSenderSender.SendEmailAsync(Input.Email, "Apstiprini savu e-pastu",
-                    $"Lai apstiprinātu e-pastu spied uz \"Apstiprināt\" <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Apstiprināt</a>.");
+                    $"Lai apstiprinātu e-pastu spied uz \"Apstiprināt\" <a href='{HtmlEncoder.Default.Encode(confirmationUrl)}'>Apstiprināt</a>.");
                 // Ieloggojamies kontā
                 await _userManager.AddToRoleAsync(newUser, "User");
                 await _signInManager.SignInAsync(newUser, isPersistent: false);
@@ -73,30 +70,30 @@ public class Register : PageModel
                 ModelState.AddModelError(string.Empty, error.Description);
             }
         }
-        
 
         // Redisplay form
         return Page();
     }
     public class RegistrationInputModel
     {
-        [Required]
+        [Required(ErrorMessage = "'E-Pasts' lauks ir nepieciešams")]
         [EmailAddress(ErrorMessage = "Ievadīts nederīgs e-pasts")]
         [Display(Name = "E-Pasts")]
         public string Email { get; set; }
         
-        [Required]
+        [Required(ErrorMessage = "'Parole lauks' ir nepieciešams")]
         [StringLength(100, ErrorMessage = "Parolei jāsastāv no {2} līdz {1} simboliem", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Parole")]
         public string Password { get; set; }
 
+        [Required(ErrorMessage = "'Parole atkārtoti' lauks ir nepieciešams")]
         [DataType(DataType.Password)]
         [Display(Name = "Parole atkārtoti")]
         [Compare("Password", ErrorMessage = "Paroles nesakrīt")]
         public string ConfirmPassword { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "'Lietotājvārds' lauks ir nepieciešams")]
         [DataType(DataType.Text)]
         [Display(Name = "Lietotājvārds")]
         public string Username { get; set; }

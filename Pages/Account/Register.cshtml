@@ -1,36 +1,37 @@
 @page
+@attribute [ValidateAntiForgeryToken]
 @model WebProject.Pages.Account.Register
 @{
     ViewData["Title"] = "Izveidot jaunu kontu";
-    Model.ReturnUrl = "/Index";
 }
 <div class="row justify-content-center">
     <form class="card col-12 col-lg-4 px-4 py-4 mt-5 border-0" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-        <h1 class="fs-3 mb-3 text-primary fw-bold text-center">Izveidot jaunu kontu</h1>
-        <hr />
+        @Html.AntiForgeryToken()
+        <h1 class="fs-3 fw-bold text-center">Izveidot jaunu kontu</h1>
+        <hr/>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group mb-3">
-            <label asp-for="Input.Email" class="text-primary fw-bold"></label>
-            <input asp-for="Input.Email" class="form-control" />
+        <div class="form-floating mb-2">
+            <input asp-for="Input.Email" class="form-control" id="floatingEmail" placeholder="E-Pasts"/>
+            <label asp-for="Input.Email" for="floatingEmail"></label>
             <span asp-validation-for="Input.Email" class="text-danger"></span>
         </div>
-        <div class="form-group mb-3">
-            <label asp-for="Input.Password" class="text-primary fw-bold"></label>
-            <input asp-for="Input.Password" class="form-control" />
+        <div class="form-floating mb-2">
+            <input asp-for="Input.Password" class="form-control" id="floatingPassword" placeholder="Parole"/>
+            <label asp-for="Input.Password" for="floatingPassword"></label>
             <span asp-validation-for="Input.Password" class="text-danger"></span>
         </div>
-        <div class="form-group mb-3">
-            <label asp-for="Input.ConfirmPassword" class="text-primary fw-bold"></label>
-            <input asp-for="Input.ConfirmPassword" class="form-control" />
+        <div class="form-floating mb-2">
+            <input asp-for="Input.ConfirmPassword" class="form-control" id="floatingConfirmPassword" placeholder="Parole atkārtoti">
+            <label asp-for="Input.ConfirmPassword" for="floatingConfirmPassword"></label>
             <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
         </div>
-        <div class="form-group mb-3">
-            <label asp-for="Input.Username" class="text-primary fw-bold"></label>
-            <input asp-for="Input.Username" class="form-control" />
+        <div class="form-floating mb-1">
+            <input asp-for="Input.Username" class="form-control" id="floatingUsername" placeholder="Lietotājvārds">
+            <label asp-for="Input.Username" for="floatingUsername"></label>
             <span asp-validation-for="Input.Username" class="text-danger"></span>
         </div>
-        <hr />
-        <button class="mt-1 w-100 btn btn-lg btn-primary bg-filler border-0 text-primary fw-bold" type="submit">Reģistrēties</button>
+        <hr/>
+        <button class="w-100 btn btn-lg btn-primary bg-filler border-0 text-black fw-bold" type="submit">Izveidot</button>
     </form>
 </div>
 

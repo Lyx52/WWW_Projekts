@@ -2,7 +2,7 @@
 
 namespace WebProject.Pages.Account;
 
-public class AdminDashboard : PageModel
+public class AccessDenied : PageModel
 {
     public void OnGet()
     {

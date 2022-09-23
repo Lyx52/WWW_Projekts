@@ -9,7 +9,7 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <li class="nav-item dropdown p-0 m-0">
+    <li class="nav-item dropdown p-0 m-0 me-3">
         <a class="nav-link dropdown-toggle text-black" href="#" id="loggedInDropdownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <em>Hello @UserManager.GetUserName(User)!</em>
         </a>
@@ -32,7 +32,7 @@
             @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdminLogin")).Succeeded)
             {
                 <li>
-                    <a class="dropdown-item fw-bold text-black" asp-page="/Account/AdminDashboard">
+                    <a class="dropdown-item fw-bold text-black" asp-page="/Admin/Dashboard">
                         <span aria-hidden="true"></span> Admin dashboard
                     </a>
                 </li>

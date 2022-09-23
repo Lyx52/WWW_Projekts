@@ -1,0 +1,21 @@
+﻿@page
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles="Admin")]
+@attribute [ValidateAntiForgeryToken]
+@model WebProject.Pages.Admin.Dashboard
+<div class="row justify-content-center">
+    <div class="card col-12 mt-5 border-0">
+        <div class="row g-2">
+            <div class="col-6">
+                @* Add category form *@
+                <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    @Html.AntiForgeryToken()
+                    <h1>test</h1>
+                </form>
+            </div>
+            <div class="col-6">
+                @* Categories *@
+            </div>
+        </div>
+    </div>
+</div>
