@@ -1,5 +1,6 @@
 ﻿@page
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @attribute [Authorize(Roles="Admin")]
 @attribute [ValidateAntiForgeryToken]
 @model WebProject.Pages.Admin.Dashboard
@@ -10,11 +11,22 @@
                 @* Add category form *@
                 <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
                     @Html.AntiForgeryToken()
-                    <h1>test</h1>
+                    
                 </form>
             </div>
             <div class="col-6">
                 @* Categories *@
+                @foreach (var category in Model.Categories)
+                {
+                    <p>@category.Name</p>
+                    <ul>
+                    @foreach (var subCategory in category.SubCategories)
+                    {
+                        <li>@subCategory.Name</li>    
+                    }
+                    </ul>
+                }
+                @Model.Test
             </div>
         </div>
     </div>

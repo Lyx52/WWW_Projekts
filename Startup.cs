@@ -92,12 +92,14 @@ namespace WebProject
                 options.SlidingExpiration = true;
             });
             services.AddRazorPages();
+            services.AddServerSideBlazor();
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
-            //services.AddScoped<IRepository<Zombie>, EfRepository<Zombie>>();
+            services.AddScoped<IEntityRepository<ListingCategory>, EfRepository<ListingCategory>>();
         }
         
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, UserDbContext userDb, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, AppDbContext appDb, UserDbContext userDb, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
+            appDb.Database.EnsureCreatedAsync().GetAwaiter().GetResult();
             InitializeAuthorization(userDb, userManager, roleManager).GetAwaiter().GetResult();
          
             if (env.IsDevelopment())
@@ -117,6 +119,7 @@ namespace WebProject
             {
                 options.MapRazorPages();
                 options.MapDefaultControllerRoute();
+                options.MapBlazorHub();
             });
         }
 
