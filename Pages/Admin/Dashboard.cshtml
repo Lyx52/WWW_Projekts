@@ -1,6 +1,8 @@
 ﻿@page
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Html
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using WebProject.Core.Models
 @attribute [Authorize(Roles="Admin")]
 @attribute [ValidateAntiForgeryToken]
 @model WebProject.Pages.Admin.Dashboard
@@ -16,18 +18,31 @@
             </div>
             <div class="col-6">
                 @* Categories *@
-                @foreach (var category in Model.Categories)
-                {
-                    <p>@category.Name</p>
-                    <ul>
-                    @foreach (var subCategory in category.SubCategories)
-                    {
-                        <li>@subCategory.Name</li>    
-                    }
-                    </ul>
-                }
-                @Model.Test
+                RenderSubCategories(Model.Categories[0])
             </div>
         </div>
     </div>
 </div>
+
+@{
+    void RenderSubCategories(ListingCategory category)
+    {
+        <ul>
+            @foreach (var subCategory in category.SubCategories)
+            {
+                <li>@subCategory.Name</li>
+                @if (subCategory.SubCategories.Count > 0)
+                {
+                    RenderSubCategories(subCategory);
+                }
+            }
+        </ul>    
+    }
+}
+@functions {
+
+    public static HtmlString OrderedList(IEnumerable<string> items)
+    {
+        return <h1>test</h1>
+    }
+}
