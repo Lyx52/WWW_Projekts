@@ -96,7 +96,6 @@ namespace WebProject
                 options.SlidingExpiration = true;
             });
             services.AddRazorPages();
-            services.AddServerSideBlazor();
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IEntityRepository<ListingCategory>, EfRepository<ListingCategory>>();
             services.AddScoped<IEntityRepository<Listing>, EfRepository<Listing>>();
@@ -125,7 +124,6 @@ namespace WebProject
             {
                 options.MapRazorPages();
                 options.MapDefaultControllerRoute();
-                options.MapBlazorHub();
             });
         }
 

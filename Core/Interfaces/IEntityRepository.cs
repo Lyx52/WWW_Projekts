@@ -10,4 +10,5 @@ public interface IEntityRepository<T> where T : IdEntity
     Task Update(T entity);
     ValueTask<T?> GetById(int id);
     IQueryable<T> AsQueryable();
+    Task<int> Count();
 }

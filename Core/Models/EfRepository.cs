@@ -10,11 +10,9 @@ namespace WebProject.Core.Models;
 public class EfRepository<T> : IEntityRepository<T> where T : IdEntity
 {
     private readonly AppDbContext _dbContext;
-    private DbSet<T> _entities;
     public EfRepository(AppDbContext dbContext)
     {
         _dbContext = dbContext;
-        _entities = _dbContext.Set<T>();
     }
 
     public ValueTask<T?> GetById(int id)
@@ -48,5 +46,10 @@ public class EfRepository<T> : IEntityRepository<T> where T : IdEntity
         return limit > 0
             ? await entitySet.Skip(offset).Take(limit).ToListAsync()
             : await entitySet.Skip(offset).ToListAsync();
+    }
+
+    public async Task<int> Count()
+    {
+        return await _dbContext.Set<T>().CountAsync();
     }
 }
