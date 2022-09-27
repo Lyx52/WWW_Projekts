@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebProject.Pages.Listing;
+namespace WebProject.Pages.Listings;
 
 public class Create : PageModel
 {

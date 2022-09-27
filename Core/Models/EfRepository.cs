@@ -1,4 +1,7 @@
+using System.Collections;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using WebProject.Core.Interfaces;
 using WebProject.Infastructure.Data;
 
@@ -7,10 +10,11 @@ namespace WebProject.Core.Models;
 public class EfRepository<T> : IEntityRepository<T> where T : IdEntity
 {
     private readonly AppDbContext _dbContext;
-
+    private DbSet<T> _entities;
     public EfRepository(AppDbContext dbContext)
     {
         _dbContext = dbContext;
+        _entities = _dbContext.Set<T>();
     }
 
     public ValueTask<T?> GetById(int id)
@@ -27,14 +31,22 @@ public class EfRepository<T> : IEntityRepository<T> where T : IdEntity
         await _dbContext.Set<T>().AddAsync(entity);
         await _dbContext.SaveChangesAsync();
     }
-    
+
+    public IQueryable<T> AsQueryable()
+    {
+        return _dbContext.Set<T>().AsQueryable();
+    }
     public async Task Remove(T entity)
     {
         _dbContext.Set<T>().Remove(entity);
         await _dbContext.SaveChangesAsync();
     }
-    public async Task<List<T>> ToList()
+    
+    public async Task<List<T>> ToList(int offset = 0, int limit = -1)
     {
-        return await _dbContext.Set<T>().ToListAsync();
+        var entitySet = _dbContext.Set<T>();
+        return limit > 0
+            ? await entitySet.Skip(offset).Take(limit).ToListAsync()
+            : await entitySet.Skip(offset).ToListAsync();
     }
 }

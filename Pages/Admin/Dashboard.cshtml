@@ -9,40 +9,34 @@
 <div class="row justify-content-center">
     <div class="card col-12 mt-5 border-0">
         <div class="row g-2">
-            <div class="col-6">
+            <div class="col-4">
                 @* Add category form *@
                 <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
                     @Html.AntiForgeryToken()
                     
                 </form>
             </div>
-            <div class="col-6">
+            <div class="col-8">
                 @* Categories *@
-                RenderSubCategories(Model.Categories[0])
+                @RenderSubCategories(Model.Categories[0])
             </div>
         </div>
     </div>
 </div>
 
 @{
-    void RenderSubCategories(ListingCategory category)
+    HtmlString RenderSubCategories(ListingCategory category)
     {
-        <ul>
-            @foreach (var subCategory in category.SubCategories)
+        string output = string.Empty;
+        
+        foreach (var subCategory in category.SubCategories)
+        {
+            output += $"<li>{@subCategory.Name}</li>";
+            if (subCategory.SubCategories.Count > 0)
             {
-                <li>@subCategory.Name</li>
-                @if (subCategory.SubCategories.Count > 0)
-                {
-                    RenderSubCategories(subCategory);
-                }
+                output += RenderSubCategories(subCategory).Value;
             }
-        </ul>    
-    }
-}
-@functions {
-
-    public static HtmlString OrderedList(IEnumerable<string> items)
-    {
-        return <h1>test</h1>
+        }
+        return new HtmlString($"<ul>{output}</ul>");
     }
 }

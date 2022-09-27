@@ -35,6 +35,10 @@ namespace WebProject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+            });
             services.AddDbContext<AppDbContext>(optionsBuilder =>
             {
                 #if USING_INMEMORYDB
@@ -95,6 +99,8 @@ namespace WebProject
             services.AddServerSideBlazor();
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IEntityRepository<ListingCategory>, EfRepository<ListingCategory>>();
+            services.AddScoped<IEntityRepository<Listing>, EfRepository<Listing>>();
+
         }
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, AppDbContext appDb, UserDbContext userDb, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)

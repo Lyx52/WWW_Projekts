@@ -1,10 +1,129 @@
 ﻿@page
+@using WebProject.Core.Models
+@using WebProject.Components
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="py-5">
+    <component type="typeof(ListingView)" render-mode="Server" />
+    <div class="container-fluid">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            @foreach (var listing in Model.Listings)
+            {
+                <div class="col">
+                    <a asp-page="/Listings/Create" class="text-decoration-none text-black">
+                        <div class="card shadow-sm d-flex flex-column align-items-stretch">
+                            <div id="carouselSelectionIndicators_@listing.Id" class="card-img-top h-50 carousel slide" data-bs-ride="true">
+                                @if (listing.Images.Count > 1)
+                                {
+                                    <div class="carousel-indicators">
+                                        @for (int i = 0; i < listing.Images.Count; i++)
+                                        {
+                                            if (i == 0)
+                                            {
+                                                <button type="button" data-bs-target="#carouselSelectionIndicators_@listing.Id" data-bs-slide-to="@i" aria-label="Slide @i" class="active" aria-current="true"></button>
+                                                continue;
+                                            }
+                                            <button type="button" data-bs-target="#carouselSelectionIndicators_@listing.Id" data-bs-slide-to="@i" aria-label="Slide @i"></button>
+                                        }
+                                    </div>
+                                }
+                                <div class="carousel-inner">
+                                    @foreach (var image in listing.Images)
+                                    {
+                                        var index = listing.Images.IndexOf(image);
+                                        // pirmais ir aktīvs
+                                        <div class="carousel-item @(index == 0 ? "active" : "")">
+                                            <img src="@image.FilePath" class="d-block w-100" alt="listing_img_@index">
+                                        </div>
+                                    }
+                                </div>
+                                @if (listing.Images.Count > 1)
+                                {
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselSelectionIndicators_@listing.Id" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#carouselSelectionIndicators_@listing.Id" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>   
+                                }
+                            </div>
+                            <div class="card-body album-listing-body d-flex flex-column justify-content-between">
+                                <h5 class="fs-3 card-title fw-upper">@listing.Title</h5>
+                                <p class="card-text">
+                                    @if (listing.Description.Length >= 160)
+                                    {
+                                        @($"{listing.Description[0..150]}...")
+                                    }
+                                    else
+                                    {
+                                        @listing.Description
+                                    }    
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    
+                                    <small class="text-muted">@GetCreationDateString(listing.Created!.Value)&nbsp;</small>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+        <div class="row row-cols-1">
+            <div class="col justify-content-end">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                  <button type="button" class="btn btn-primary">Left</button>
+                  <button type="button" class="btn btn-primary">Middle</button>
+                  <button type="button" class="btn btn-primary">Right</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+@functions {
+    
+    string GetCreationDateString(DateTime? dateTime)
+    {
+        if (!dateTime.HasValue)
+            return "&nbsp;";    
+        var delta = DateTime.UtcNow - dateTime.Value;
+        if (delta.TotalSeconds <= 60)
+        {
+            return $"{(int)delta.TotalSeconds} secs";    
+        }
+        if (delta.TotalMinutes <= 60)
+        {
+            return $"{(int)delta.TotalMinutes} mins";
+        }
+        return string.Empty;
+    }
+}
+
+@section Scripts {
+    <script src="_framework/blazor.server.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(
+            $(window).on('resize', function(){
+                let window = $(this); //this = window
+                if (window.width() < 576) {
+                    // Bootstrap xs
+                    
+                } else if (window.width() >= 576 && window.width() < 768) { 
+                    // Bootstrap sm
+                    console.log("sm");
+                } else if (window.width() >= 768 && window.width() < 992) { 
+                    // Bootstrap md
+                    console.log("md");
+                } else {
+                    // Bootstrap lg+
+                    console.log("lg+");   
+                }
+            })
+        );
+    </script>
+}
