@@ -8,5 +8,5 @@ public class ContentEntity : IdEntity
 
     public DateTime? Modified { get; set; } = DateTime.MaxValue;
 
-    public ApplicationUser? User { get; set; }
+    public ApplicationUser? CreatedBy { get; set; }
 }

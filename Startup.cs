@@ -46,12 +46,6 @@ namespace WebProject
                 optionsBuilder.UseInMemoryDatabase("AppDb");
                 #endif
             });
-            services.AddDbContext<UserDbContext>(optionsBuilder =>
-            {
-                #if USING_INMEMORYDB
-                optionsBuilder.UseInMemoryDatabase("UserDb");
-                #endif
-            });
             services.AddMvc()
             .AddRazorOptions(options =>
             {
@@ -76,7 +70,7 @@ namespace WebProject
                 options.SignIn.RequireConfirmedEmail = false;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
             })
-            .AddEntityFrameworkStores<UserDbContext>()
+            .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
             
             // TODO add bad response handlers redirect to error pages
@@ -101,13 +95,13 @@ namespace WebProject
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IEntityRepository<ListingCategory>, EfRepository<ListingCategory>>();
             services.AddScoped<IEntityRepository<Listing>, EfRepository<Listing>>();
-
+            services.AddScoped<IEntityRepository<Message>, EfRepository<Message>>();
         }
         
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, AppDbContext appDb, UserDbContext userDb, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, AppDbContext appDb, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             appDb.Database.EnsureCreatedAsync().GetAwaiter().GetResult();
-            InitializeAuthorization(userDb, userManager, roleManager).GetAwaiter().GetResult();
+            InitializeAuthorization(appDb, userManager, roleManager).GetAwaiter().GetResult();
          
             if (env.IsDevelopment())
             {
@@ -135,7 +129,7 @@ namespace WebProject
             });
         }
 
-        private static async Task InitializeAuthorization(UserDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        private static async Task InitializeAuthorization(AppDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             await db.Database.EnsureCreatedAsync();
             
