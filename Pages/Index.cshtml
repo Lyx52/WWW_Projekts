@@ -2,6 +2,7 @@
 @using WebProject.Core.Models
 @using System.Globalization
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using WebProject.Pages.Shared
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
@@ -14,43 +15,7 @@
                 <div class="col">
                     <a asp-controller="Listings" asp-route-id="@listing.ListingUrlId" class="text-decoration-none text-black">
                         <div class="card shadow-sm d-flex flex-column align-items-stretch">
-                            <div id="carouselSelectionIndicators_@listing.Id" class="carousel slide" data-bs-ride="true">
-                                @if (listing.Images.Count > 1)
-                                {
-                                    <div class="carousel-indicators">
-                                        @for (int i = 0; i < listing.Images.Count; i++)
-                                        {
-                                            if (i == 0)
-                                            {
-                                                <button type="button" data-bs-target="#carouselSelectionIndicators_@listing.Id" data-bs-slide-to="@i" aria-label="Slide @i" class="active" aria-current="true"></button>
-                                                continue;
-                                            }
-                                            <button type="button" data-bs-target="#carouselSelectionIndicators_@listing.Id" data-bs-slide-to="@i" aria-label="Slide @i"></button>
-                                        }
-                                    </div>
-                                }
-                                <div class="carousel-inner w-100 p-1">
-                                    @foreach (var image in listing.Images)
-                                    {
-                                        var index = listing.Images.IndexOf(image);
-                                        // pirmais ir aktīvs
-                                        <div class="carousel-item w-100 @(index == 0 ? "active" : "")">
-                                            <img src="@image.FilePath" class="d-block img-md rounded rounded-2 mx-auto" alt="listing_img_@($"{listing.Id}_{index}")">
-                                        </div>
-                                    }
-                                </div>
-                                @if (listing.Images.Count > 1)
-                                {
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselSelectionIndicators_@listing.Id" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#carouselSelectionIndicators_@listing.Id" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
-                                }
-                            </div>
+                            @{ await Html.RenderPartialAsync("Shared/ImageGallery", new ImageGalleryModel { Images = listing.Images, GalleryId = listing.Id }); }
                             <div class="card-body album-listing-body d-flex flex-column justify-content-between">
                                 <h5 class="fs-3 card-title fw-upper">@listing.Title</h5>
                                 <p class="card-text">

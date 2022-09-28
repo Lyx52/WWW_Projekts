@@ -1,5 +1,6 @@
 ﻿@page "{listingId?}"
 @using WebProject.Infastructure.Services
+@using WebProject.Pages.Shared
 @model WebProject.Pages.Listings.Index
 @{
     ViewData["Title"] = Model.Listing is null ? string.Empty : Model.Listing.Title;
@@ -7,46 +8,10 @@
 <div class="py-3 listing-container">
     <div class="container-fluid w-100">
         <div class="row justify-content-center">
-            <div class="col-8">
-                <div id="carouselSelectionIndicators_@Model.Listing.Id" class="mx-auto carousel slide fit-img-lg" data-bs-ride="true">
-                    @if (Model.Listing.Images.Count > 1)
-                    {
-                        <div class="carousel-indicators">
-                            @for (int i = 0; i < Model.Listing.Images.Count; i++)
-                            {
-                                if (i == 0)
-                                {
-                                    <button type="button" data-bs-target="#carouselSelectionIndicators_@Model.Listing.Id" data-bs-slide-to="@i" aria-label="Slide @i" class="active" aria-current="true"></button>
-                                    continue;
-                                }
-                                <button type="button" data-bs-target="#carouselSelectionIndicators_@Model.Listing.Id" data-bs-slide-to="@i" aria-label="Slide @i"></button>
-                            }
-                        </div>
-                    } 
-                    <div class="carousel-inner">
-                        @foreach (var image in Model.Listing.Images)
-                        {
-                            var index = Model.Listing.Images.IndexOf(image);
-                            // pirmais ir aktīvs
-                            <div class="carousel-item w-100 @(index == 0 ? "active" : "")">
-                                <img src="@image.FilePath" class="w-100 img-lg rounded-2" alt="listing_img_@index">
-                            </div>
-                        }
-                    </div>
-                    @if (Model.Listing.Images.Count > 1)
-                    {
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselSelectionIndicators_@Model.Listing.Id" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselSelectionIndicators_@Model.Listing.Id" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
-                    }
-                </div>
+            <div class="col-12 col-lg-8">
+                @{ await Html.RenderPartialAsync("Shared/ImageGallery", new ImageGalleryModel { Images = Model.Listing!.Images, GalleryId = Model.Listing.Id }); }
             </div>
-            <div class="col-4">
+            <div class="col-12 col-lg-4">
                 <h1>TEST!</h1>
             </div>
         </div>

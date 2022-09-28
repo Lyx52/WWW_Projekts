@@ -53,30 +53,11 @@ html {
   height: 100%;
 }
 
-.img-sm {
-  max-width: 100%;
-  height: 150px !important;
+.img {
   object-fit: contain;
+  aspect-ratio: 16/9;
 }
-.fit-img-sm {
-  width: 300px !important;
-}
-.img-md {
-  max-width: 100%;
-  height: 250px !important;
-  object-fit: contain;
-}
-.fit-img-md {
-  width: 500px !important;
-}
-.img-lg {
-  max-width: 100%;
-  height: 500px !important;
-  object-fit: contain;
-}
-.fit-img-lg {
-  max-width: 80% !important;
-}
+
 /* sm */
 @media (min-width: 768px) {
   html {

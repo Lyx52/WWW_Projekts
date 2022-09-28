@@ -56,17 +56,17 @@ public class AppDbContext : DbContext
                 images.Add(
                     new ListingImage()
                     {
-                        Id = -(imgId++), FilePath = "/Images/test2.jpg", ListingId = -i
+                        Id = -(imgId++), FilePath = "/Images/16_9.jpg", ListingId = -i
                     });
                 images.Add(
                     new ListingImage()
                     {
-                        Id = -(imgId++), FilePath = "/Images/test.jpg", ListingId = -i
+                        Id = -(imgId++), FilePath = "/Images/4_3.jpg", ListingId = -i
                     });
                 images.Add(
                     new ListingImage()
                     {
-                        Id = -(imgId++), FilePath = "/Images/test3.jpg", ListingId = -i
+                        Id = -(imgId++), FilePath = "/Images/cube.jpg", ListingId = -i
                     });
                 continue;
             }
@@ -74,7 +74,7 @@ public class AppDbContext : DbContext
             images.Add(
                 new ListingImage()
                 {
-                    Id = -(imgId++), FilePath = "/Images/test.jpg", ListingId = -i
+                    Id = -(imgId++), FilePath = "/Images/4_3.jpg", ListingId = -i
                 });
 
         }
