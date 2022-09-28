@@ -17,6 +17,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
 using WebProject.Core.Interfaces;
+using WebProject.Core.Interfaces.Services;
 using WebProject.Core.Models;
 using WebProject.Infastructure.Data;
 using WebProject.Infastructure.Services;
@@ -93,6 +94,7 @@ namespace WebProject
             });
             services.AddRazorPages();
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
+            services.AddScoped<IMessageSenderService, MessageSenderService>();
             services.AddScoped<IEntityRepository<ListingCategory>, EfRepository<ListingCategory>>();
             services.AddScoped<IEntityRepository<Listing>, EfRepository<Listing>>();
             services.AddScoped<IEntityRepository<Message>, EfRepository<Message>>();

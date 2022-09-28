@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebProject.Core.Interfaces;
+using WebProject.Core.Interfaces.Services;
 using WebProject.Core.Models;
 
 namespace WebProject.Pages.Account;

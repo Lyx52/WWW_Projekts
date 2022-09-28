@@ -9,4 +9,6 @@ public class Message : ContentEntity
     
     [Required]
     public ApplicationUser? Recipient { get; set; }
+
+    public bool Unread { get; set; } = true;
 }

@@ -1,4 +1,10 @@
-﻿@* TODO: Create one generic color scheme *@
+﻿@using WebProject.Core.Models
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using WebProject.Core.Interfaces.Services
+@using Microsoft.AspNetCore.Identity
+@inject IMessageSenderService _messageSender
+@inject UserManager<ApplicationUser> _userManager
+@* TODO: Create one generic color scheme *@
 <!DOCTYPE html>
 <html lang="lv">
     <head>
@@ -46,7 +52,7 @@
                                 <span aria-hidden="true"></span> Izveidot sludinājumu
                             </a>
                         </li>
-                        @await Html.PartialAsync("LoginPartial")
+                        @{ await Html.RenderPartialAsync("Shared/LoginPartial"); }
                     </ul>
                 </div>
             </div>

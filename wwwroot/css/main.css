@@ -58,6 +58,9 @@ html {
   aspect-ratio: 16/9;
 }
 
+/*.dropdown-menu[data-bs-popper] {*/
+/*  left: -60px;*/
+/*}*/
 /* sm */
 @media (min-width: 768px) {
   html {

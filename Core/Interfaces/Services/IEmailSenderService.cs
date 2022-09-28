@@ -1,4 +1,4 @@
-﻿namespace WebProject.Core.Interfaces;
+﻿namespace WebProject.Core.Interfaces.Services;
 
 public interface IEmailSenderService
 {

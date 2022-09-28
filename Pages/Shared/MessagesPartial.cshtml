@@ -1,0 +1,56 @@
+@using WebProject.Core.Models;
+@using WebProject.Core.Interfaces.Services
+@using Microsoft.AspNetCore.Identity
+@inject IMessageSenderService _messageSender
+@inject SignInManager<ApplicationUser> _signInManager
+@inject UserManager<ApplicationUser> _userManager
+@model List<Message>
+@{
+    var currentUser = await _userManager.GetUserAsync(User);
+}
+<li class="nav-item p-0 m-0">
+    <div class="dropdown-center">
+        <a class="nav-link fw-bold text-black px-1 dropdown-toggle position-relative" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+            <i class="bi bi-chat-left">
+                @if (Model.Count(m => m.Unread && m.Recipient!.Id == currentUser!.Id) > 0)
+                {
+                    <span class="position-absolute top-25 start-75 translate-middle p-1 bg-danger border border-light rounded-circle">
+                        <span class="visually-hidden">Jaunas ziņas!</span>
+                    </span>
+                }
+            </i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+                <a class="dropdown-item" href="#">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">List group item heading</h5>
+                        <small>3 days ago</small>
+                    </div>
+                    <p class="mb-1">Some placeholder content in a paragraph.</p>
+                    <small>And some small print.</small>
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="#">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">List group item heading</h5>
+                        <small>3 days ago</small>
+                    </div>
+                    <p class="mb-1">Some placeholder content in a paragraph.</p>
+                    <small>And some small print.</small>
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="#">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">List group item heading</h5>
+                        <small>3 days ago</small>
+                    </div>
+                    <p class="mb-1">Some placeholder content in a paragraph.</p>
+                    <small>And some small print.</small>
+                </a>
+            </li>
+        </ul>
+    </div>
+</li>

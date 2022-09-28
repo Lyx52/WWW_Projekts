@@ -2,18 +2,25 @@
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using WebProject.Core.Interfaces.Services
 @using WebProject.Core.Models
 
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
+@inject IMessageSenderService _messageSender
+@inject SignInManager<ApplicationUser> _signInManager
+@inject UserManager<ApplicationUser> _userManager
 
-@if (SignInManager.IsSignedIn(User))
+@if (_signInManager.IsSignedIn(User))
 {
-    <li class="nav-item dropdown p-0 m-0 me-3">
+    var user = await _userManager.GetUserAsync(User);
+    if (user is not null)
+    {
+        await Html.RenderPartialAsync("Shared/MessagesPartial", await _messageSender.GetAllMessages(user));
+    }
+    <li class="nav-item dropdown-center p-0 m-0">
         <a class="nav-link dropdown-toggle text-black" href="#" id="loggedInDropdownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <em>Hello @UserManager.GetUserName(User)!</em>
+            <em>Hello @_userManager.GetUserName(User)!</em>
         </a>
-        <ul class="dropdown-menu" aria-labelledby="loggedInDropdownMenu">
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loggedInDropdownMenu">
             <li>
                 <form asp-controller="Account" asp-action="SignOut" method="post" id="logoutForm">
                     <button type="submit" class="dropdown-item fw-bold text-black">Sign out</button>
