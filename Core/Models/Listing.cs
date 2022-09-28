@@ -36,6 +36,5 @@ public class Listing : ContentEntity
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public string ListingUrlId => DataProtectorService.Encode(BitConverter.GetBytes(Id));
-
     public List<ListingImage> Images { get; set; } = new List<ListingImage>();
 }

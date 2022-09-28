@@ -1,7 +1,13 @@
 ﻿@page "{listingId?}"
-@using WebProject.Infastructure.Services
 @using WebProject.Pages.Shared
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using WebProject.Core.Models
 @model WebProject.Pages.Listings.Index
+
+@attribute [ValidateAntiForgeryToken]
+
+@inject SignInManager<ApplicationUser> SignInManager
 @{
     ViewData["Title"] = Model.Listing is null ? string.Empty : Model.Listing.Title;
 }
@@ -12,7 +18,58 @@
                 @{ await Html.RenderPartialAsync("Shared/ImageGallery", new ImageGalleryModel { Images = Model.Listing!.Images, GalleryId = Model.Listing.Id }); }
             </div>
             <div class="col-12 col-lg-4">
-                <h1>TEST!</h1>
+                <div class="container-fluid px-2">
+                    <h2 class="pb-2 border-bottom">@Model.Listing.Title</h2>
+                    <div class="row row-cols-1 g-1">
+                        <div class="col d-flex align-items-start">
+                            <div>
+                                <h3 class="fs-2">Cena: @Model.Listing.DisplayPrice</h3>
+                                <p>@Model.Listing.Description</p>
+                                
+                                @* Rādām tikai authorizētiem lietotājiem *@
+                                @if (SignInManager.IsSignedIn(User))
+                                {
+                                    // Parādām vai ziņa nosūtīta
+                                    @if (Model.MessageSent)
+                                    {
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            <strong>Ziņa nosūtīta!</strong>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    }
+                                    <button type="button" class="float-end btn btn-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
+                                        Sūtīt ziņu <i class="bi bi-chat-dots"></i>
+                                    </button>
+                                 
+                                    
+                                    <div class="modal fade" id="messageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="messageModelLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="messageModelLabel">Sūtīt ziņu</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form class="modal-body" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <div class="form-floating mb-2">
+                                                        <textarea asp-for="Message" name="message" class="form-control" placeholder="Sūtīt ziņu" id="message" style="height: 120px"></textarea>
+                                                        <label for="message">Ziņas saturs</label>
+                                                    </div>
+                                                    <button type="submit" class="float-end btn btn-primary">
+                                                        Sūtīt <i class="bi bi-chat-dots"></i>
+                                                    </button>
+                                                    <button type="button" class="me-2 float-end btn btn-secondary" data-bs-dismiss="modal">
+                                                        Aizvērt <i class="bi bi-x-lg"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

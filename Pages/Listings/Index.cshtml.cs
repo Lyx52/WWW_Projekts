@@ -10,11 +10,14 @@ namespace WebProject.Pages.Listings;
 
 public class Index : PageModel
 {
-    [BindProperty]
     public int ListingId { get; set; }
     
-    [BindProperty]
     public Listing? Listing { get; set; }
+
+    public bool MessageSent { get; set; } = false;
+    
+    [BindProperty]
+    public string Message { get; set; }
 
     private readonly IEntityRepository<Listing> _listingRepository;
     
@@ -22,9 +25,16 @@ public class Index : PageModel
     {
         _listingRepository = repository;
     }
-    
-    public async Task<IActionResult> OnGetAsync()
+
+    public async Task<IActionResult> OnPostAsync()
     {
+        return RedirectToAction("Index", "Listings", new { id = RouteData.Values["listingId"], sentSuccess = true });
+    }
+    public async Task<IActionResult> OnGetAsync(bool? sentSuccess)
+    {
+        // Ja ziņojums nosūtīts, parādīt paziņojumu lietotājam
+        MessageSent = sentSuccess.HasValue && sentSuccess.Value;
+        
         // TODO: FIX 400/404!
         // Ja nav dots parametrs atgriezam nepareizu pieprasījumu
         if (!RouteData.Values.ContainsKey("listingId"))
@@ -46,7 +56,10 @@ public class Index : PageModel
         }
 
         Listing = await _listingRepository
-            .AsQueryable().Include(l => l.Category).Include(l => l.Images)
+            .AsQueryable()
+            .Include(l => l.Category)
+            .Include(l => l.Images)
+            .Include(l => l.User)
             .FirstOrDefaultAsync(l => l.Id == ListingId);
         if (Listing is null)
             return NotFound();  
