@@ -7,6 +7,8 @@ public class ContentEntity : IdEntity
     public DateTime? Created { get; set; } = DateTime.UtcNow;
 
     public DateTime? Modified { get; set; } = DateTime.MaxValue;
-    
+
     public ApplicationUser? Creator { get; set; }
+    
+    public int CreatorId { get; set; }
 }
