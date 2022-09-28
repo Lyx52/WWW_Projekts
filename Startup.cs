@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore.InMemory;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.FileProviders;
 using WebProject.Core.Interfaces;
 using WebProject.Core.Models;
 using WebProject.Infastructure.Data;
@@ -58,11 +59,10 @@ namespace WebProject
             })
             .AddRazorPagesOptions(options =>
             {
-                options.Conventions.AddPageRoute("/Pages/Shared/Error", "/Error");
                 // TODO: Finish implementing error pages
-                options.Conventions.AddPageRoute("/Pages/Shared/Error/Status400", "/400");
-                options.Conventions.AddPageRoute("/Pages/Shared/Error/Status404", "/404");
-                options.Conventions.AddPageRoute("/Pages/Shared/Error/Status500", "/500");
+                options.Conventions.AddPageRoute("/Page400", "/Shared/Error/Status400");
+                options.Conventions.AddPageRoute("/Page404","/Shared/Error/Status404");
+                options.Conventions.AddPageRoute("/Page500","/Shared/Error/Status500");
             });
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -78,7 +78,9 @@ namespace WebProject
             })
             .AddEntityFrameworkStores<UserDbContext>()
             .AddDefaultTokenProviders();
-
+            
+            // TODO add bad response handlers redirect to error pages
+            
             // Add authorization policies
             services.AddAuthorization(options =>
             {
@@ -115,8 +117,14 @@ namespace WebProject
             {
                 app.UseExceptionHandler("/Error");
             }
-
+            // Add standard css/js/lib static files
             app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+                RequestPath = "/Images"
+            });
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

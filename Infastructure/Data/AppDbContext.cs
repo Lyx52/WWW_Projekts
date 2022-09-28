@@ -31,7 +31,8 @@ public class AppDbContext : DbContext
                 {
                     Id = -i, CategoryId = -1, Title = $"Test{i}",
                     Description = "This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer. This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer. This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer. This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.", 
-                    Created = DateTime.UtcNow
+                    Created = DateTime.UtcNow,
+                    Price = Random.Shared.NextSingle() * 50
                 });
                 continue;
             }
@@ -55,17 +56,17 @@ public class AppDbContext : DbContext
                 images.Add(
                     new ListingImage()
                     {
-                        Id = -(imgId++), FilePath = "https://i.postimg.cc/28PqLLQC/dotonburi-canal-osaka-japan-700.jpg", ListingId = -i
+                        Id = -(imgId++), FilePath = "/Images/test2.jpg", ListingId = -i
                     });
                 images.Add(
                     new ListingImage()
                     {
-                        Id = -(imgId++), FilePath = "https://i.postimg.cc/28PqLLQC/dotonburi-canal-osaka-japan-700.jpg", ListingId = -i
+                        Id = -(imgId++), FilePath = "/Images/test.jpg", ListingId = -i
                     });
                 images.Add(
                     new ListingImage()
                     {
-                        Id = -(imgId++), FilePath = "https://i.postimg.cc/28PqLLQC/dotonburi-canal-osaka-japan-700.jpg", ListingId = -i
+                        Id = -(imgId++), FilePath = "/Images/test3.jpg", ListingId = -i
                     });
                 continue;
             }
@@ -73,7 +74,7 @@ public class AppDbContext : DbContext
             images.Add(
                 new ListingImage()
                 {
-                    Id = -(imgId++), FilePath = "https://i.postimg.cc/28PqLLQC/dotonburi-canal-osaka-japan-700.jpg", ListingId = -i
+                    Id = -(imgId++), FilePath = "/Images/test.jpg", ListingId = -i
                 });
 
         }
