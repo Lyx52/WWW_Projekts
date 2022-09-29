@@ -8,12 +8,13 @@
 @model List<Message>
 @{
     var currentUser = await _userManager.GetUserAsync(User);
+    var replyMessageId = -1;
 }
 <li class="nav-item p-0 m-0">
     <div class="dropdown-center">
         <a class="nav-link fw-bold text-black px-1 dropdown-toggle position-relative" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
             <i class="bi bi-chat-left">
-                @if (Model is List<Message> && Model.Count(m => m.Unread && m.Recipient!.Id == currentUser!.Id) > 0)
+                @if (Model.Count(m => m.Unread && m.Recipient!.Id == currentUser!.Id) > 0)
                 {
                     <span class="position-absolute top-25 start-75 translate-middle p-1 bg-danger border border-light rounded-circle">
                         <span class="visually-hidden">Jaunas ziņas!</span>
@@ -51,13 +52,17 @@
                                     </p>
                                 </div>
                                 <div class="card-footer d-flex w-100 justify-content-between">
+                                    @* Todo: Implementēt atbildēšanu/atzīmēt kā izlasīts *@
                                     <form method="post">
-                                        <a class="btn">Atbildēt</a>
-                                        @if (message.Recipient == currentUser)
-                                        {
-                                            <a class="btn">Izlasīts</a>    
-                                        }
+                                        <button type="submit" class="btn">Atbildēt</button>
                                     </form>
+                                    @if (message.Recipient == currentUser)
+                                    {
+                                        
+                                        {
+                                            await Html.RenderPartialAsync("MarkReadPartial", new MarkReadModel { UserId = currentUser.Id, Read = true, MessageId = message.Id });
+                                        }
+                                    }
                                 </div>
                             </div>
                         </div>

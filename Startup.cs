@@ -47,6 +47,7 @@ namespace WebProject
                 #if USING_INMEMORYDB
                 optionsBuilder.UseInMemoryDatabase("AppDb");
                 #endif
+                
             });
             services.AddMvc()
             .AddRazorOptions(options =>

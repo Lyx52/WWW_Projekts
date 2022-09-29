@@ -8,6 +8,5 @@ public class ListingImage : ContentEntity
     public string FilePath { get; set; } = string.Empty;
     
     public Listing? Listing { get; set; }
-    
     public int ListingId { get; set; }
 }
