@@ -13,7 +13,7 @@
     <div class="dropdown-center">
         <a class="nav-link fw-bold text-black px-1 dropdown-toggle position-relative" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
             <i class="bi bi-chat-left">
-                @if (Model.Count(m => m.Unread && m.Recipient!.Id == currentUser!.Id) > 0)
+                @if (Model is List<Message> && Model.Count(m => m.Unread && m.Recipient!.Id == currentUser!.Id) > 0)
                 {
                     <span class="position-absolute top-25 start-75 translate-middle p-1 bg-danger border border-light rounded-circle">
                         <span class="visually-hidden">Jaunas ziņas!</span>
@@ -30,7 +30,16 @@
                     <li class="messagebox dropdown-item p-3 bg-active-none">
                         <button class="btn d-flex w-100 justify-content-between bg-active-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMessage_@index" aria-expanded="false" aria-controls="collapseMessage_@index">
                             <h6 class="mb-1">
-                                <i class="bi @(message.Unread ? "bi-send-fill" : "bi-send")"></i><span class="@(message.Unread ? "fw-bold" : "fw-normal")"> No: </span>@message.Recipient!.UserName
+                                @if (message.CreatedBy == currentUser)
+                                {
+                                    // Nosūtītās ziņas
+                                    <i class="bi @(message.Unread ? "bi-send-fill" : "bi-send")"></i><span class="@(message.Unread ? "fw-bold" : "fw-normal")"> Uz: </span>@message.Recipient!.UserName
+                                }
+                                else
+                                {
+                                    // Saņemtās
+                                    <i class="bi @(message.Unread ? "bi-send-fill" : "bi-send")"></i><span class="@(message.Unread ? "fw-bold" : "fw-normal")"> No: </span>@message.CreatedBy!.UserName
+                                }
                             </h6>
                             <small class="text-muted">@GetMessageRecievedDateTime(message.Created)</small>
                         </button>
@@ -44,7 +53,10 @@
                                 <div class="card-footer d-flex w-100 justify-content-between">
                                     <form method="post">
                                         <a class="btn">Atbildēt</a>
-                                        <a class="btn">Izlasīts</a>    
+                                        @if (message.Recipient == currentUser)
+                                        {
+                                            <a class="btn">Izlasīts</a>    
+                                        }
                                     </form>
                                 </div>
                             </div>

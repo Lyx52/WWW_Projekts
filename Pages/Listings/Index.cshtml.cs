@@ -37,6 +37,7 @@ public class Index : PageModel
         if (message is null || message.Length <= 0)
             return BadRequest();
         var user = await _userManager.GetUserAsync(User);
+        
         if (user is null)
             return BadRequest();
         
@@ -48,8 +49,9 @@ public class Index : PageModel
             return BadRequest();
         
         // TODO: REMOVE TEST CODE
+        var recv = await _userManager.FindByEmailAsync("user@email.com");
         if (listing.CreatedBy is null)
-            listing.CreatedBy = user;
+            listing.CreatedBy = recv;
         await _listingRepository.Update(listing);
 
         await _messageSender.SendMessage(message, user, listing.CreatedBy);

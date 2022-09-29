@@ -167,6 +167,17 @@ namespace WebProject
                 user = await userManager.FindByEmailAsync("admin@email.com");
                 await userManager.AddToRoleAsync(user, "Admin");
             }
+            user = await userManager.FindByEmailAsync("user@email.com");
+            if (user is null)
+            {
+                await userManager.CreateAsync(new ApplicationUser() {
+                    UserName = "user",
+                    Email = "user@email.com",
+                    EmailConfirmed = true
+                }, "parole123");
+                user = await userManager.FindByEmailAsync("user@email.com");
+                await userManager.AddToRoleAsync(user, "Admin");
+            }
         }
     }
 }

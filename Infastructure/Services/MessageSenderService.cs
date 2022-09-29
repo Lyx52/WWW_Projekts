@@ -40,7 +40,9 @@ public class MessageSenderService : IMessageSenderService
     public async Task<List<Message>> GetAllMessages(ApplicationUser user, int offset = 0, int limit = -1)
     {
         return await _messageRepository
-            .AsQueryable().Include(m => m.CreatedBy)
+            .AsQueryable()
+            .Include(m => m.CreatedBy)
+            .Include(m => m.Recipient)
             .Where(m => m.CreatedBy!.Id == user.Id || m.Recipient!.Id == user.Id)
             .Skip(offset).Take(limit > 0 ? limit : Int32.MaxValue).ToListAsync();
     } 
