@@ -45,5 +45,18 @@ public class MessageSenderService : IMessageSenderService
             .Include(m => m.Recipient)
             .Where(m => m.CreatedBy!.Id == user.Id || m.Recipient!.Id == user.Id)
             .Skip(offset).Take(limit > 0 ? limit : Int32.MaxValue).ToListAsync();
-    } 
+    }
+
+    public async Task MarkAsRead(ApplicationUser user, int? messageId)
+    {
+        var msg = await _messageRepository.AsQueryable()
+            .Include(m => m.Recipient)
+            .Where(m => m.Recipient == user && m.Id == messageId).FirstOrDefaultAsync();
+        if (msg is not null)
+        {
+            msg.Unread = false;
+            await _messageRepository.Update(msg);
+        }
+
+    }
 }

@@ -2,13 +2,16 @@
 @using WebProject.Core.Interfaces.Services
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.AspNetCore.DataProtection
 @inject IMessageSenderService _messageSender
 @inject SignInManager<ApplicationUser> _signInManager
 @inject UserManager<ApplicationUser> _userManager
+@inject IDataProtectionProvider _dataProtector
 @model List<Message>
 @{
     var currentUser = await _userManager.GetUserAsync(User);
-    var replyMessageId = -1;
+    var protector = _dataProtector.CreateProtector("MessageProvider");
 }
 <li class="nav-item p-0 m-0">
     <div class="dropdown-center">
@@ -58,10 +61,12 @@
                                     </form>
                                     @if (message.Recipient == currentUser)
                                     {
-                                        
-                                        {
-                                            await Html.RenderPartialAsync("MarkReadPartial", new MarkReadModel { UserId = currentUser.Id, Read = true, MessageId = message.Id });
-                                        }
+
+                                        var protectedId = protector.Protect(message.Id.ToString());
+                                        <form id="markAsRead">
+                                            @Html.Hidden("pdata", protectedId)
+                                            <button id="btnMarkAsRead" type="submit" class="btn">Izlasīts</button>
+                                        </form>
                                     }
                                 </div>
                             </div>
@@ -94,3 +99,20 @@
         return new HtmlString(result);
     }
 }
+
+<script type="text/javascript">
+    $(document).ready(
+        $('#btnMarkAsRead').on('click', function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "/Message/MarkAsRead",
+                data: $('form').serialize(),
+                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                success: function () {
+                    alert('Posted using jQuery')
+                }
+            });
+        })
+    );
+</script>
