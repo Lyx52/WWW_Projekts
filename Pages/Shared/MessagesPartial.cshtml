@@ -63,7 +63,7 @@
                                     {
 
                                         var protectedId = protector.Protect(message.Id.ToString());
-                                        <form id="markAsRead">
+                                        <form href="#" id="markAsRead">
                                             @Html.Hidden("pdata", protectedId)
                                             <button id="btnMarkAsRead" type="submit" class="btn">Izlasīts</button>
                                         </form>
@@ -102,15 +102,17 @@
 
 <script type="text/javascript">
     $(document).ready(
-        $('#btnMarkAsRead').on('click', function (e) {
-            e.preventDefault();
+        // Mark as read
+        $('#markAsRead').on('submit', function (e) {
+            e.preventDefault()
             $.ajax({
                 type: "POST",
-                url: "/Message/MarkAsRead",
+                url: "@Url.Action("MarkAsRead", "Message")",
                 data: $('form').serialize(),
                 headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
                 success: function () {
-                    alert('Posted using jQuery')
+                    window.location.reload();
+                    window.location.search = "";
                 }
             });
         })

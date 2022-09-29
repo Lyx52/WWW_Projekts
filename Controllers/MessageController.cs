@@ -19,6 +19,7 @@ public class MessageController : Controller
         _messageSender = messageSender;
         _userManager = userManager;
     }
+    
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> MarkAsRead(string? pdata)
@@ -29,6 +30,10 @@ public class MessageController : Controller
         if (user is not null && Int32.TryParse(_dataProtector.Unprotect(pdata), out int id))
         {
             await _messageSender.MarkAsRead(user, id);
+        }
+        else
+        {
+            return BadRequest();
         }
 
         return Ok();
