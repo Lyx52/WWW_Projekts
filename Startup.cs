@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore.InMemory;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Linq;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
 using WebProject.Core.Interfaces;
@@ -82,16 +83,25 @@ namespace WebProject
                 options.AddPolicy("RequireUserLogin", c => c.RequireRole("User", "Admin"));
                 options.AddPolicy("RequireAdminLogin", c => c.RequireRole("Admin"));
             });
-            services.ConfigureApplicationCookie(options =>
-            {
-                // Cookie settings
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+            services
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options => {
+                    // Cookie settings
+                    options.Cookie = new CookieBuilder
+                    {
+                        SameSite = SameSiteMode.Strict,
+                        SecurePolicy = CookieSecurePolicy.Always,
+                        IsEssential = true,
+                        HttpOnly = true,
+                        Name = "Authentication"
+                    };
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 
-                options.LoginPath = "/Account/Login";
-                options.AccessDeniedPath = "/Account/AccessDenied";
-                options.SlidingExpiration = true;
-            });
+                    options.LoginPath = "/Account/Login";
+                    options.LogoutPath = "/Account/SignOut";
+                    options.AccessDeniedPath = "/Account/AccessDenied";
+                    options.SlidingExpiration = true;
+                });
             services.AddRazorPages();
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IMessageSenderService, MessageSenderService>();

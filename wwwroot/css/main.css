@@ -57,7 +57,13 @@ html {
   object-fit: contain;
   aspect-ratio: 16/9;
 }
-
+/* Saņemto nosūtīto ziņu bloks */
+.messagebox {
+  min-width: 350px !important;  
+}
+.bg-active-none:not(:disabled):not(:disabled):active {
+  background-color: transparent;
+}
 /*.dropdown-menu[data-bs-popper] {*/
 /*  left: -60px;*/
 /*}*/

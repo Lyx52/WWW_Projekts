@@ -19,13 +19,21 @@
             </div>
             <div class="col-12 col-lg-4">
                 <div class="container-fluid px-2">
+                    <nav aria-label="breadcrumb pt-md-2">
+                        <ol class="breadcrumb">
+                            @* TODO: Add dynamic categories *@
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item"><a href="#">Library</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Data</li>
+                        </ol>
+                    </nav>
                     <h2 class="pb-2 border-bottom">@Model.Listing.Title</h2>
                     <div class="row row-cols-1 g-1">
                         <div class="col d-flex align-items-start">
                             <div>
                                 <h3 class="fs-2">Cena: @Model.Listing.DisplayPrice</h3>
                                 <p>@Model.Listing.Description</p>
-                                
+
                                 @* Rādām tikai authorizētiem lietotājiem *@
                                 @if (SignInManager.IsSignedIn(User))
                                 {
@@ -40,8 +48,7 @@
                                     <button type="button" class="float-end btn btn-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
                                         Sūtīt ziņu <i class="bi bi-chat-dots"></i>
                                     </button>
-                                 
-                                    
+
                                     <div class="modal fade" id="messageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="messageModelLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
@@ -59,7 +66,7 @@
                                                         Sūtīt <i class="bi bi-chat-dots"></i>
                                                     </button>
                                                     <button type="button" class="me-2 float-end btn btn-secondary" data-bs-dismiss="modal">
-                                                        Aizvērt <i class="bi bi-x-lg"></i>
+                                                        Aizvērt <i class="bi bi-x"></i>
                                                     </button>
                                                 </form>
                                             </div>

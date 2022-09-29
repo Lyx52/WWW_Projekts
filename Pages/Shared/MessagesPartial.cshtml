@@ -1,6 +1,7 @@
 @using WebProject.Core.Models;
 @using WebProject.Core.Interfaces.Services
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Html
 @inject IMessageSenderService _messageSender
 @inject SignInManager<ApplicationUser> _signInManager
 @inject UserManager<ApplicationUser> _userManager
@@ -21,36 +22,58 @@
             </i>
         </a>
         <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-                <a class="dropdown-item" href="#">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">List group item heading</h5>
-                        <small>3 days ago</small>
-                    </div>
-                    <p class="mb-1">Some placeholder content in a paragraph.</p>
-                    <small>And some small print.</small>
-                </a>
-            </li>
-            <li>
-                <a class="dropdown-item" href="#">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">List group item heading</h5>
-                        <small>3 days ago</small>
-                    </div>
-                    <p class="mb-1">Some placeholder content in a paragraph.</p>
-                    <small>And some small print.</small>
-                </a>
-            </li>
-            <li>
-                <a class="dropdown-item" href="#">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">List group item heading</h5>
-                        <small>3 days ago</small>
-                    </div>
-                    <p class="mb-1">Some placeholder content in a paragraph.</p>
-                    <small>And some small print.</small>
-                </a>
-            </li>
+            @if (Model.Count > 0)
+            {
+                @foreach (var message in Model)
+                {
+                    var index = Model.IndexOf(message);
+                    <li class="messagebox dropdown-item p-3 bg-active-none">
+                        <button class="btn d-flex w-100 justify-content-between bg-active-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMessage_@index" aria-expanded="false" aria-controls="collapseMessage_@index">
+                            <h6 class="mb-1">
+                                <i class="bi @(message.Unread ? "bi-send-fill" : "bi-send")"></i><span class="@(message.Unread ? "fw-bold" : "fw-normal")"> No: </span>@message.Recipient!.UserName
+                            </h6>
+                            <small class="text-muted">@GetMessageRecievedDateTime(message.Created)</small>
+                        </button>
+                        <div class="collapse" id="collapseMessage_@index">
+                            <div class="card">
+                                <div class="card-body overflow-auto">
+                                    <p class="text-wrap">
+                                        @PrettyfyMessage(message.Text)
+                                    </p>
+                                </div>
+                                <div class="card-footer d-flex w-100 justify-content-between">
+                                    <form method="post">
+                                        <a class="btn">Atbildēt</a>
+                                        <a class="btn">Izlasīts</a>    
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+            else
+            {
+                <li class="messagebox dropdown-item p-3 bg-active-none">Ziņu nav!</li>
+            }
         </ul>
     </div>
 </li>
+@functions
+{
+    public string GetMessageRecievedDateTime(DateTime? recv)
+    {
+        return "3 dien.";
+    }
+
+    public HtmlString PrettyfyMessage(string? message)
+    {
+
+        if (message is null || message.Length == 0)
+            return HtmlString.Empty;
+        string? result = message.ToString();
+        result = result.Replace(System.Environment.NewLine, " ");
+
+        return new HtmlString(result);
+    }
+}
