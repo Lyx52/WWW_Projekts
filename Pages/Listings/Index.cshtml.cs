@@ -30,33 +30,6 @@ public class Index : PageModel
         _userManager = userManager;
         _messageSender = messageSender;
     }
-    public async Task<IActionResult> OnPostAsync(string? message)
-    {
-        if (!TryParseUrlId((string?)RouteData.Values["listingId"], out int listingId))
-            return BadRequest();
-        if (message is null || message.Length <= 0)
-            return BadRequest();
-        var user = await _userManager.GetUserAsync(User);
-        
-        if (user is null)
-            return BadRequest();
-        
-        var listing = await _listingRepository
-            .AsQueryable()
-            .Include(l => l.CreatedBy)
-            .FirstOrDefaultAsync(l => l.Id == listingId);
-        if (listing is null)
-            return BadRequest();
-        
-        // TODO: REMOVE TEST CODE
-        var recv = await _userManager.FindByEmailAsync("user@email.com");
-        if (listing.CreatedBy is null)
-            listing.CreatedBy = recv;
-        await _listingRepository.Update(listing);
-
-        await _messageSender.SendMessage(message, user, listing.CreatedBy);
-        return RedirectToAction("Index", "Listings", new { id = RouteData.Values["listingId"], sentSuccess = true });
-    }
     public async Task<IActionResult> OnGetAsync(bool? sentSuccess)
     {
         // Ja ziņojums nosūtīts, parādīt paziņojumu lietotājam
@@ -80,6 +53,11 @@ public class Index : PageModel
             .FirstOrDefaultAsync(l => l.Id == ListingId);
         if (Listing is null)
             return NotFound();  
+        
+        // TODO: TESTCODE REMOVE THIS!!!
+        var user = await _userManager.FindByEmailAsync("user@email.com");
+        if (user is not null)
+            Listing.CreatedBy = user;
         
         return Page();
     }

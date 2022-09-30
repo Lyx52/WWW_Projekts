@@ -47,11 +47,20 @@ public class MessageSenderService : IMessageSenderService
             .Skip(offset).Take(limit > 0 ? limit : Int32.MaxValue).ToListAsync();
     }
 
-    public async Task MarkAsRead(ApplicationUser user, int? messageId)
+    public async Task<Message?> GetMessageById(int id)
+    {
+        return await _messageRepository
+            .AsQueryable()
+            .Include(m => m.CreatedBy)
+            .Include(m => m.Recipient)
+            .Where(m => m.Id == id)
+            .FirstOrDefaultAsync();
+    }
+    public async Task MarkAsRead(int? messageId)
     {
         var msg = await _messageRepository.AsQueryable()
             .Include(m => m.Recipient)
-            .Where(m => m.Recipient == user && m.Id == messageId).FirstOrDefaultAsync();
+            .Where(m => m.Id == messageId).FirstOrDefaultAsync();
         if (msg is not null)
         {
             msg.Unread = false;

@@ -11,7 +11,7 @@
 @model List<Message>
 @{
     var currentUser = await _userManager.GetUserAsync(User);
-    var protector = _dataProtector.CreateProtector("MessageProvider");
+    var messageProtector = _dataProtector.CreateProtector("MessageProvider");
 }
 <li class="nav-item p-0 m-0">
     <div class="dropdown-center">
@@ -55,16 +55,12 @@
                                     </p>
                                 </div>
                                 <div class="card-footer d-flex w-100 justify-content-between">
-                                    @* Todo: Implementēt atbildēšanu/atzīmēt kā izlasīts *@
-                                    <form method="post">
-                                        <button type="submit" class="btn">Atbildēt</button>
-                                    </form>
+                                    @{ var pdata = messageProtector.Protect($"{message.Recipient!.Id}|{Context.Request.Path}"); }
+                                    <button onclick="openMessageModal('@pdata')" class="btn" data-bs-toggle="modal" data-bs-target="#messageModal">Atbildēt</button>
                                     @if (message.Recipient == currentUser)
                                     {
-
-                                        var protectedId = protector.Protect(message.Id.ToString());
-                                        <form href="#" id="markAsRead">
-                                            @Html.Hidden("pdata", protectedId)
+                                        <form asp-controller="Message" asp-action="MarkAsRead">
+                                            @Html.Hidden("pdata", pdata)
                                             <button id="btnMarkAsRead" type="submit" class="btn">Izlasīts</button>
                                         </form>
                                     }
@@ -81,6 +77,8 @@
         </ul>
     </div>
 </li>
+@{ await Html.RenderPartialAsync("Shared/MessageModalPartial"); }
+
 @functions
 {
     public string GetMessageRecievedDateTime(DateTime? recv)
@@ -99,22 +97,3 @@
         return new HtmlString(result);
     }
 }
-
-<script type="text/javascript">
-    $(document).ready(
-        // Mark as read
-        $('#markAsRead').on('submit', function (e) {
-            e.preventDefault()
-            $.ajax({
-                type: "POST",
-                url: "@Url.Action("MarkAsRead", "Message")",
-                data: $('form').serialize(),
-                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
-                success: function () {
-                    window.location.reload();
-                    window.location.search = "";
-                }
-            });
-        })
-    );
-</script>

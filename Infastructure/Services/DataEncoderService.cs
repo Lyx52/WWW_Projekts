@@ -1,6 +1,6 @@
 ﻿namespace WebProject.Infastructure.Services;
 
-public static class DataProtectorService
+public static class DataEncoderService
 {
     public static string Encode(this int value) => Encode(BitConverter.GetBytes(value));
     public static string Encode(this ReadOnlySpan<byte> data)

@@ -6,3 +6,7 @@ function showToast(message, title, time=1000)
     $("#toastContainerTitle").text(title);
     $("#toastContainer").toast({ autohide: true, delay: time }).toast("show")
 }
+function openMessageModal(pdata)
+{
+    $("#messageModalForm > #pdata").val(pdata)
+}

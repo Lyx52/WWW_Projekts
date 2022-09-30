@@ -3,13 +3,15 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using WebProject.Core.Models
+@using Microsoft.AspNetCore.DataProtection
 @model WebProject.Pages.Listings.Index
 
 @attribute [ValidateAntiForgeryToken]
-
+    @inject IDataProtectionProvider _dataProtector
 @inject SignInManager<ApplicationUser> SignInManager
 @{
     ViewData["Title"] = Model.Listing is null ? string.Empty : Model.Listing.Title;
+    var messageProtector = _dataProtector.CreateProtector("MessageProvider");
 }
 <div class="py-3 listing-container">
     <div class="container-fluid w-100">
@@ -45,33 +47,11 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                         </div>
                                     }
-                                    <button type="button" class="float-end btn btn-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
+                                    
+                                    var pdata = messageProtector.Protect($"{Model.Listing.CreatedBy.Id}|{Request.Path}");
+                                    <button onclick="openMessageModal('@pdata')" type="button" class="float-end btn btn-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
                                         Sūtīt ziņu <i class="bi bi-chat-dots"></i>
                                     </button>
-
-                                    <div class="modal fade" id="messageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="messageModelLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="messageModelLabel">Sūtīt ziņu</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <form class="modal-body" method="post">
-                                                    @Html.AntiForgeryToken()
-                                                    <div class="form-floating mb-2">
-                                                        <textarea asp-for="Message" name="message" class="form-control" placeholder="Sūtīt ziņu" id="message" style="height: 120px"></textarea>
-                                                        <label for="message">Ziņas saturs</label>
-                                                    </div>
-                                                    <button type="submit" class="float-end btn btn-primary">
-                                                        Sūtīt <i class="bi bi-chat-dots"></i>
-                                                    </button>
-                                                    <button type="button" class="me-2 float-end btn btn-secondary" data-bs-dismiss="modal">
-                                                        Aizvērt <i class="bi bi-x"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
                                 }
                             </div>
                         </div>
