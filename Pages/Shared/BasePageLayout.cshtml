@@ -29,7 +29,7 @@
                     <ul class="navbar-nav">
                         <li class="nav-item p-0 me-md-3">
                             @* TODO: Implement listing searches *@
-                            <form>
+                            <form asp-controller="Home" asp-action="Index" method="post">
                                 <div class="input-group my-auto">
                                     <button class="btn btn-outline-secondary dropdown-toggle border-0 rounded-3 bg-active-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Pēc kategorijas
@@ -42,8 +42,8 @@
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" href="#">Separated link</a></li>
                                     </ul>
-                                    <input id="txt-listing-search" type="text" class="form-control rounded-3" placeholder="Meklēt sludinājumu" aria-label="Meklēt sludinājumu" aria-describedby="btn-search">
-                                    <button class="btn border-0" type="submit" id="btn-search">
+                                    <input id="search" name="search" type="text" class="form-control rounded-3" placeholder="Meklēt sludinājumu" aria-label="Meklēt sludinājumu" aria-describedby="btn-search">
+                                    <button btn="btn-submit-search" class="btn border-0" type="submit">
                                         <i class="bi bi-search"></i>
                                     </button>
                                 </div>
