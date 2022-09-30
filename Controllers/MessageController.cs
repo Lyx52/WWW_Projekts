@@ -36,6 +36,7 @@ public class MessageController : Controller
         try
         {
             var user = await _userManager.GetUserAsync(User);
+            // messageId|redirectUrl
             var data = _dataProtector.Unprotect(pdata).Split("|");
             if (user is not null && Int32.TryParse(data[0], out int id))
             {

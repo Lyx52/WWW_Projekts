@@ -55,10 +55,11 @@
                                     </p>
                                 </div>
                                 <div class="card-footer d-flex w-100 justify-content-between">
-                                    @{ var pdata = messageProtector.Protect($"{message.Recipient!.Id}|{Context.Request.Path}"); }
-                                    <button onclick="openMessageModal('@pdata')" class="btn" data-bs-toggle="modal" data-bs-target="#messageModal">Atbildēt</button>
                                     @if (message.Recipient == currentUser)
                                     {
+                                        var pdata = messageProtector.Protect($"{message.Recipient!.Id}|{Context.Request.Path}");
+                                        <button onclick="openMessageModal('@pdata')" class="btn" data-bs-toggle="modal" data-bs-target="#messageModal">Atbildēt</button> 
+                                        pdata = messageProtector.Protect($"{message.Id}|{Context.Request.Path}");
                                         <form asp-controller="Message" asp-action="MarkAsRead">
                                             @Html.Hidden("pdata", pdata)
                                             <button id="btnMarkAsRead" type="submit" class="btn">Izlasīts</button>
