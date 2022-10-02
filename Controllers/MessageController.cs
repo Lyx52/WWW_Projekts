@@ -2,15 +2,14 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebProject.Core.Interfaces;
 using WebProject.Core.Interfaces.Services;
 using WebProject.Core.Models;
-using WebProject.Infastructure.Services;
-using WebProject.Pages.Shared;
 
 namespace WebProject.Controllers;
 
+[ApiController]
+[Route("Message")]
 public class MessageController : Controller
 {
     private readonly IDataProtector _dataProtector;
@@ -29,6 +28,7 @@ public class MessageController : Controller
     
     [HttpPost]
     [Authorize]
+    [Route("MarkAsRead")]
     public async Task<IActionResult> MarkAsRead(string? pdata)
     {
         if (pdata is null || pdata.Length <= 0)
@@ -59,6 +59,7 @@ public class MessageController : Controller
 
     [HttpPost]
     [Authorize]
+    [Route("SendMessage")]
     public async Task<IActionResult> SendMessage(string? pdata, string? message)
     {
         if (string.IsNullOrEmpty(pdata) || string.IsNullOrEmpty(message))

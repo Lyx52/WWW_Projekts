@@ -2,6 +2,8 @@
 
 namespace WebProject.Controllers;
 
+[ApiController]
+[Route("Home")]
 public class HomeController : Controller
 {
     // GET

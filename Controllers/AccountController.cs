@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebProject.Core.Models;
 
 namespace WebProject.Controllers;
 
+[ApiController]
+[Route("Account")]
 public class AccountController : Controller
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -16,6 +19,10 @@ public class AccountController : Controller
         _userManager = userManager;
         _signInManager = signInManager;
     }
+    
+    [HttpPost]
+    [AllowAnonymous]
+    [Route("ConfirmEmail")]
     public async Task<IActionResult> ConfirmEmail(string userId, string code)
     {
         // Pārbaudam vai pareizi parametri atsūtīti un vai lietotājs vispār eksistē
@@ -32,6 +39,9 @@ public class AccountController : Controller
         return RedirectToPage("/Index");
     }
 
+    [HttpPost]
+    [AllowAnonymous]
+    [Route("SignOut")]
     public async Task<IActionResult> SignOut()
     {
         // Ja esam ielogojušies, izloggojamies

@@ -2,6 +2,8 @@
 
 namespace WebProject.Controllers;
 
+[ApiController]
+[Route("Admin")]
 public class AdminController : Controller
 {
     private readonly ILogger<AdminController> _logger;
