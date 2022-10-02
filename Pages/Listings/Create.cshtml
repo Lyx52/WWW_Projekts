@@ -44,12 +44,14 @@
         @*     <strong>$20</strong> *@
         @*   </li> *@
         @* </ul> *@
-        <form id="imgUploadForm" class="card p-2">
-          <div class="input-group">
-            <input id="fileImg" name="fileImg" type="file" class="form-control" placeholder="Attelu Augšupielade">
-            <button id="fileSubmit" type="submit" class="btn btn-secondary">Augšupielādēt</button>
-          </div>
-        </form>
+    <form id="imgUploadForm" class="card p-2" method="post">
+      @Html.AntiForgeryToken()
+      <div class="input-group">
+        <input id="imgUploadField" name="fileImg" type="file" class="form-control me-2 rounded" placeholder="Attelu Augšupielade" />
+        <button id="imgUploadSubmit" type="submit" class="btn btn-secondary">Augšupielādēt</button>
+        <div id="imgUploadFieldValidation" class="invalid-feedback">Augšupielādētais fails nav atbalstīts!</div>
+      </div>
+    </form>
     </div>
     <div class="col-md-7 col-lg-8">
       <h4 class="mb-3">Billing address</h4>
@@ -152,19 +154,61 @@
     </div>
   </div>
 </div>
-@section scripts{ 
-  <script>
-      $(document).load(
-        $("#imgUploadForm").submit(function(e) {
-          e.preventDefault();
-          $.ajax({
-              type: "POST",
-              url: '@Url.Action("UploadFile", "Listings")',
-              dataType: "multipart/form-data",
-              data: $('#imgUploadForm').serialize(),
-              cache: false
-          });  
-        })
-      );
-  </script>
+@section Scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            function setValidation(msg, enable=true)
+            {
+                $("#imgUploadFieldValidation").text(msg)
+                if (enable)
+                    $("#imgUploadField").removeClass("is-invalid").addClass("is-invalid")
+            }
+            const acceptedFileExt = [ ".png", ".jpg" ]
+            $("#imgUploadForm").on("submit", function(e) {
+                e.preventDefault();
+                var files = $("#imgUploadField").prop("files");
+                // Pārbaidam vai ir pievienots fails
+                if (files.length <= 0)
+                {        
+                    setValidation("Neviens fails nav izvēlēts!");
+                    return;
+                }
+                // Pārbaidām vai faila nosaukums beidzas ar konkrēto faila tipu
+                if (acceptedFileExt.filter(function(ext) { return files[0].name.endsWith(ext); }).length <= 0)
+                {
+                    setValidation("Neatbalstīts faila tips");
+                    return;
+                }
+                var formData = new FormData();
+                formData.append("imgUpload", files[0]);
+                
+                $.ajax({
+                    type: "POST",
+                    url: '/Listings/UploadFile',
+                    dataType: "multipart/form-data",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                        $("#imgUploadField").removeClass("is-invalid");
+                    },
+                    success: function (res) {
+                        let response = JSON.parse(res);
+                        if (!response["success"])
+                        {
+                            setValidation(response["message"]) 
+                            return;
+                        }
+                    },
+                    error: function(err) {
+                        $("#imgUploadField").addClass("is-invalid");
+                    }
+                });  
+            });
+        });
+    </script>
 }

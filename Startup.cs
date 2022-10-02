@@ -103,6 +103,7 @@ namespace WebProject
                     options.AccessDeniedPath = "/Account/AccessDenied";
                     options.SlidingExpiration = true;
                 });
+            services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
             services.AddRazorPages();
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IMessageSenderService, MessageSenderService>();
