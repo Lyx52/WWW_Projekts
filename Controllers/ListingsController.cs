@@ -1,6 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using WebProject.Core.Interfaces;
+using WebProject.Core.Models;
+using WebProject.Infastructure.Services;
+
 namespace WebProject.Controllers;
 
 [ApiController]
@@ -10,8 +16,12 @@ public class ListingsController : Controller
     private static Random _random = new Random();
     private static string[] AcceptedFileExtensions = { "png", "jpg" };
     private readonly ILogger<ListingsController> _logger;
-    public ListingsController(ILogger<ListingsController> logger)
+    private readonly IEntityRepository<ListingImage> _imageRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
+    public ListingsController(ILogger<ListingsController> logger, UserManager<ApplicationUser> userManager, IEntityRepository<ListingImage> imageRepository)
     {
+        _imageRepository = imageRepository;
+        _userManager = userManager;
         _logger = logger;
     }
     public IActionResult Index()
@@ -21,13 +31,18 @@ public class ListingsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize]
     [Route("UploadFile")]
     public async Task<IActionResult> UploadFile(IFormFile? imgUpload)
     {
         if (imgUpload is null || !AcceptedFileExtensions.Any((ext) => imgUpload.FileName.EndsWith(ext)))
             return new JsonResult(new { success = false, message = "Fails nav atbalstīts!" });
-        
-        string newFileName = string.Empty;
+        // Pārbaudam vai lietotājs ir ieloggojies
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return BadRequest();
+
+        int imgId = -1;
         try
         {
             using (var imgStream = new MemoryStream())
@@ -39,8 +54,14 @@ public class ListingsController : Controller
                 // Izfiltrējam bildes kurām aspekta attiecība ir zem 4:3 un virs 16:9
                 if ((aspect) < 1.3D || (aspect) > 1.8D)
                     return new JsonResult(new { success = false, message = "Faila izšķirtspēja neatbist prasībām!" });
-                newFileName = $"{GetRandomFileName()}.jpg";
+                string newFileName = $"{GetRandomFileName()}.jpg";
                 image.Save(Path.Combine(Directory.GetCurrentDirectory(), "Images", newFileName), new JpegEncoder());
+                var entity = new ListingImage
+                {
+                    FilePath = $"/Images/{newFileName}", IsUsed = false, CreatedBy = user, Created = DateTime.UtcNow
+                };
+                await _imageRepository.Add(entity);
+                imgId = entity.Id;
             }
         }
         catch (Exception e)
@@ -48,7 +69,7 @@ public class ListingsController : Controller
             _logger.LogError("Caught error while trying to upload image {String}", e.Message);
             return new JsonResult(new { success = false, message = "Neizdevās augšupielādēt failu!" });
         }
-        return new JsonResult(new { success = true, fileName = newFileName });
+        return new JsonResult(new { success = true, imageId = DataEncoderService.Encode(imgId) });
     }
 
     private static string GetRandomFileName()

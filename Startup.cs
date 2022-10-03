@@ -109,6 +109,7 @@ namespace WebProject
             services.AddScoped<IMessageSenderService, MessageSenderService>();
             services.AddScoped<IEntityRepository<ListingCategory>, EfRepository<ListingCategory>>();
             services.AddScoped<IEntityRepository<Listing>, EfRepository<Listing>>();
+            services.AddScoped<IEntityRepository<ListingImage>, EfRepository<ListingImage>>();
             services.AddScoped<IEntityRepository<Message>, EfRepository<Message>>();
         }
         

@@ -1,170 +1,82 @@
 ﻿@page
 @using Microsoft.AspNetCore.Authorization
+@using WebProject.Core.Models
 @model WebProject.Pages.Listings.Create
-@* @attribute [Authorize(Roles = "User,Admin")] *@
-
+@attribute [ValidateAntiForgeryToken]
+@attribute [Authorize(Roles = "User,Admin")]
 <div class="py-3 listing-container">
-  <div class="row g-5">
-    <div class="col-md-5 col-lg-4 order-sm-first order-md-last">
-      <h4 class="d-flex justify-content-between align-items-center mb-3">
-        <span class="text-success">Augšupielādēt Attēlus</span>
-        <span class="badge bg-success rounded-pill">3</span>
-      </h4>
-        @* <ul class="list-group mb-3"> *@
-        @*   <li class="list-group-item d-flex justify-content-between lh-sm"> *@
-        @*     <div> *@
-        @*       <h6 class="my-0">Product name</h6> *@
-        @*       <small class="text-muted">Brief description</small> *@
-        @*     </div> *@
-        @*     <span class="text-muted">$12</span> *@
-        @*   </li> *@
-        @*   <li class="list-group-item d-flex justify-content-between lh-sm"> *@
-        @*     <div> *@
-        @*       <h6 class="my-0">Second product</h6> *@
-        @*       <small class="text-muted">Brief description</small> *@
-        @*     </div> *@
-        @*     <span class="text-muted">$8</span> *@
-        @*   </li> *@
-        @*   <li class="list-group-item d-flex justify-content-between lh-sm"> *@
-        @*     <div> *@
-        @*       <h6 class="my-0">Third item</h6> *@
-        @*       <small class="text-muted">Brief description</small> *@
-        @*     </div> *@
-        @*     <span class="text-muted">$5</span> *@
-        @*   </li> *@
-        @*   <li class="list-group-item d-flex justify-content-between bg-light"> *@
-        @*     <div class="text-success"> *@
-        @*       <h6 class="my-0">Promo code</h6> *@
-        @*       <small>EXAMPLECODE</small> *@
-        @*     </div> *@
-        @*     <span class="text-success">−$5</span> *@
-        @*   </li> *@
-        @*   <li class="list-group-item d-flex justify-content-between"> *@
-        @*     <span>Total (USD)</span> *@
-        @*     <strong>$20</strong> *@
-        @*   </li> *@
-        @* </ul> *@
-    <form id="imgUploadForm" class="card p-2" method="post">
-      @Html.AntiForgeryToken()
-      <div class="input-group">
-        <input id="imgUploadField" name="fileImg" type="file" class="form-control me-2 rounded" placeholder="Attelu Augšupielade" />
-        <button id="imgUploadSubmit" type="submit" class="btn btn-secondary">Augšupielādēt</button>
-        <div id="imgUploadFieldValidation" class="invalid-feedback">Augšupielādētais fails nav atbalstīts!</div>
-      </div>
-    </form>
-    </div>
-    <div class="col-md-7 col-lg-8">
-      <h4 class="mb-3">Billing address</h4>
-      <form class="needs-validation" novalidate="">
-        <div class="row g-3">
-          <div class="col-sm-6">
-            <label for="firstName" class="form-label">First name</label>
-            <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
-            <div class="invalid-feedback">
-              Valid first name is required.
-            </div>
-          </div>
-
-          <div class="col-sm-6">
-            <label for="lastName" class="form-label">Last name</label>
-            <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
-            <div class="invalid-feedback">
-              Valid last name is required.
-            </div>
-          </div>
-
-          <div class="col-12">
-            <label for="username" class="form-label">Username</label>
-            <div class="input-group has-validation">
-              <span class="input-group-text">@@</span>
-              <input type="text" class="form-control" id="username" placeholder="Username" required="">
-              <div class="invalid-feedback">
-                Your username is required.
-              </div>
-            </div>
-          </div>
-
-          <div class="col-12">
-            <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
-            <input type="email" class="form-control" id="email" placeholder="you@example.com">
-            <div class="invalid-feedback">
-              Please enter a valid email address for shipping updates.
-            </div>
-          </div>
-
-          <div class="col-12">
-            <label for="address" class="form-label">Address</label>
-            <input type="text" class="form-control" id="address" placeholder="1234 Main St" required="">
-            <div class="invalid-feedback">
-              Please enter your shipping address.
-            </div>
-          </div>
-
-          <div class="col-12">
-            <label for="address2" class="form-label">Address 2 <span class="text-muted">(Optional)</span></label>
-            <input type="text" class="form-control" id="address2" placeholder="Apartment or suite">
-          </div>
-
-          <div class="col-md-5">
-            <label for="country" class="form-label">Country</label>
-            <select class="form-select" id="country" required="">
-              <option value="">Choose...</option>
-              <option>United States</option>
-            </select>
-            <div class="invalid-feedback">
-              Please select a valid country.
-            </div>
-          </div>
-
-          <div class="col-md-4">
-            <label for="state" class="form-label">State</label>
-            <select class="form-select" id="state" required="">
-              <option value="">Choose...</option>
-              <option>California</option>
-            </select>
-            <div class="invalid-feedback">
-              Please provide a valid state.
-            </div>
-          </div>
-
-          <div class="col-md-3">
-            <label for="zip" class="form-label">Zip</label>
-            <input type="text" class="form-control" id="zip" placeholder="" required="">
-            <div class="invalid-feedback">
-              Zip code required.
-            </div>
-          </div>
+    <div class="row g-5">
+        <div class="col-md-5 col-lg-4 order-sm-first order-md-last">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-success">Augšupielādēt Attēlus</span>
+                <span id="imgUploadCount" class="badge bg-success rounded-pill">0</span>
+            </h4>
+            <ul id="imgUploadContainer" class="list-group mb-3"></ul>
+            <form id="imgUploadForm" class="card p-2" method="post">
+                @Html.AntiForgeryToken()
+                <div class="input-group">
+                    <input id="imgUploadField" name="fileImg" type="file" class="form-control me-2 rounded" placeholder="Attelu Augšupielade" />
+                    <button id="imgUploadSubmit" type="submit" class="btn btn-secondary">Augšupielādēt</button>
+                    <div id="imgUploadFieldValidation" class="invalid-feedback">Fails netika augšupielādēts!</div>
+                </div>
+            </form>
         </div>
-
-        <hr class="my-4">
-
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="same-address">
-          <label class="form-check-label" for="same-address">Shipping address is the same as my billing address</label>
+        <div class="col-md-7 col-lg-8">
+            <h4 class="mb-3">Izveidot sludinājumu</h4>
+            <form id="createListingForm" method="post">
+                @Html.AntiForgeryToken()
+                @Html.Hidden("images", string.Empty, new { id = "imgUploadPaths" })
+                <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="Input.Title" class="form-label"></label>
+                        <input asp-for="Input.Title" type="text" class="form-control">
+                        <span asp-validation-for="Input.Title" class="text-danger"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Input.Description" class="form-label"></label>
+                        <textarea asp-for="Input.Description" type="text" class="form-control" style="height: 120px;"></textarea>
+                        <span asp-validation-for="Input.Description" class="text-danger"></span>
+                    </div>
+                </div>
+                <hr class="my-4">
+                <button class="w-100 btn btn-primary btn-lg" type="submit">Izveidot</button>
+            </form>
         </div>
-
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="save-info">
-          <label class="form-check-label" for="save-info">Save this information for next time</label>
-        </div>
-
-        <hr class="my-4">
-        <button class="w-100 btn btn-primary btn-lg" type="submit">Continue to checkout</button>
-      </form>
-    </div>
   </div>
 </div>
 @section Scripts
 {
+    <script src="~/lib/handlebars/handlebars.min.js"></script>
+    <script type="text/x-handlebars-template" id="upload_tmpl">
+        <li id="upload_{{id}}" class="list-group-item d-flex justify-content-between lh-sm">
+            <h6 class="my-0">{{inputName}}</h6>
+            <button onclick="$.removeImg('{{id}}')" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+        </li>
+    </script>
     <script type="text/javascript">
         $(function () {
+            const acceptedFileExt = [ ".png", ".jpg" ]
+            let imgPaths = [];
+            const img_upload_template = Handlebars.compile( $("#upload_tmpl").html() );
             function setValidation(msg, enable=true)
             {
                 $("#imgUploadFieldValidation").text(msg)
                 if (enable)
                     $("#imgUploadField").removeClass("is-invalid").addClass("is-invalid")
             }
-            const acceptedFileExt = [ ".png", ".jpg" ]
+            function updateUploadContainer()
+            {
+                $("#imgUploadCount").text(imgPaths.length);   
+                $("#imgUploadPaths").val(imgPaths.reduce((a, i) => `${a};${i.id}`, "")); 
+            }
+            $.removeImg = function(id)
+            {
+
+                $(`#upload_${id}`).remove();
+                imgPaths = imgPaths.filter((e) => e.id !== id);    
+                updateUploadContainer();
+            }
             $("#imgUploadForm").on("submit", function(e) {
                 e.preventDefault();
                 var files = $("#imgUploadField").prop("files");
@@ -186,7 +98,6 @@
                 $.ajax({
                     type: "POST",
                     url: '/Listings/UploadFile',
-                    dataType: "multipart/form-data",
                     data: formData,
                     cache: false,
                     contentType: false,
@@ -196,18 +107,24 @@
                         $('input:hidden[name="__RequestVerificationToken"]').val());
                         $("#imgUploadField").removeClass("is-invalid");
                     },
-                    success: function (res) {
-                        let response = JSON.parse(res);
-                        if (!response["success"])
+                    success: function(data) 
+                    {
+                        $('#imgUploadForm').trigger("reset");
+                        if (!data.success)
                         {
-                            setValidation(response["message"]) 
+                            setValidation(data.message);
                             return;
                         }
+                        if (data.imageId.length > 0)
+                        {
+                            let img = { id: data.imageId, inputName: files[0].name }
+                            imgPaths.push(img); 
+                            $("#imgUploadContainer").append(img_upload_template(img));
+                            updateUploadContainer();
+                        }
+                        
                     },
-                    error: function(err) {
-                        $("#imgUploadField").addClass("is-invalid");
-                    }
-                });  
+                });
             });
         });
     </script>
