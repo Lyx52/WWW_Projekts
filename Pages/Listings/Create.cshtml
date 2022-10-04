@@ -3,7 +3,7 @@
 @using WebProject.Core.Models
 @model WebProject.Pages.Listings.Create
 @attribute [ValidateAntiForgeryToken]
-@attribute [Authorize(Roles = "User,Admin")]
+@* @attribute [Authorize(Roles = "User,Admin")] *@
 <div class="py-3 listing-container">
     <div class="row g-5">
         <div class="col-md-5 col-lg-4 order-sm-first order-md-last">
@@ -11,32 +11,49 @@
                 <span class="text-success">Augšupielādēt Attēlus</span>
                 <span id="imgUploadCount" class="badge bg-success rounded-pill">0</span>
             </h4>
-            <ul id="imgUploadContainer" class="list-group mb-3"></ul>
-            <form id="imgUploadForm" class="card p-2" method="post">
+            <ul id="imgUploadContainer" class="list-group mb-3">
+                @foreach (var img in Model.ImageList)
+                {
+                    var data = img.Split('-');
+                    if (data.Length >= 2)
+                    {
+                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                            <h6 class="my-0">@data[0]</h6>
+                            <form method="post" asp-page-handler="RemoveImage">
+                                @Html.Hidden("removeId", data[1].Replace("id:", string.Empty))
+                                <button class="btn btn-danger" type="submit"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </li>
+                    }
+                }
+            </ul>
+            <form class="card p-2 row" method="post" enctype="multipart/form-data" asp-page-handler="UploadImage">
                 @Html.AntiForgeryToken()
-                <div class="input-group">
-                    <input id="imgUploadField" name="fileImg" type="file" class="form-control me-2 rounded" placeholder="Attelu Augšupielade" />
-                    <button id="imgUploadSubmit" type="submit" class="btn btn-secondary">Augšupielādēt</button>
-                    <div id="imgUploadFieldValidation" class="invalid-feedback">Fails netika augšupielādēts!</div>
+                <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
+                <div class="input-group col-12">
+                    <input asp-for="UploadImageInput.ImageFile" type="file" class="form-control me-2 rounded" placeholder="Attelu Augšupielade" />
+                    <button type="submit" class="btn btn-secondary">Augšupielādēt</button>
+                </div>
+                <div class="col-12">
+                    <span asp-validation-for="UploadImageInput.ImageFile" class="text-danger"></span>
                 </div>
             </form>
         </div>
         <div class="col-md-7 col-lg-8">
             <h4 class="mb-3">Izveidot sludinājumu</h4>
-            <form id="createListingForm" method="post">
+            <form id="createListingForm" method="post" asp-page-handler="CreateListing">
                 @Html.AntiForgeryToken()
-                @Html.Hidden("images", string.Empty, new { id = "imgUploadPaths" })
                 <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
                 <div class="row g-3">
                     <div class="col-12">
-                        <label asp-for="Input.Title" class="form-label"></label>
-                        <input asp-for="Input.Title" type="text" class="form-control">
-                        <span asp-validation-for="Input.Title" class="text-danger"></span>
+                        <label asp-for="CreateListingInput.Title" class="form-label"></label>
+                        <input asp-for="CreateListingInput.Title" type="text" class="form-control">
+                        <span asp-validation-for="CreateListingInput.Title" class="text-danger"></span>
                     </div>
                     <div class="col-12">
-                        <label asp-for="Input.Description" class="form-label"></label>
-                        <textarea asp-for="Input.Description" type="text" class="form-control" style="height: 120px;"></textarea>
-                        <span asp-validation-for="Input.Description" class="text-danger"></span>
+                        <label asp-for="CreateListingInput.Description" class="form-label"></label>
+                        <textarea asp-for="CreateListingInput.Description" type="text" class="form-control" style="height: 120px;"></textarea>
+                        <span asp-validation-for="CreateListingInput.Description" class="text-danger"></span>
                     </div>
                 </div>
                 <hr class="my-4">
@@ -45,87 +62,87 @@
         </div>
   </div>
 </div>
-@section Scripts
-{
-    <script src="~/lib/handlebars/handlebars.min.js"></script>
-    <script type="text/x-handlebars-template" id="upload_tmpl">
-        <li id="upload_{{id}}" class="list-group-item d-flex justify-content-between lh-sm">
-            <h6 class="my-0">{{inputName}}</h6>
-            <button onclick="$.removeImg('{{id}}')" class="btn btn-danger"><i class="bi bi-trash"></i></button>
-        </li>
-    </script>
-    <script type="text/javascript">
-        $(function () {
-            const acceptedFileExt = [ ".png", ".jpg" ]
-            let imgPaths = [];
-            const img_upload_template = Handlebars.compile( $("#upload_tmpl").html() );
-            function setValidation(msg, enable=true)
-            {
-                $("#imgUploadFieldValidation").text(msg)
-                if (enable)
-                    $("#imgUploadField").removeClass("is-invalid").addClass("is-invalid")
-            }
-            function updateUploadContainer()
-            {
-                $("#imgUploadCount").text(imgPaths.length);   
-                $("#imgUploadPaths").val(imgPaths.reduce((a, i) => `${a};${i.id}`, "")); 
-            }
-            $.removeImg = function(id)
-            {
-
-                $(`#upload_${id}`).remove();
-                imgPaths = imgPaths.filter((e) => e.id !== id);    
-                updateUploadContainer();
-            }
-            $("#imgUploadForm").on("submit", function(e) {
-                e.preventDefault();
-                var files = $("#imgUploadField").prop("files");
-                // Pārbaidam vai ir pievienots fails
-                if (files.length <= 0)
-                {        
-                    setValidation("Neviens fails nav izvēlēts!");
-                    return;
-                }
-                // Pārbaidām vai faila nosaukums beidzas ar konkrēto faila tipu
-                if (acceptedFileExt.filter(function(ext) { return files[0].name.endsWith(ext); }).length <= 0)
-                {
-                    setValidation("Neatbalstīts faila tips");
-                    return;
-                }
-                var formData = new FormData();
-                formData.append("imgUpload", files[0]);
-                
-                $.ajax({
-                    type: "POST",
-                    url: '/Listings/UploadFile',
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    beforeSend: function (xhr) {
-                    xhr.setRequestHeader("XSRF-TOKEN",
-                        $('input:hidden[name="__RequestVerificationToken"]').val());
-                        $("#imgUploadField").removeClass("is-invalid");
-                    },
-                    success: function(data) 
-                    {
-                        $('#imgUploadForm').trigger("reset");
-                        if (!data.success)
-                        {
-                            setValidation(data.message);
-                            return;
-                        }
-                        if (data.imageId.length > 0)
-                        {
-                            let img = { id: data.imageId, inputName: files[0].name }
-                            imgPaths.push(img); 
-                            $("#imgUploadContainer").append(img_upload_template(img));
-                            updateUploadContainer();
-                        }
-                        
-                    },
-                });
-            });
-        });
-    </script>
-}
+@* @section Scripts *@
+@* { *@
+@*     <script src="~/lib/handlebars/handlebars.min.js"></script> *@
+@*     <script type="text/x-handlebars-template" id="upload_tmpl"> *@
+@*         <li id="upload_{{id}}" class="list-group-item d-flex justify-content-between lh-sm"> *@
+@*             <h6 class="my-0">{{inputName}}</h6> *@
+@*             <button onclick="$.removeImg('{{id}}')" class="btn btn-danger"><i class="bi bi-trash"></i></button> *@
+@*         </li> *@
+@*     </script> *@
+@*     <script type="text/javascript"> *@
+@*         $(function () { *@
+@*             const acceptedFileExt = [ ".png", ".jpg" ] *@
+@*             let imgPaths = []; *@
+@*             const img_upload_template = Handlebars.compile( $("#upload_tmpl").html() ); *@
+@*             function setValidation(msg, enable=true) *@
+@*             { *@
+@*                 $("#imgUploadFieldValidation").text(msg) *@
+@*                 if (enable) *@
+@*                     $("#imgUploadField").removeClass("is-invalid").addClass("is-invalid") *@
+@*             } *@
+@*             function updateUploadContainer() *@
+@*             { *@
+@*                 $("#imgUploadCount").text(imgPaths.length);    *@
+@*                 $("#imgUploadPaths").val(imgPaths.reduce((a, i) => `${a};${i.id}`, ""));  *@
+@*             } *@
+@*             $.removeImg = function(id) *@
+@*             { *@
+@* *@
+@*                 $(`#upload_${id}`).remove(); *@
+@*                 imgPaths = imgPaths.filter((e) => e.id !== id);     *@
+@*                 updateUploadContainer(); *@
+@*             } *@
+@*             $("#imgUploadForm").on("submit", function(e) { *@
+@*                 e.preventDefault(); *@
+@*                 var files = $("#imgUploadField").prop("files"); *@
+@*                 // Pārbaidam vai ir pievienots fails *@
+@*                 if (files.length <= 0) *@
+@*                 {         *@
+@*                     setValidation("Neviens fails nav izvēlēts!"); *@
+@*                     return; *@
+@*                 } *@
+@*                 // Pārbaidām vai faila nosaukums beidzas ar konkrēto faila tipu *@
+@*                 if (acceptedFileExt.filter(function(ext) { return files[0].name.endsWith(ext); }).length <= 0) *@
+@*                 { *@
+@*                     setValidation("Neatbalstīts faila tips"); *@
+@*                     return; *@
+@*                 } *@
+@*                 var formData = new FormData(); *@
+@*                 formData.append("imgUpload", files[0]); *@
+@*                  *@
+@*                 $.ajax({ *@
+@*                     type: "POST", *@
+@*                     url: '/Listings/UploadFile', *@
+@*                     data: formData, *@
+@*                     cache: false, *@
+@*                     contentType: false, *@
+@*                     processData: false, *@
+@*                     beforeSend: function (xhr) { *@
+@*                     xhr.setRequestHeader("XSRF-TOKEN", *@
+@*                         $('input:hidden[name="__RequestVerificationToken"]').val()); *@
+@*                         $("#imgUploadField").removeClass("is-invalid"); *@
+@*                     }, *@
+@*                     success: function(data)  *@
+@*                     { *@
+@*                         $('#imgUploadForm').trigger("reset"); *@
+@*                         if (!data.success) *@
+@*                         { *@
+@*                             setValidation(data.message); *@
+@*                             return; *@
+@*                         } *@
+@*                         if (data.imageId.length > 0) *@
+@*                         { *@
+@*                             let img = { id: data.imageId, inputName: files[0].name } *@
+@*                             imgPaths.push(img);  *@
+@*                             $("#imgUploadContainer").append(img_upload_template(img)); *@
+@*                             updateUploadContainer(); *@
+@*                         } *@
+@*                          *@
+@*                     }, *@
+@*                 }); *@
+@*             }); *@
+@*         }); *@
+@*     </script> *@
+@* } *@
