@@ -46,7 +46,10 @@ public class Create : PageModel
     public async Task<IActionResult> OnGetAsync()
     {
         TempData.Clear();
-        Categories = await GetCategories();
+        var root = await _categoryRepository.AsQueryable()
+            .Include(c => c.SubCategories)
+            .Where(c => c.Id == -1)
+            .FirstOrDefaultAsync();
         return Page();
     }
     public async Task<IActionResult> OnPostRemoveImageAsync(string? removeId)
