@@ -55,6 +55,9 @@
                         <textarea asp-for="CreateListingInput.Description" type="text" class="form-control" style="height: 120px;"></textarea>
                         <span asp-validation-for="CreateListingInput.Description" class="text-danger"></span>
                     </div>
+                    <div class="col-sm-6">
+                        @{ await Html.RenderPartialAsync("Shared/CategoryListPartial", Model.Categories); }
+                    </div>
                 </div>
                 <hr class="my-4">
                 <button class="w-100 btn btn-primary btn-lg" type="submit">Izveidot</button>

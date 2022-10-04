@@ -19,10 +19,13 @@ public class Create : PageModel
     private static string[] _acceptedFileExtensions = { "png", "jpg" };
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEntityRepository<ListingImage> _imageRepository;
+    private readonly IEntityRepository<ListingCategory> _categoryRepository;
     private readonly ILogger<Create> _logger;
     private readonly IHostEnvironment _environment;
     [TempData] 
     public string Images { get; set; }
+    
+    public List<ListingCategory> Categories { get; set; }
     
     [BindProperty] 
     public CreateListingInputModel CreateListingInput { get; set; }
@@ -31,17 +34,19 @@ public class Create : PageModel
     public UploadImageInputModel UploadImageInput { get; set; }
 
     public List<string> ImageList => string.IsNullOrEmpty(Images) ? new List<string>() : Images.Split(';').Where(i => !string.IsNullOrEmpty(i)).ToList();
-    public Create(IHostEnvironment environment, ILogger<Create> logger, UserManager<ApplicationUser> userManager, IEntityRepository<ListingImage> imageRepository)
+    public Create(IEntityRepository<ListingCategory> categoryRepository, IHostEnvironment environment, ILogger<Create> logger, UserManager<ApplicationUser> userManager, IEntityRepository<ListingImage> imageRepository)
     {
         _userManager = userManager;
         _imageRepository = imageRepository;
         _logger = logger;
         _environment = environment;
+        _categoryRepository = categoryRepository;
     }
 
     public async Task<IActionResult> OnGetAsync()
     {
         TempData.Clear();
+        Categories = await GetCategories();
         return Page();
     }
     public async Task<IActionResult> OnPostRemoveImageAsync(string? removeId)
@@ -154,5 +159,13 @@ public class Create : PageModel
             chars[i] = (char)(_random.NextSingle() >= 0.5 ? _random.Next(65, 91) : _random.Next(97, 123));
         }
         return new string(chars);
+    }
+    public async Task<List<ListingCategory>> GetCategories()
+    {
+        return await _categoryRepository.AsQueryable()
+            .Include(c => c.SubCategories).Include(c => c.ParentCategory)
+            .ThenInclude(c => c.SubCategories).Include(c => c.ParentCategory)
+            .ThenInclude(c => c.SubCategories).Include(c => c.ParentCategory)
+            .ToListAsync();
     }
 }
