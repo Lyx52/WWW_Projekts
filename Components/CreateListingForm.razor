@@ -2,13 +2,14 @@
 @using Microsoft.AspNetCore.Components
 @using System.ComponentModel
 @using System.ComponentModel.DataAnnotations
-@using Microsoft.AspNetCore.Http.Extensions
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
 @using WebProject.Core.Interfaces
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider _authenticationStateProvider
 @inject UserManager<ApplicationUser> _userManager;
 @inject IEntityRepository<Listing> _listingRepository;
+@inject IEntityRepository<ListingCategory> _categoryRepository
 
 <EditForm EditContext="@_editContext" class="row g-5" OnValidSubmit="CreateListing">
     <DataAnnotationsValidator />
@@ -51,6 +52,10 @@
         {
             NavigationManager.NavigateTo("/Account/Login");
         }
+        var root = await _categoryRepository.AsQueryable()
+            .Include(c => c.SubCategories)
+            .Where(c => c.Id == -1)
+            .FirstOrDefaultAsync();
     }
     private async Task CreateListing(EditContext context)
     {
