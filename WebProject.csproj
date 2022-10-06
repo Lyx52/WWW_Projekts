@@ -63,6 +63,7 @@
 
   <ItemGroup>
     <Folder Include="Images" />
+    <Folder Include="Pages\Home" />
   </ItemGroup>
 
 </Project>

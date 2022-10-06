@@ -11,22 +11,24 @@ public class IndexModel : PageModel
     
     public List<Listing> Listings { get; set; } = new List<Listing>();
     private readonly IEntityRepository<Listing> _listingRepository;
-    public int PageNumber = 1;
+    public int PageNumber { get; set; }
     public string? SearchParam { get; set; } = string.Empty;
-    public string NextPage => Url.ActionLink("Index", "Home", values: new { listingPage = PageNumber + 1, search = SearchParam }) ?? "/Index";
-    public string PrevPage => Url.ActionLink("Index", "Home", values: new { listingPage = Math.Max(1, PageNumber - 1), search = SearchParam }) ?? "/Index";
+    public string NextPage => Url.Page("/Index", new { listingPage = PageNumber + 1, search = SearchParam }) ?? "/Index";
+    public string PrevPage => Url.Page("/Index", new { listingPage = Math.Max(1, PageNumber - 1), search = SearchParam }) ?? "/Index";
     public IndexModel(ILogger<IndexModel> logger, IEntityRepository<Listing> listingRepository)
     {
         _logger = logger;
         _listingRepository = listingRepository;
     }
 
-    public async Task OnPostAsync([FromForm] string? search, [FromRoute] int? listingPage)
+    public async Task OnPostSearchListingAsync([FromForm] string? search, [FromRoute] int? listingPage)
     {
         Listings = await GetListings(listingPage, search);
     }
     public async Task OnGetAsync([FromRoute] string? search, [FromRoute] int? listingPage)
     {
+        
+        // TODO: Fix searching/paging...
         // Izdabūjam pēdējos 24 
         Listings = await GetListings(listingPage, search);
     }

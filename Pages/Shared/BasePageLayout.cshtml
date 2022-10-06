@@ -3,8 +3,6 @@
 @using WebProject.Core.Interfaces.Services
 @using Microsoft.AspNetCore.Identity
 @using WebProject.Components
-@inject IMessageSenderService _messageSender
-@inject UserManager<ApplicationUser> _userManager
 @* TODO: Create one generic color scheme *@
 <!DOCTYPE html>
 <html lang="lv">
@@ -12,6 +10,7 @@
         <title>@ViewData["Title"]</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
         <!-- Bootstrap CSS/icons -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
@@ -30,7 +29,7 @@
                     <ul class="navbar-nav">
                         <li class="nav-item p-0 me-md-3">
                             @* TODO: Implement listing searches *@
-                            <form asp-controller="Home" asp-action="Index" method="post">
+                            <form asp-page="/Index" method="post" asp-page-handler="SearchListing">
                                 <div class="input-group my-auto">
                                     <button class="btn btn-outline-secondary dropdown-toggle border-0 rounded-3 bg-active-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Pēc kategorijas
