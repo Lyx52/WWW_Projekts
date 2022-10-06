@@ -29,7 +29,7 @@ public class MessageController : Controller
     [HttpPost]
     [Authorize]
     [Route("MarkAsRead")]
-    public async Task<IActionResult> MarkAsRead(string? pdata)
+    public async Task<IActionResult> MarkAsRead([FromForm]string? pdata)
     {
         if (pdata is null || pdata.Length <= 0)
             return NoContent();
@@ -60,7 +60,7 @@ public class MessageController : Controller
     [HttpPost]
     [Authorize]
     [Route("SendMessage")]
-    public async Task<IActionResult> SendMessage(string? pdata, string? message)
+    public async Task<IActionResult> SendMessage([FromForm]string? pdata, [FromForm]string? message)
     {
         if (string.IsNullOrEmpty(pdata) || string.IsNullOrEmpty(message))
             return NoContent();

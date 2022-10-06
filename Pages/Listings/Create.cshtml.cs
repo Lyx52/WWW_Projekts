@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -15,132 +16,81 @@ namespace WebProject.Pages.Listings;
 
 public class Create : PageModel
 {
-    private static Random _random = new Random();
-    private static string[] _acceptedFileExtensions = { "png", "jpg" };
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEntityRepository<ListingImage> _imageRepository;
     private readonly IEntityRepository<ListingCategory> _categoryRepository;
+    private readonly IEntityRepository<Listing> _listingRepository;
     private readonly ILogger<Create> _logger;
     private readonly IHostEnvironment _environment;
-    [TempData] 
-    public string Images { get; set; }
-    
     public List<ListingCategory> Categories { get; set; }
-    
-    [BindProperty] 
-    public CreateListingInputModel CreateListingInput { get; set; }
-    
-    [BindProperty]
-    public UploadImageInputModel UploadImageInput { get; set; }
 
-    public List<string> ImageList => string.IsNullOrEmpty(Images) ? new List<string>() : Images.Split(';').Where(i => !string.IsNullOrEmpty(i)).ToList();
-    public Create(IEntityRepository<ListingCategory> categoryRepository, IHostEnvironment environment, ILogger<Create> logger, UserManager<ApplicationUser> userManager, IEntityRepository<ListingImage> imageRepository)
+    [BindProperty] 
+    public CreateListingInputModel CreateListingInput { get; set; } = new CreateListingInputModel();
+    
+    public Create(IEntityRepository<Listing> listingRepository, IEntityRepository<ListingCategory> categoryRepository, IHostEnvironment environment, ILogger<Create> logger, UserManager<ApplicationUser> userManager, IEntityRepository<ListingImage> imageRepository)
     {
         _userManager = userManager;
         _imageRepository = imageRepository;
         _logger = logger;
         _environment = environment;
         _categoryRepository = categoryRepository;
+        _listingRepository = listingRepository;
     }
 
     public async Task<IActionResult> OnGetAsync()
     {
-        TempData.Clear();
         var root = await _categoryRepository.AsQueryable()
             .Include(c => c.SubCategories)
             .Where(c => c.Id == -1)
             .FirstOrDefaultAsync();
         return Page();
     }
-    public async Task<IActionResult> OnPostRemoveImageAsync(string? removeId)
-    {
-        TempData.Keep("Images");
-        if (string.IsNullOrEmpty(removeId) || !Int32.TryParse(removeId, out int imgId))
-        {
-            ModelState.AddModelError("UploadImageInput.ImageFile", "Nav izvēlēts attēls!");
-            return Page();
-        }
-        var user = await _userManager.GetUserAsync(User);
-        if (user is null)
-            return Unauthorized();
-        var img = await _imageRepository.AsQueryable()
-            .Include(i => i.CreatedBy)
-            .Where(i => i.Id == imgId && i.CreatedBy == user).FirstOrDefaultAsync();
-        if (img is null)
-        {
-            ModelState.AddModelError("UploadImageInput.ImageFile", "Nevar izdzēst attēlu!");
-            return Page();
-        }
-
-        await _imageRepository.Remove(img);
-        try
-        {
-            // TODO: Remove from filesystem
-            // Directory.Delete(Path.Combine(_environment.ContentRootPath, img.FilePath));
-        }
-        catch (IOException e)
-        {
-            _logger.LogError("Caught exception while trying to delete image {String}", e.Message);
-        }
-
-        Images = string.Join(';', Images.Split(';').Where(r => !r.EndsWith($"id:{removeId}")));
-        return Page();
-    }
-    public async Task<IActionResult> OnPostUploadImageAsync()
-    {
-        TempData.Keep("Images");
-        if (ModelState.GetFieldValidationState("UploadImageInput") == ModelValidationState.Valid)
-        {
-            if (!_acceptedFileExtensions.Any((ext) => UploadImageInput.ImageFile.FileName.EndsWith(ext)))
-            {
-                ModelState.AddModelError("UploadImageInput.ImageFile", "Attēla formāts nav atbalstīts!");
-                return Page();
-            }
-            var user = await _userManager.GetUserAsync(User);
-            if (user is null)
-                return Unauthorized();
-            
-            using (var imgStream = new MemoryStream())
-            {
-                await UploadImageInput.ImageFile.CopyToAsync(imgStream);
-                imgStream.Seek(0, SeekOrigin.Begin);
-                var image = await Image.LoadAsync(imgStream);
-                double aspect = (double)image.Width / (double)image.Height;
-                
-                // Izfiltrējam bildes kurām aspekta attiecība ir zem 4:3 un virs 16:9
-                if ((aspect) < 1.3D || (aspect) > 1.8D)
-                {
-                    ModelState.AddModelError("", "Faila izšķirtspēja neatbist prasībām!");
-                    return Page();
-                }
-
-                string newFileName = $"{GetRandomFileName()}.jpg";
-                image.Save(Path.Combine(_environment.ContentRootPath, "Images", newFileName), new JpegEncoder());
-                var img = new ListingImage
-                {
-                    FilePath = $"/Images/{newFileName}", IsUsed = false, CreatedBy = user, Created = DateTime.UtcNow
-                };
-                await _imageRepository.Add(img);
-                Images += $"{UploadImageInput.ImageFile.FileName}-id:{img.Id};";
-            }
-        }
-
-        return Page();
-    }
     public async Task<IActionResult> OnPostCreateListingAsync()
     {
-        if (ModelState.IsValid)
+        if (ModelState.GetFieldValidationState("CreateListingInput") == ModelValidationState.Valid)
         {
+            var imgStr = CreateListingInput.Images ?? string.Empty;
+            var imgIds = Array.ConvertAll<string, int?>(imgStr.Split(';'), e => Int32.TryParse(e, out int result) ? result : null)
+                .Where(e => e is not null).ToList<int?>();
+            if (string.IsNullOrEmpty(CreateListingInput.Images) || imgIds.Count <= 0)
+            {
+                ModelState.AddModelError("CreateListingInput.Images", "Nepieciešams vismaz viens attēls!");
+                return Page();
+            }
             
-        }
+            var user = await _userManager.GetUserAsync(User);
+            if (user is null)
+            {
+                return Unauthorized();
+            }
 
+            var listing = new Listing()
+            {
+                Description = CreateListingInput.Description,
+                Title = CreateListingInput.Title,
+                Images = new List<ListingImage>(),
+                CreatedBy = user,
+                Created = DateTime.UtcNow,
+                Price = 12.12f,
+                Category = new ListingCategory(){Name = "Test123"}
+            };
+            foreach (var id in imgIds)
+            {
+                var img = await _imageRepository.AsQueryable()
+                    .Include(li => li.CreatedBy)
+                    .FirstOrDefaultAsync(e => e.Id == id);
+                if (img is null) continue;
+                
+                if (img.CreatedBy != user)
+                    return Unauthorized();
+                img.Listing = listing;
+                listing.Images.Add(img);
+            }
+
+            await _listingRepository.Add(listing);
+            return RedirectToPage("/Listings/Index", new { listingId = listing.ListingUrlId });
+        }
         return Page();
-    }
-    
-    public class UploadImageInputModel
-    {
-        [Required(ErrorMessage = "Attēls ir nepieciešams!")]
-        public IFormFile ImageFile { get; set; }
     }
     public class CreateListingInputModel
     {
@@ -153,16 +103,10 @@ public class Create : PageModel
         [MinLength(20, ErrorMessage = "Apraksts nav pietiekami garš")]
         [DisplayName("Apraksts")]
         public string Description { get; set; } = string.Empty;
+        
+        public string? Images { get; set; } = string.Empty;
     }
-    private static string GetRandomFileName()
-    {
-        Span<char> chars = stackalloc char[8];
-        for (int i = 0; i < chars.Length; i++)
-        {
-            chars[i] = (char)(_random.NextSingle() >= 0.5 ? _random.Next(65, 91) : _random.Next(97, 123));
-        }
-        return new string(chars);
-    }
+    
     public async Task<List<ListingCategory>> GetCategories()
     {
         return await _categoryRepository.AsQueryable()

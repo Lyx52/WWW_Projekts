@@ -25,6 +25,7 @@ public class AccountController : Controller
     [Route("ConfirmEmail")]
     public async Task<IActionResult> ConfirmEmail(string userId, string code)
     {
+        // TODO: Fix email confirmation...
         // Pārbaudam vai pareizi parametri atsūtīti un vai lietotājs vispār eksistē
         if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
         {

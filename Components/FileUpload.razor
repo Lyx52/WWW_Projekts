@@ -1,0 +1,158 @@
+﻿@using WebProject.Core.Models
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using SixLabors.ImageSharp
+@using SixLabors.ImageSharp.Formats.Jpeg
+@using WebProject.Core.Interfaces
+@inject AuthenticationStateProvider _authenticationStateProvider
+@inject UserManager<ApplicationUser> _userManager;
+@inject IEntityRepository<ListingImage> _imageRepository;
+<h4 class="d-flex justify-content-between align-items-center mb-3">
+    <span class="text-success">Augšupielādēt Attēlus @Images</span>
+    <span id="imgUploadCount" class="badge bg-success rounded-pill">0</span>
+</h4>
+
+@if (IsUploading)
+{
+    <p>Uploading: @string.Format("{0:P0}", progressPercent)</p>
+}
+else
+{
+    <ul class="list-group mb-3">
+        @foreach (var file in UploadedFiles)
+        {
+            <li class="list-group-item d-flex justify-content-between lh-sm">
+                <h6 class="my-0">@file.Name</h6>
+                @{
+                    var index = UploadedFiles.IndexOf(file);
+                }
+                
+                <button @onclick="@(e => RemoveImage(index))" class="btn btn-danger" type="button"><i class="bi bi-trash"></i></button>
+            </li>
+        }
+    </ul>
+    <input name="CreateListingInput.Images" id="CreateListingInput_Images" type="hidden" @bind="Images" />
+}
+<div class="card p-2 row">
+    <div class="input-group col-12">
+        <InputFile class="form-control me-2 rounded" OnChange="@LoadFiles" />
+        <button @onclick="UploadFileAsync" type="button" class="btn btn-secondary">Augšupielādēt</button>
+    </div>
+    <div class="col-12">
+        <span class="text-danger">@ValidationMessage</span>
+    </div>    
+</div>
+
+@code {
+    [Parameter]
+    public string Images { get; set; }
+    private List<IBrowserFile> UploadedFiles { get; set; } = new List<IBrowserFile>();
+    private bool IsUploading { get; set; } = false;
+
+    private string[] AcceptedFileExtensions = { "png", "jpg" };
+    private long MaxFileSize { get; set; } = 1024 * 1024 * 15;
+    private IBrowserFile? SelectedFile { get; set; }
+    private string ValidationMessage { get; set; } = string.Empty;
+    private decimal progressPercent = 0;
+    
+    private void LoadFiles(InputFileChangeEventArgs e)
+    {
+        ValidationMessage = string.Empty;
+        if (e.File.Size > MaxFileSize)
+        {
+            ValidationMessage = "Izvēlētais fails ir pārāk liels!";
+            StateHasChanged();
+            return;
+        }
+        if (!AcceptedFileExtensions.Any(ext => e.File.Name.EndsWith(ext)))
+        {
+            ValidationMessage = "Izvēlētais fails nav atbalstīts!";
+            StateHasChanged();
+            return;    
+        }
+        SelectedFile = e.File;
+    }
+
+    private async Task UploadFileAsync()
+    {
+        var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+        var userClaim = authState.User;
+        var user = await _userManager.GetUserAsync(userClaim);
+        if (userClaim.Identity is null || !userClaim.Identity.IsAuthenticated || user is null)
+        {
+            ValidationMessage = "Lai augšupielādētu nepieciešams pieslēgties!";
+            StateHasChanged();
+            return;
+        }
+        if (SelectedFile is null)
+        {
+            ValidationMessage = "Nav izvēlēts fails!";
+            StateHasChanged();
+            return;     
+        }
+        try
+        {
+            IsUploading = true;
+            await using MemoryStream imgStream = new MemoryStream();
+            await using var readStream = SelectedFile.OpenReadStream(MaxFileSize);
+            int bytesRead = 0;
+            int totalRead = 0;
+            var buffer = new byte[MaxFileSize];
+
+            while ((bytesRead = await readStream.ReadAsync(buffer)) != 0)
+            {
+                totalRead += bytesRead;
+
+                await imgStream.WriteAsync(buffer, 0, bytesRead);
+
+                progressPercent = Decimal.Divide(totalRead, SelectedFile.Size);
+
+                StateHasChanged();
+            }
+            imgStream.Seek(0, SeekOrigin.Begin);
+            var image = await Image.LoadAsync(imgStream);
+            
+            double aspect = (double)image.Width / (double)image.Height;
+            // Izfiltrējam bildes kurām aspekta attiecība ir zem 4:3 un virs 16:9
+            if ((aspect) < 1.3D || (aspect) > 1.8D)
+            {
+                ValidationMessage = "Āttēla izšķirtspēja neatbilst prasībām 4:3 vai 16:9!";
+                StateHasChanged();
+                return;
+            }
+            var savedFileName = $"{GetRandomFileName()}.jpg";
+            var savePath = Path.Combine("Images", savedFileName);
+            await image.SaveAsync(Path.Combine(Directory.GetCurrentDirectory(), savePath), new JpegEncoder());
+            var entity = new ListingImage
+            {
+                FilePath = $"\\{savePath}", IsUsed = false, CreatedBy = user, Created = DateTime.UtcNow
+            };
+            await _imageRepository.Add(entity);
+            Images += $"{entity.Id};";
+            UploadedFiles.Add(SelectedFile);
+            SelectedFile = null;
+        }
+        catch (Exception e)
+        {
+            ValidationMessage = "Radās kļūda augšupielādējot failu!";
+        }
+        IsUploading = false;
+        StateHasChanged();
+    }
+    private static string GetRandomFileName()
+    {
+        Span<char> chars = stackalloc char[8];
+        for (int i = 0; i < chars.Length; i++)
+        {
+            chars[i] = (char)(Random.Shared.NextSingle() >= 0.5 ? Random.Shared.Next(65, 91) : Random.Shared.Next(97, 123));
+        }
+        return new string(chars);
+    }
+
+    private void RemoveImage(int index)
+    {
+        UploadedFiles.RemoveAt(index);
+        StateHasChanged();    
+    }
+}

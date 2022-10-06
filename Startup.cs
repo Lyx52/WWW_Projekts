@@ -61,6 +61,7 @@ namespace WebProject
                 options.Conventions.AddPageRoute("/Page404","/Shared/Error/Status404");
                 options.Conventions.AddPageRoute("/Page500","/Shared/Error/Status500");
             });
+            services.AddServerSideBlazor();
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 // TODO: Proper password configuration...
@@ -103,6 +104,7 @@ namespace WebProject
                     options.AccessDeniedPath = "/Account/AccessDenied";
                     options.SlidingExpiration = true;
                 });
+            services.AddAuthorizationCore();
             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
             services.AddRazorPages();
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
@@ -139,6 +141,9 @@ namespace WebProject
             app.UseAuthorization();
             app.UseEndpoints(options =>
             {
+                options.MapBlazorHub();
+                // Blazor access to listings controller path
+                options.MapBlazorHub("~/Listings/_blazor");
                 options.MapRazorPages();
                 options.MapDefaultControllerRoute();
             });

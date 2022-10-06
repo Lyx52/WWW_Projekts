@@ -13,6 +13,8 @@ namespace WebProject.Controllers;
 [Route("Listings")]
 public class ListingsController : Controller
 {
+    private static Random _random = new Random();
+    private static string[] AcceptedFileExtensions = { "png", "jpg" };
     private readonly ILogger<ListingsController> _logger;
     private readonly IEntityRepository<ListingImage> _imageRepository;
     private readonly UserManager<ApplicationUser> _userManager;

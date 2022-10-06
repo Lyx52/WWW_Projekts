@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using WebProject.Core.Interfaces.Services
 @using Microsoft.AspNetCore.Identity
+@using WebProject.Components
 @inject IMessageSenderService _messageSender
 @inject UserManager<ApplicationUser> _userManager
 @* TODO: Create one generic color scheme *@
@@ -89,7 +90,7 @@
     </div>
 </footer>
 </body>
-<!-- JavaScript Bundle with Popper -->
+    <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
     <script src="~/js/main.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
