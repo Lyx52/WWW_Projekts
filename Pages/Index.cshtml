@@ -20,21 +20,14 @@
             {
                 <div class="col">
                     <a asp-controller="Listings" asp-route-id="@listing.ListingUrlId" class="text-decoration-none text-black">
-                        <div class="card shadow-sm d-flex flex-column align-items-stretch">
+                        <div class="card shadow-sm d-flex flex-column align-items-stretch h-100">
                             @{ await Html.RenderPartialAsync("Shared/ImageGalleryPartial", new ImageGalleryModel { Images = listing.Images, GalleryId = listing.Id }); }
                             <div class="card-body album-listing-body d-flex flex-column justify-content-between">
                                 <h5 class="fs-3 card-title fw-upper">@listing.Title</h5>
-                                <p class="card-text">
-                                    @if (listing.Description.Length >= 160)
-                                    {
-                                        @($"{listing.Description[0..150]}...")
-                                    }
-                                    else
-                                    {
-                                        @listing.Description
-                                    }
+                                <p class="card-text truncated-text">
+                                    @listing.Description
                                 </p>
-                                <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex justify-content-between align-items-center flex-fill">
                                     <strong class="fs-4">@listing.DisplayPrice</strong>
                                     <small class="text-muted">@GetCreationDateString(listing.Created!.Value)&nbsp;</small>
                                 </div>

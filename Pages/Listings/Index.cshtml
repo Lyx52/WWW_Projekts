@@ -32,9 +32,9 @@
                     <h2 class="pb-2 border-bottom">@Model.Listing.Title</h2>
                     <div class="row row-cols-1 g-1">
                         <div class="col d-flex align-items-start">
-                            <div>
+                            <div class="w-100">
                                 <h3 class="fs-2">Cena: @Model.Listing.DisplayPrice</h3>
-                                <p>@Model.Listing.Description</p>
+                                <p class="listing-description w-100">@Html.DisplayTextFor(m => m.Listing!.Description)</p>
 
                                 @* Rādām tikai authorizētiem lietotājiem *@
                                 @if (SignInManager.IsSignedIn(User))

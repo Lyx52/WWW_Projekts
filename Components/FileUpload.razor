@@ -8,12 +8,17 @@
 @inject IEntityRepository<ListingImage> _imageRepository;
 <h4 class="d-flex justify-content-between align-items-center mb-3">
     <span class="text-success">Augšupielādēt Attēlus</span>
-    <span id="imgUploadCount" class="badge bg-success rounded-pill">0</span>
+    <span id="imgUploadCount" class="badge bg-success rounded-pill">@Images.Count</span>
 </h4>
 
-@if (IsUploading)
+@if (_isUploading)
 {
-    <p>Uploading: @($"{progressPercent:P0}")</p>
+    <div class="d-inline-flex">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="ms-3 text-center">Uploading: @($"{progressPercent:P0}")</p>
+    </div>
 }
 else
 {
@@ -33,11 +38,18 @@ else
 }
 <div class="card p-2 row">
     <div class="input-group col-12">
-        <InputFile class="form-control me-2 rounded" OnChange="@LoadFiles" />
-        <button @onclick="UploadFileAsync" type="button" class="btn btn-secondary">Augšupielādēt</button>
+        @if (_showFileInput)
+        {
+            <InputFile class="form-control form-control-sm me-2 rounded" OnChange="@LoadFiles" />
+        }
+        <button @onclick="UploadFileAsync" type="button" class="btn btn-secondary rounded lh-1">Augšupielādēt</button>
     </div>
-    <div class="col-12">
+    <div class="col-12 pt-3">
         <span class="text-danger">@ValidationMessage</span>
+        <p class="text-muted pt-1">
+            Maksimālais failu izmērs @(MaxFileSize / (1024 * 1024))Mb<br/>
+            Atbalstītie failu tipi: @string.Join(", ", AcceptedFileExtensions)
+        </p>
     </div>    
 </div>
 
@@ -47,8 +59,8 @@ else
     [Parameter]
     public ApplicationUser User { get; set; }
     private List<IBrowserFile> UploadedFiles { get; set; } = new List<IBrowserFile>();
-    private bool IsUploading { get; set; } = false;
-
+    private bool _isUploading { get; set; } = false;
+    private bool _showFileInput { get; set; } = true;
     private string[] AcceptedFileExtensions = { "png", "jpg" };
     private long MaxFileSize { get; set; } = 1024 * 1024 * 15;
     private IBrowserFile? SelectedFile { get; set; }
@@ -61,13 +73,13 @@ else
         if (e.File.Size > MaxFileSize)
         {
             ValidationMessage = "Izvēlētais fails ir pārāk liels!";
-            StateHasChanged();
+            ClearFileInput();
             return;
         }
         if (!AcceptedFileExtensions.Any(ext => e.File.Name.EndsWith(ext)))
         {
             ValidationMessage = "Izvēlētais fails nav atbalstīts!";
-            StateHasChanged();
+            ClearFileInput();
             return;    
         }
         SelectedFile = e.File;
@@ -84,7 +96,7 @@ else
         }
         try
         {
-            IsUploading = true;
+            _isUploading = true;
             await using MemoryStream imgStream = new MemoryStream();
             await using var readStream = SelectedFile.OpenReadStream(MaxFileSize);
             int bytesRead = 0;
@@ -128,7 +140,15 @@ else
         {
             ValidationMessage = "Radās kļūda augšupielādējot failu!";
         }
-        IsUploading = false;
+        _isUploading = false;
+        ClearFileInput();
+    }
+
+    private void ClearFileInput()
+    {
+        _showFileInput = false;
+        StateHasChanged();
+        _showFileInput = true;
         StateHasChanged();
     }
     private static string GetRandomFileName()
@@ -143,6 +163,7 @@ else
 
     private void RemoveImage(int index)
     {
+        Images.RemoveAt(index);
         UploadedFiles.RemoveAt(index);
         StateHasChanged();    
     }
