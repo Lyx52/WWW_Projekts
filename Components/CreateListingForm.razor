@@ -1,0 +1,86 @@
+@using WebProject.Core.Models
+@using Microsoft.AspNetCore.Components
+@using System.ComponentModel
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Http.Extensions
+@using Microsoft.AspNetCore.Identity
+@using WebProject.Core.Interfaces
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider _authenticationStateProvider
+@inject UserManager<ApplicationUser> _userManager;
+@inject IEntityRepository<Listing> _listingRepository;
+
+<EditForm EditContext="@_editContext" class="row g-5" OnValidSubmit="CreateListing">
+    <DataAnnotationsValidator />
+    <div class="col-md-5 col-lg-4 order-sm-first order-md-last">
+        <FileUpload Images="@_input.Images" User="_user"/>
+    </div>
+    <div class="col-md-7 col-lg-8">
+        <h4 class="mb-3">Izveidot sludinājumu</h4>
+        <div class="row g-3">
+            <div class="col-12">
+                <label for="listingTitle">Virsraksts</label>
+                <InputText @bind-Value="@_input.Title" class="form-control" id="listingTitle"></InputText>
+                <ValidationMessage class="text-danger" For="@(() => _input.Title)"/>
+            </div>
+            <div class="col-12">
+                <label for="listingDesc">Apraksts</label>
+                <InputTextArea id="listingDesc" @bind-Value="@_input.Description" class="form-control" style="height: 120px;"></InputTextArea>
+                <ValidationMessage For="@(() => _input.Description)"/>
+            </div>
+            <div class="col-sm-6">
+
+            </div>
+        </div>
+        <hr class="my-4">
+        <button class="w-100 btn btn-primary btn-lg" type="submit">Izveidot</button>
+    </div>
+</EditForm>
+@code {
+    private CreateListingModel _input { get; set; } = new ();
+    private EditContext _editContext;
+    private ApplicationUser _user { get; set; }
+ 
+    protected override async Task OnInitializedAsync()
+    {
+        _editContext = new EditContext(_input);
+        var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+        var userClaim = authState.User;
+        _user = await _userManager.GetUserAsync(userClaim);
+        if (userClaim.Identity is null || !userClaim.Identity.IsAuthenticated || _user is null)
+        {
+            NavigationManager.NavigateTo("/Account/Login");
+        }
+    }
+    private async Task CreateListing(EditContext context)
+    {
+        var listing = new Listing()
+        {
+            Description = _input.Description,
+            Title = _input.Title,
+            Images = _input.Images,
+            CreatedBy = _user,
+            Created = DateTime.UtcNow,
+            Price = 12.12f,
+            Category = new ListingCategory(){ Name = "Test123" }
+        };
+        listing.Images.ForEach(i => i.Listing = listing);
+
+        await _listingRepository.Add(listing);
+        NavigationManager.NavigateTo($"/Listings/Index/{listing.ListingUrlId}", true, true);
+    }
+    private class CreateListingModel
+    {
+        [Required(ErrorMessage = "Virsraksts ir nepieciešams")]
+        [MinLength(8, ErrorMessage = "Virsraksts nav pietiekami garš")]
+        [DisplayName("Virsraksts")]
+        public string Title { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Apraksts ir nepieciešams")]
+        [MinLength(20, ErrorMessage = "Apraksts nav pietiekami garš")]
+        [DisplayName("Apraksts")]
+        public string Description { get; set; } = string.Empty;
+        
+        public List<ListingImage> Images { get; set; } = new List<ListingImage>();
+    }
+}

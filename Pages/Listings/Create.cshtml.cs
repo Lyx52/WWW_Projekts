@@ -45,53 +45,6 @@ public class Create : PageModel
             .FirstOrDefaultAsync();
         return Page();
     }
-    public async Task<IActionResult> OnPostCreateListingAsync()
-    {
-        if (ModelState.GetFieldValidationState("CreateListingInput") == ModelValidationState.Valid)
-        {
-            var imgStr = CreateListingInput.Images ?? string.Empty;
-            var imgIds = Array.ConvertAll<string, int?>(imgStr.Split(';'), e => Int32.TryParse(e, out int result) ? result : null)
-                .Where(e => e is not null).ToList<int?>();
-            if (string.IsNullOrEmpty(CreateListingInput.Images) || imgIds.Count <= 0)
-            {
-                ModelState.AddModelError("CreateListingInput.Images", "Nepieciešams vismaz viens attēls!");
-                return Page();
-            }
-            
-            var user = await _userManager.GetUserAsync(User);
-            if (user is null)
-            {
-                return Unauthorized();
-            }
-
-            var listing = new Listing()
-            {
-                Description = CreateListingInput.Description,
-                Title = CreateListingInput.Title,
-                Images = new List<ListingImage>(),
-                CreatedBy = user,
-                Created = DateTime.UtcNow,
-                Price = 12.12f,
-                Category = new ListingCategory(){Name = "Test123"}
-            };
-            foreach (var id in imgIds)
-            {
-                var img = await _imageRepository.AsQueryable()
-                    .Include(li => li.CreatedBy)
-                    .FirstOrDefaultAsync(e => e.Id == id);
-                if (img is null) continue;
-                
-                if (img.CreatedBy != user)
-                    return Unauthorized();
-                img.Listing = listing;
-                listing.Images.Add(img);
-            }
-
-            await _listingRepository.Add(listing);
-            return RedirectToPage("/Listings/Index", new { listingId = listing.ListingUrlId });
-        }
-        return Page();
-    }
     public class CreateListingInputModel
     {
         [Required(ErrorMessage = "Virsraksts ir nepieciešams")]

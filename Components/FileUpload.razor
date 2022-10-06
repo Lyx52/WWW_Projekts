@@ -5,17 +5,15 @@
 @using SixLabors.ImageSharp
 @using SixLabors.ImageSharp.Formats.Jpeg
 @using WebProject.Core.Interfaces
-@inject AuthenticationStateProvider _authenticationStateProvider
-@inject UserManager<ApplicationUser> _userManager;
 @inject IEntityRepository<ListingImage> _imageRepository;
 <h4 class="d-flex justify-content-between align-items-center mb-3">
-    <span class="text-success">Augšupielādēt Attēlus @Images</span>
+    <span class="text-success">Augšupielādēt Attēlus</span>
     <span id="imgUploadCount" class="badge bg-success rounded-pill">0</span>
 </h4>
 
 @if (IsUploading)
 {
-    <p>Uploading: @string.Format("{0:P0}", progressPercent)</p>
+    <p>Uploading: @($"{progressPercent:P0}")</p>
 }
 else
 {
@@ -32,7 +30,6 @@ else
             </li>
         }
     </ul>
-    <input name="CreateListingInput.Images" id="CreateListingInput_Images" type="hidden" @bind="Images" />
 }
 <div class="card p-2 row">
     <div class="input-group col-12">
@@ -46,7 +43,9 @@ else
 
 @code {
     [Parameter]
-    public string Images { get; set; }
+    public List<ListingImage> Images { get; set; }
+    [Parameter]
+    public ApplicationUser User { get; set; }
     private List<IBrowserFile> UploadedFiles { get; set; } = new List<IBrowserFile>();
     private bool IsUploading { get; set; } = false;
 
@@ -76,15 +75,7 @@ else
 
     private async Task UploadFileAsync()
     {
-        var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
-        var userClaim = authState.User;
-        var user = await _userManager.GetUserAsync(userClaim);
-        if (userClaim.Identity is null || !userClaim.Identity.IsAuthenticated || user is null)
-        {
-            ValidationMessage = "Lai augšupielādētu nepieciešams pieslēgties!";
-            StateHasChanged();
-            return;
-        }
+        
         if (SelectedFile is null)
         {
             ValidationMessage = "Nav izvēlēts fails!";
@@ -126,10 +117,10 @@ else
             await image.SaveAsync(Path.Combine(Directory.GetCurrentDirectory(), savePath), new JpegEncoder());
             var entity = new ListingImage
             {
-                FilePath = $"\\{savePath}", IsUsed = false, CreatedBy = user, Created = DateTime.UtcNow
+                FilePath = $"\\{savePath}", IsUsed = false, CreatedBy = User, Created = DateTime.UtcNow
             };
             await _imageRepository.Add(entity);
-            Images += $"{entity.Id};";
+            Images.Add(entity);
             UploadedFiles.Add(SelectedFile);
             SelectedFile = null;
         }

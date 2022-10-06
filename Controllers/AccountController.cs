@@ -20,7 +20,7 @@ public class AccountController : Controller
         _signInManager = signInManager;
     }
     
-    [HttpPost]
+    [HttpGet]
     [AllowAnonymous]
     [Route("ConfirmEmail")]
     public async Task<IActionResult> ConfirmEmail(string userId, string code)

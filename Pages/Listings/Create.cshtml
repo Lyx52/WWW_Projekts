@@ -1,38 +1,10 @@
 ﻿@page
-@using Microsoft.AspNetCore.Authorization
-@using WebProject.Components
-@using WebProject.Core.Models
 @model WebProject.Pages.Listings.Create
 @attribute [ValidateAntiForgeryToken]
 @* @attribute [Authorize(Roles = "User,Admin")] *@
+
 <div class="py-3 listing-container">
-    <form class="row g-5" method="post" asp-page-handler="CreateListing">
-        <div class="col-md-5 col-lg-4 order-sm-first order-md-last">
-            <component type="typeof(FileUpload)" render-mode="ServerPrerendered" param-Images="Model.CreateListingInput.Images"/>
-        </div>
-        <div class="col-md-7 col-lg-8">
-            <h4 class="mb-3">Izveidot sludinājumu</h4>
-            @Html.AntiForgeryToken()
-            <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
-            <div class="row g-3">
-                <div class="col-12">
-                    <label asp-for="CreateListingInput.Title" class="form-label"></label>
-                    <input asp-for="CreateListingInput.Title" type="text" class="form-control">
-                    <span asp-validation-for="CreateListingInput.Title" class="text-danger"></span>
-                </div>
-                <div class="col-12">
-                    <label asp-for="CreateListingInput.Description" class="form-label"></label>
-                    <textarea asp-for="CreateListingInput.Description" type="text" class="form-control" style="height: 120px;"></textarea>
-                    <span asp-validation-for="CreateListingInput.Description" class="text-danger"></span>
-                </div>
-                <div class="col-sm-6">
-                    @{ await Html.RenderPartialAsync("Shared/CategoryListPartial", Model.Categories); }
-                </div>
-            </div>
-            <hr class="my-4">
-            <button class="w-100 btn btn-primary btn-lg" type="submit">Izveidot</button>
-        </div>
-    </form>
+    <component type="typeof(CreateListingForm)" render-mode="Server" />
 </div>
 @section Scripts
 {

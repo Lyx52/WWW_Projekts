@@ -1,10 +1,12 @@
 :root {
-  /* Primary text color https://www.colorbook.io/hexcolors/view/e95354 */
-  --main-primary-color: #E95354 !important;
-  /* Secondary text color https://www.colorbook.io/hexcolors/view/53e9e8 */
-  --main-secondary-color: #53E9E8 !important;
-  /* Filler color https://www.colorbook.io/hexcolors/view/c4f7f7 */
-  --main-fill-color: #C4F7F7 !important;
+    /* Primary text color https://www.colorbook.io/hexcolors/view/e95354 */
+    --main-primary-color: #E95354 !important;
+    /* Secondary text color https://www.colorbook.io/hexcolors/view/53e9e8 */
+    --main-secondary-color: #53E9E8 !important;
+    /* Filler color https://www.colorbook.io/hexcolors/view/c4f7f7 */
+    --main-fill-color: #C4F7F7 !important;
+    /* Validation messages */
+    --main-validation-color: #f14c4c;
 }
 .bg-filler {
   background: var(--main-fill-color) !important;
@@ -28,7 +30,9 @@
   font-weight: bold;
   list-style: none;
 }
-
+.validation-message {
+    color: var(--main-validation-color) !important;
+}
 html {
   font-size: 14px;
   color: var(--main-primary-color) !important;
