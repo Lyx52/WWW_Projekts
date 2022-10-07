@@ -31,17 +31,6 @@
                             @* TODO: Implement listing searches *@
                             <form asp-page="/Index" method="post" asp-page-handler="SearchListing">
                                 <div class="input-group my-auto">
-                                    <button class="btn btn-outline-secondary dropdown-toggle border-0 rounded-3 bg-active-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Pēc kategorijas
-                                    </button>
-                                    @* TODO: Implement multilevel listing category dropdown menu(js for on mouse over) *@
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Action</a></li>
-                                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" href="#">Separated link</a></li>
-                                    </ul>
                                     <input id="search" name="search" type="text" class="form-control rounded-3" placeholder="Meklēt sludinājumu" aria-label="Meklēt sludinājumu" aria-describedby="btn-search">
                                     <button btn="btn-submit-search" class="btn border-0" type="submit">
                                         <i class="bi bi-search"></i>

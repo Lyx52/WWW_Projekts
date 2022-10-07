@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Components
 @using System.ComponentModel
 @using System.ComponentModel.DataAnnotations
+@using System.Globalization
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
 @using WebProject.Core.Interfaces
@@ -21,16 +22,23 @@
         <div class="row g-3">
             <div class="col-12">
                 <label for="listingTitle">Virsraksts</label>
-                <InputText @bind-Value="@_input.Title" class="form-control" id="listingTitle"></InputText>
+                <InputText @bind-Value="@_input.Title" class="form-control" id="listingTitle"/>
                 <ValidationMessage class="text-danger" For="@(() => _input.Title)"/>
             </div>
             <div class="col-12">
                 <label for="listingDesc">Apraksts</label>
-                <InputTextArea id="listingDesc" @bind-Value="@_input.Description" class="form-control" style="height: 120px;"></InputTextArea>
+                <InputTextArea id="listingDesc" @bind-Value="@_input.Description" class="form-control" style="height: 120px;"/>
                 <ValidationMessage For="@(() => _input.Description)"/>
             </div>
-            <div class="col-sm-6">
-
+            <div class="col-4">
+                <label for="listingPrice">Cena</label>
+                <InputText id="listingPrice" @bind-Value="@_input.PriceInput" class="form-control" placeholder="Price"/>
+                <ValidationMessage For="@(() => _input.Price)"/>
+            </div>
+            <div class="col-8">
+                <label for="listingCategory">Kategorija</label>
+                <CategoryDropdown Id="listingCategory"/>
+                <ValidationMessage For="@(() => _input.Category)"/>
             </div>
         </div>
         <hr class="my-4">
@@ -41,7 +49,6 @@
     private CreateListingModel _input { get; set; } = new ();
     private EditContext _editContext;
     private ApplicationUser _user { get; set; }
- 
     protected override async Task OnInitializedAsync()
     {
         _editContext = new EditContext(_input);
@@ -66,7 +73,7 @@
             Images = _input.Images,
             CreatedBy = _user,
             Created = DateTime.UtcNow,
-            Price = 12.12f,
+            Price = _input.Price,
             Category = new ListingCategory(){ Name = "Test123" }
         };
         listing.Images.ForEach(i => i.Listing = listing);
@@ -85,7 +92,18 @@
         [MinLength(20, ErrorMessage = "Apraksts nav pietiekami garš")]
         [DisplayName("Apraksts")]
         public string Description { get; set; } = string.Empty;
-        
+
+        [Required(ErrorMessage = "Cena ir nepieciešama")]
+        [DisplayFormat(DataFormatString = "2dp")]
+        public float Price { get; set; } = 0;
+        //[Required(ErrorMessage = "Kategorija ir nepieciešama!")]
+        public ListingCategory Category { get; set; }
+
+        public string PriceInput
+        {
+            get => Price.ToString("C", new CultureInfo("lv-LV"));
+            set => Price = float.TryParse(value, NumberStyles.Currency, new CultureInfo("lv-LV"), out float output) ? (float)Math.Round(output, 2) : 0f;
+        }
         public List<ListingImage> Images { get; set; } = new List<ListingImage>();
     }
 }
