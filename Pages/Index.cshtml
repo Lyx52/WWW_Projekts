@@ -41,8 +41,8 @@
             <div class="col d-flex justify-content-end">
                 <nav aria-label="Listing navigation">
                     <ul class="pagination">
-                        <li class="page-item"><a class="page-link @(Model.PageNumber == 1 ? "disabled" : string.Empty)" href="@Model.PrevPage">Previous</a></li>
-                        <li class="page-item"><a class="page-link" href="@Model.NextPage">Next</a></li>
+                        <li class="page-item"><a class="page-link  @(Model.PageNumber == 1 ? "disabled" : string.Empty)" href="@Model.PrevPage">Previous</a></li>
+                        <li class="page-item"><a class="page-link @(Model.PageNumber == Model.MaxPageNumber ? "disabled" : string.Empty)" href="@Model.NextPage">Next</a></li>
                     </ul>
                 </nav>
             </div>

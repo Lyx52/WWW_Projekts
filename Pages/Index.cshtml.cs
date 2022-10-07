@@ -12,6 +12,7 @@ public class IndexModel : PageModel
     public List<Listing> Listings { get; set; } = new List<Listing>();
     private readonly IEntityRepository<Listing> _listingRepository;
     public int PageNumber { get; set; }
+    public int MaxPageNumber { get; set; } = Int32.MaxValue;
     public string? SearchParam { get; set; } = string.Empty;
     public string NextPage => Url.Page("/Index", new { listingPage = PageNumber + 1, search = SearchParam }) ?? "/Index";
     public string PrevPage => Url.Page("/Index", new { listingPage = Math.Max(1, PageNumber - 1), search = SearchParam }) ?? "/Index";
@@ -25,7 +26,7 @@ public class IndexModel : PageModel
     {
         Listings = await GetListings(listingPage, search);
     }
-    public async Task OnGetAsync([FromRoute] string? search, [FromRoute] int? listingPage)
+    public async Task OnGetAsync([FromQuery]string? search, [FromQuery] int? listingPage)
     {
         
         // TODO: Fix searching/paging...
@@ -36,7 +37,8 @@ public class IndexModel : PageModel
     private async Task<List<Listing>> GetListings(int? listingPage = 1, string? searchParameter=null)
     {
         PageNumber = listingPage ?? 1;
-        PageNumber = Math.Max(1, Math.Min(PageNumber, (await _listingRepository.Count() / 24)));
+        MaxPageNumber = await _listingRepository.Count() / 24;
+        PageNumber = Math.Max(1, Math.Min(PageNumber, MaxPageNumber));
         var query = _listingRepository.AsQueryable()
             .Include(l => l.Images);
         if (!string.IsNullOrEmpty(searchParameter))
