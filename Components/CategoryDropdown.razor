@@ -1,35 +1,77 @@
 ﻿@using WebProject.Core.Models
+@using WebProject.Core.Interfaces
+@using Microsoft.EntityFrameworkCore
+@inject IEntityRepository<ListingCategory> _categoryRepository
 <div class="dropdown">
-    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        --Izvēlēties kategoriju--
-    </button>
-    <ul class="dropdown-menu">
-        <li>
-            @* https://mdbootstrap.com/docs/standard/extended/dropdown-multilevel/ *@
-            <div class="btn-group dropend">
-                <a class="dropdown-item" @onmouseover="@(() => OnCategoryOver(true))" @onmouseout="@(() => OnCategoryOver(false))" href="#">Test123</a>
-                <ul class="dropdown-menu @(ShowMenu ? "show" : "hide")">
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-            </div>
-        </li>
-        <li><a class="dropdown-item" href="#">Another action</a></li>
-        <li><a class="dropdown-item" href="#">Something else here</a></li>
-    </ul>
+  @if (_rootCategory is not null)
+  {
+      <button @onclick="@(e => ShowMenu = !ShowMenu)" class="btn dropdown-toggle" type="button" id="dropdownMenuButton" aria-expanded="false">
+        @(_selectedCategory is null ? "--Izvēlēties kategoriju--" : _selectedCategory.Name)
+      </button>
+      <ul class="dropdown-menu @(ShowMenu ? "show" : "hide")" aria-labelledby="dropdownMenuButton">
+          @foreach (ListingCategory firstCat in _rootCategory.SubCategories)
+          {
+              <li>
+                  <a class="dropdown-item">
+                    @firstCat.Name &raquo;
+                  </a>
+                  <ul class="dropdown-menu dropdown-submenu">
+                      @foreach (ListingCategory secondCat in firstCat.SubCategories)
+                      {
+                          <li>
+                              <a class="dropdown-item">
+                                @secondCat.Name &raquo;
+                              </a>
+                              <ul class="dropdown-menu dropdown-submenu">
+                                  @foreach (ListingCategory thirdCat in secondCat.SubCategories)
+                                  {
+                                      <li>
+                                          <a class="dropdown-item" @onclick="@(async (e) => await OnCategorySelected(thirdCat))">
+                                              <strong>@thirdCat.Name</strong>
+                                          </a>
+                                      </li>
+                                  }
+                              </ul>
+                          </li>
+                      }
+                  </ul>
+              </li>
+          }
+      </ul>
+  }
 </div>
 @code {
+
     [Parameter]
     public string Id { get; set; }
+    
+    [Parameter]
+    public EventCallback<ListingCategory> SelectedCategoryChanged { get; set; }
+    
+    [Parameter]
+    public ListingCategory Category { get; set; }
 
-    public string Test { get; set; } = "test";
-    public bool ShowMenu { get; set; } = false;
-    private ListingCategory UncategorizedCategory { get; set; }
 
-    public void OnCategoryOver(bool open)
+    private ListingCategory _selectedCategory { get; set; }
+    private bool ShowMenu { get; set; } = false;
+    private ListingCategory? _rootCategory { get; set; }
+    
+    private async Task OnCategorySelected(ListingCategory selected)
     {
-        Test = "fff";
-        ShowMenu = open;
+        await SelectedCategoryChanged.InvokeAsync(selected);
+        _selectedCategory = selected;
+        ShowMenu = false;
         StateHasChanged();
+        
     }
+    protected override async Task OnInitializedAsync()
+    {
+        _rootCategory = await _categoryRepository.AsQueryable()
+            .Include(c => c.SubCategories) // First level
+            .ThenInclude(c => c.SubCategories) // Second level
+            .ThenInclude(c => c.SubCategories) // Third level
+            .Where(c => c.Id == -1)
+            .FirstOrDefaultAsync(); // Default category "Uncategorized" category
+    }
+    
 }

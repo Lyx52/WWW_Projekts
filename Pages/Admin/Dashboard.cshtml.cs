@@ -30,6 +30,7 @@ public class Dashboard : PageModel
 
     public async Task<IActionResult> OnPostRemoveCategoryAsync()
     {
+        Categories = await _categoriesRepository.ToList();
         if (ModelState.GetFieldValidationState("CategoryRemoveInput") == ModelValidationState.Valid)
         {
             if (CategoryRemoveInput.CategoryId!.Value == -1)
@@ -55,11 +56,11 @@ public class Dashboard : PageModel
             }
             await _categoriesRepository.Remove(category);
         }
-        Categories = await _categoriesRepository.ToList();
         return Page();
     }
     public async Task<IActionResult> OnPostCreateCategoryAsync()
     {
+        Categories = await _categoriesRepository.ToList();
         if (ModelState.GetFieldValidationState("CategoryCreateInput") == ModelValidationState.Valid)
         {
             var parent = await _categoriesRepository.AsQueryable()
@@ -80,7 +81,6 @@ public class Dashboard : PageModel
             await _categoriesRepository.Update(parent);
             return LocalRedirect("/Admin/Dashboard");
         }
-        Categories = await _categoriesRepository.ToList();
         return Page();
     }
     public async void OnGetAsync()
@@ -100,7 +100,6 @@ public class Dashboard : PageModel
         [Required(ErrorMessage = "Virskategorija ir nepieciešama!")]
         public int? ParentId { get; set; } = null!;
         [Required(ErrorMessage = "Kategorijas nosaukums ir nepieciešams!")]
-        [MinLength(8, ErrorMessage = "Kategorijas nosaukums nav pietiekami garš!")]
         public string Name { get; set; }
     }
 }

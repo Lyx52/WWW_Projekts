@@ -7,7 +7,8 @@
 @model WebProject.Pages.Listings.Index
 
 @attribute [ValidateAntiForgeryToken]
-    @inject IDataProtectionProvider _dataProtector
+@inject IDataProtectionProvider _dataProtector
+@inject UserManager<ApplicationUser> _userManager;
 @inject SignInManager<ApplicationUser> SignInManager
 @{
     ViewData["Title"] = Model.Listing is null ? string.Empty : Model.Listing.Title;
@@ -23,10 +24,9 @@
                 <div class="container-fluid px-2">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-1">
-                            @* TODO: Add dynamic categories *@
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Library</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Data</li>
+                            <li class="breadcrumb-item">@Model.Listing.Category.ParentCategory!.ParentCategory!.Name</li>
+                            <li class="breadcrumb-item">@Model.Listing.Category.ParentCategory!.Name</li>
+                            <li class="breadcrumb-item active" aria-current="page">@Model.Listing.Category.Name</li>
                         </ol>
                     </nav>
                     <h2 class="pb-2 border-bottom">@Model.Listing.Title</h2>
@@ -39,19 +39,24 @@
                                 @* Rādām tikai authorizētiem lietotājiem *@
                                 @if (SignInManager.IsSignedIn(User))
                                 {
-                                    // Parādām vai ziņa nosūtīta
-                                    @if (Model.MessageSent)
+                                    // Nevaram nosūtīt sev 
+                                    var user = await _userManager.GetUserAsync(User);
+                                    if (user is not null && Model.Listing.CreatedBy != user)
                                     {
-                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                            <strong>Ziņa nosūtīta!</strong>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
+                                        // Parādām vai ziņa nosūtīta
+                                        @if (Model.MessageSent)
+                                        {
+                                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                                <strong>Ziņa nosūtīta!</strong>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+                                        }
+
+                                        var pdata = messageProtector.Protect($"{Model.Listing.CreatedBy.Id}|{Request.Path}");
+                                        <button onclick="openMessageModal('@pdata')" type="button" class="float-end btn btn-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
+                                            Sūtīt ziņu <i class="bi bi-chat-dots"></i>
+                                        </button>
                                     }
-                                    
-                                    var pdata = messageProtector.Protect($"{Model.Listing.CreatedBy.Id}|{Request.Path}");
-                                    <button onclick="openMessageModal('@pdata')" type="button" class="float-end btn btn-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
-                                        Sūtīt ziņu <i class="bi bi-chat-dots"></i>
-                                    </button>
                                 }
                             </div>
                         </div>

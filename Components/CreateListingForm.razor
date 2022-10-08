@@ -37,7 +37,7 @@
             </div>
             <div class="col-8">
                 <label for="listingCategory">Kategorija</label>
-                <CategoryDropdown Id="listingCategory"/>
+                <CategoryDropdown Id="listingCategory"  @bind-Category="_input.Category" @bind-Category:event="SelectedCategoryChanged" />
                 <ValidationMessage For="@(() => _input.Category)"/>
             </div>
         </div>
@@ -49,6 +49,7 @@
     private CreateListingModel _input { get; set; } = new ();
     private EditContext _editContext;
     private ApplicationUser _user { get; set; }
+    protected int _selectedCategoryId { get; set; }
     protected override async Task OnInitializedAsync()
     {
         _editContext = new EditContext(_input);
@@ -59,10 +60,6 @@
         {
             NavigationManager.NavigateTo("/Account/Login");
         }
-        var root = await _categoryRepository.AsQueryable()
-            .Include(c => c.SubCategories)
-            .Where(c => c.Id == -1)
-            .FirstOrDefaultAsync();
     }
     private async Task CreateListing(EditContext context)
     {
@@ -74,7 +71,7 @@
             CreatedBy = _user,
             Created = DateTime.UtcNow,
             Price = _input.Price,
-            Category = new ListingCategory(){ Name = "Test123" }
+            Category = _input.Category
         };
         listing.Images.ForEach(i => i.Listing = listing);
 
@@ -96,14 +93,16 @@
         [Required(ErrorMessage = "Cena ir nepieciešama")]
         [DisplayFormat(DataFormatString = "2dp")]
         public float Price { get; set; } = 0;
-        //[Required(ErrorMessage = "Kategorija ir nepieciešama!")]
-        public ListingCategory Category { get; set; }
+        
+        [Required(ErrorMessage = "Kategorija ir nepieciešama!")]
+        public ListingCategory Category { get; set; } = null!;
 
         public string PriceInput
         {
             get => Price.ToString("C", new CultureInfo("lv-LV"));
-            set => Price = float.TryParse(value, NumberStyles.Currency, new CultureInfo("lv-LV"), out float output) ? (float)Math.Round(output, 2) : 0f;
+            set => Price = float.TryParse(value.Replace('.',','), NumberStyles.Currency, new CultureInfo("lv-LV"), out float output) ? (float)Math.Round(output, 2) : 0f;
         }
+        [MinLength(1, ErrorMessage = "Nepieciešams vismaz viens attēls")]
         public List<ListingImage> Images { get; set; } = new List<ListingImage>();
     }
 }

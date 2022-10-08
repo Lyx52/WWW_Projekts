@@ -48,16 +48,13 @@ public class Index : PageModel
         Listing = await _listingRepository
             .AsQueryable()
             .Include(l => l.Category)
+                .ThenInclude(c => c.ParentCategory)
+                .ThenInclude(c => c.ParentCategory)
             .Include(l => l.Images)
             .Include(l => l.CreatedBy)
             .FirstOrDefaultAsync(l => l.Id == ListingId);
         if (Listing is null)
             return NotFound();  
-        
-        // TODO: TESTCODE REMOVE THIS!!!
-        var user = await _userManager.FindByEmailAsync("user@email.com");
-        if (user is not null)
-            Listing.CreatedBy = user;
         
         return Page();
     }

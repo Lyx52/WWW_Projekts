@@ -26,68 +26,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<ListingCategory>()
             .HasData(new List<ListingCategory>()
             {
-                new ListingCategory() { Id = -1, Name = "Category 1" },
-                new ListingCategory() { Id = -2, Name = "Category 2" },
-                new ListingCategory() { Id = -3, Name = "Category 3" }
+                new () { Id = -1, Name = "Uncategorized" }
             });
-        var listings = new List<Listing>();
-        for (int i = 1; i < 50; i++)
-        {
-            if (i % 2 == 0)
-            {
-                listings.Add(new Listing()
-                {
-                    Id = -i, CategoryId = -1, Title = $"Test{i}",
-                    Description = "This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer. This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer. This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer. This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.", 
-                    Created = DateTime.UtcNow,
-                    Price = Random.Shared.NextSingle() * 50
-                });
-                continue;
-            }
-
-            listings.Add(new Listing()
-            {
-                Id = -i, CategoryId = -1, Title = $"Test{i}",
-                Description = "This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-                Created = DateTime.MinValue
-            });
-        }
-
-        modelBuilder.Entity<Listing>()
-            .HasData(listings);
-        var images = new List<ListingImage>();
-        int imgId = 1;
-        for (int i = 1; i < 50; i++)
-        {
-            if (i % 2 == 0)
-            {
-                images.Add(
-                    new ListingImage()
-                    {
-                        Id = -(imgId++), FilePath = "/Images/16_9.jpg", ListingId = -i
-                    });
-                images.Add(
-                    new ListingImage()
-                    {
-                        Id = -(imgId++), FilePath = "/Images/4_3.jpg", ListingId = -i
-                    });
-                images.Add(
-                    new ListingImage()
-                    {
-                        Id = -(imgId++), FilePath = "/Images/cube.jpg", ListingId = -i
-                    });
-                continue;
-            }
-
-            images.Add(
-                new ListingImage()
-                {
-                    Id = -(imgId++), FilePath = "/Images/4_3.jpg", ListingId = -i
-                });
-
-        }
-        modelBuilder.Entity<ListingImage>()
-            .HasData(images);
         base.OnModelCreating(modelBuilder);
     }
     
