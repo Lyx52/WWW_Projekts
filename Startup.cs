@@ -41,6 +41,7 @@ namespace WebProject
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.Strict; 
             });
             services.AddDbContext<AppDbContext>(optionsBuilder =>
             {
@@ -139,6 +140,7 @@ namespace WebProject
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseCookiePolicy();
             app.UseEndpoints(options =>
             {
                 options.MapBlazorHub();

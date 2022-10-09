@@ -104,10 +104,9 @@ html {
 }
 /* toast ziņojumi*/
 .toast {
-  max-width: 250px;
   position: absolute;
-  top: 1%; 
-  right: 1%; 
+  bottom: 1%; 
+  left: 1%; 
   z-index:9999;
 }
 

@@ -33,6 +33,30 @@
             </form>
         </div>
         <div class="col-md-10">
+            <h4 class="mb-3">Pārsaukt kategoriju</h4>
+            <hr class="my-4">
+            <form method="post" asp-page-handler="RenameCategory">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
+                <div class="row g-3">
+                    <div class="col-12 input-group">
+                        @Html.DropDownListFor(m => m.CategoryRenameInput.CategoryId, new SelectList(Model.Categories, "Id","Name"), "--Virskategorija--", new{@class = "form-select"})
+                        <div class="form-floating">
+                            <input asp-for="CategoryRenameInput.Name" type="text" class="form-control" id="floatingCategoryToRenameInput" placeholder="Kategorijas nosaukums">
+                            <label for="floatingCategoryToRenameInput">Kategorijas nosaukums</label>
+                        </div>
+                        <button class="btn btn-outline-secondary" type="submit">Pārsaukt</button>
+                    </div>
+                    <div class="col-6">
+                        <span asp-validation-for="CategoryRenameInput.CategoryId" class="text-danger"></span>
+                    </div>
+                    <div class="col-6">
+                        <span asp-validation-for="CategoryRenameInput.Name" class="text-danger"></span>                           
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-10">
             <h4 class="mb-3">Dzēst kategoriju</h4>
             <hr class="my-4">
             <form method="post" asp-page-handler="RemoveCategory">
@@ -53,7 +77,7 @@
                 </div>
             </form>
         </div>
-  </div>
+    </div>
 </div>
 
 @{

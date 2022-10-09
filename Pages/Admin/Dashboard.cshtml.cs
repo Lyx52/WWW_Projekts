@@ -22,6 +22,9 @@ public class Dashboard : PageModel
     
     [BindProperty]
     public CategoryRemoveInputModel CategoryRemoveInput { get; set; }
+
+    [BindProperty]
+    public CategoryRenameInputModel CategoryRenameInput { get; set; }
     public Dashboard(ILogger<Dashboard> logger, IEntityRepository<ListingCategory> categories)
     {
         _logger = logger;
@@ -30,6 +33,7 @@ public class Dashboard : PageModel
 
     public async Task<IActionResult> OnPostRemoveCategoryAsync()
     {
+        // TODO: Fix child subcaategory deletion...
         Categories = await _categoriesRepository.ToList();
         if (ModelState.GetFieldValidationState("CategoryRemoveInput") == ModelValidationState.Valid)
         {
@@ -58,9 +62,28 @@ public class Dashboard : PageModel
         }
         return Page();
     }
+    public async Task<IActionResult> OnPostRenameCategoryAsync()
+    {
+        if (ModelState.GetFieldValidationState("CategoryRenameInput") == ModelValidationState.Valid)
+        {
+            var listing = await _categoriesRepository.AsQueryable()
+                .FirstOrDefaultAsync(c => c.Id == CategoryRenameInput.CategoryId!.Value);
+            if (listing is null)
+            {
+                ModelState.AddModelError("CategoryRenameInput.CategoryId", "Kategorija neēksistē!");
+                Categories = await _categoriesRepository.ToList();
+                return Page();
+            }
+
+            listing.Name = CategoryRenameInput.Name;
+            await _categoriesRepository.Update(listing);
+            return LocalRedirect("/Admin/Dashboard");
+        }
+        Categories = await _categoriesRepository.ToList();
+        return Page();
+    }
     public async Task<IActionResult> OnPostCreateCategoryAsync()
     {
-        Categories = await _categoriesRepository.ToList();
         if (ModelState.GetFieldValidationState("CategoryCreateInput") == ModelValidationState.Valid)
         {
             var parent = await _categoriesRepository.AsQueryable()
@@ -69,6 +92,7 @@ public class Dashboard : PageModel
             if (parent is null)
             {
                 ModelState.AddModelError("CategoryCreateInput.ParentId", "Virskategorija neēksistē!");
+                Categories = await _categoriesRepository.ToList();
                 return Page();
             }
 
@@ -81,6 +105,7 @@ public class Dashboard : PageModel
             await _categoriesRepository.Update(parent);
             return LocalRedirect("/Admin/Dashboard");
         }
+        Categories = await _categoriesRepository.ToList();
         return Page();
     }
     public async void OnGetAsync()
@@ -94,6 +119,13 @@ public class Dashboard : PageModel
         public int? CategoryId { get; set; } = null!;
 
         public bool DeleteSubcategories { get; set; } = false;
+    }
+    public class CategoryRenameInputModel
+    {
+        [Required(ErrorMessage = "Kategorija ir nepieciešama!")]
+        public int? CategoryId { get; set; } = null!;
+        [Required(ErrorMessage = "Kategorijas jaunais nosaukums ir nepieciešams!")]
+        public string Name { get; set; }
     }
     public class CategoryCreateInputModel
     {
