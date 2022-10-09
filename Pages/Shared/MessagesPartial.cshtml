@@ -87,7 +87,27 @@
 {
     public string GetMessageRecievedDateTime(DateTime? recv)
     {
-        return "3 dien.";
+        if (!recv.HasValue)
+            return "&nbsp;";    
+        var delta = DateTime.UtcNow - recv.Value;
+        if (delta.TotalSeconds < 60)
+        {
+            return $"{(int)delta.TotalSeconds} secs ago";    
+        }
+        if (delta.TotalMinutes < 60)
+        {
+            return $"{(int)delta.TotalMinutes} mins ago";
+        }
+        if (delta.TotalHours < 24)
+        {
+            return $"{(int)delta.TotalHours} hrs ago"; 
+        }
+        if (delta.TotalDays <= 30)
+        {
+            return $"{(int)delta.TotalDays} days ago";     
+        }
+
+        return string.Empty;
     }
 
     public HtmlString PrettyfyMessage(string? message)
