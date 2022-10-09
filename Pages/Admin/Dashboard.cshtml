@@ -1,14 +1,12 @@
 ﻿@page
 @using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Html
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@using WebProject.Core.Models
-@* @attribute [Authorize(Roles="Admin")] *@
+@attribute [Authorize(Roles="Admin")]
 @attribute [ValidateAntiForgeryToken]
 @model WebProject.Pages.Admin.Dashboard
-<div class="py-3 listing-container">
+<div class="py-3 h-100">
     <div class="row g-5">
-        <div class="col-md-10">
+        <div class="col-sm-10">
             <h4 class="mb-3">Izveidot kategoriju</h4>
             <hr class="my-4">
             <form method="post" asp-page-handler="CreateCategory">
@@ -16,7 +14,7 @@
                 <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
                 <div class="row g-3">
                     <div class="col-12 input-group">
-                        @Html.DropDownListFor(m => m.CategoryCreateInput.ParentId, new SelectList(Model.Categories, "Id","Name"), "--Virskategorija--", new{@class = "form-select"})
+                        @Html.DropDownListFor(m => m.CategoryCreateInput.ParentId, new SelectList(Model.Categories, "Id", "Name"), "--Virskategorija--", new { @class = "form-select" })
                         <div class="form-floating">
                             <input asp-for="CategoryCreateInput.Name" type="text" class="form-control" id="floatingCategoryInput" placeholder="Kategorijas nosaukums">
                             <label for="floatingCategoryInput">Kategorijas nosaukums</label>
@@ -27,12 +25,12 @@
                         <span asp-validation-for="CategoryCreateInput.ParentId" class="text-danger"></span>
                     </div>
                     <div class="col-6">
-                        <span asp-validation-for="CategoryCreateInput.Name" class="text-danger"></span>                           
+                        <span asp-validation-for="CategoryCreateInput.Name" class="text-danger"></span>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="col-md-10">
+        <div class="col-sm-10">
             <h4 class="mb-3">Pārsaukt kategoriju</h4>
             <hr class="my-4">
             <form method="post" asp-page-handler="RenameCategory">
@@ -40,7 +38,7 @@
                 <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
                 <div class="row g-3">
                     <div class="col-12 input-group">
-                        @Html.DropDownListFor(m => m.CategoryRenameInput.CategoryId, new SelectList(Model.Categories, "Id","Name"), "--Virskategorija--", new{@class = "form-select"})
+                        @Html.DropDownListFor(m => m.CategoryRenameInput.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "--Virskategorija--", new { @class = "form-select" })
                         <div class="form-floating">
                             <input asp-for="CategoryRenameInput.Name" type="text" class="form-control" id="floatingCategoryToRenameInput" placeholder="Kategorijas nosaukums">
                             <label for="floatingCategoryToRenameInput">Kategorijas nosaukums</label>
@@ -51,12 +49,12 @@
                         <span asp-validation-for="CategoryRenameInput.CategoryId" class="text-danger"></span>
                     </div>
                     <div class="col-6">
-                        <span asp-validation-for="CategoryRenameInput.Name" class="text-danger"></span>                           
+                        <span asp-validation-for="CategoryRenameInput.Name" class="text-danger"></span>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="col-md-10">
+        <div class="col-sm-10">
             <h4 class="mb-3">Dzēst kategoriju</h4>
             <hr class="my-4">
             <form method="post" asp-page-handler="RemoveCategory">
@@ -64,35 +62,15 @@
                 <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
                 <div class="row g-3">
                     <div class="col-12 input-group">
-                        @Html.DropDownListFor(m => m.CategoryRemoveInput.CategoryId, new SelectList(Model.Categories, "Id","Name"), "--Kategorija--", new{ @class = "form-select" })
+                        @Html.DropDownListFor(m => m.CategoryRemoveInput.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "--Kategorija--", new { @class = "form-select" })
                         <button class="btn btn-danger" type="submit">Dzēst <i class="bi bi-trash"></i></button>
                     </div>
                     <div class="col-12">
-                        <div class="form-check">
-                            <input asp-for="CategoryRemoveInput.DeleteSubcategories" class="form-check-input" type="checkbox" id="deleteSubCategories">
-                            <label class="form-check-label" for="deleteSubCategories">Dzēst apakškategorijas</label>
-                        </div>
                         <span asp-validation-for="CategoryRemoveInput.CategoryId" class="text-danger"></span>
+                        <small class="text-danger"><i>Dzēšot kategoriju izdzēšas apakškategorijas!</i></small>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-@{
-    HtmlString RenderSubCategories(ListingCategory category)
-    {
-        string output = string.Empty;
-        
-        foreach (var subCategory in category.SubCategories)
-        {
-            output += $"<li>{@subCategory.Name}</li>";
-            if (subCategory.SubCategories.Count > 0)
-            {
-                output += RenderSubCategories(subCategory).Value;
-            }
-        }
-        return new HtmlString($"<ul>{output}</ul>");
-    }
-}

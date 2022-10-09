@@ -6,6 +6,7 @@ using WebProject.Core.Interfaces;
 using WebProject.Core.Models;
 using WebProject.Infastructure.Data;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,16 +31,15 @@ public class Dashboard : PageModel
         _logger = logger;
         _categoriesRepository = categories;
     }
-
+    
     public async Task<IActionResult> OnPostRemoveCategoryAsync()
     {
-        // TODO: Fix child subcaategory deletion...
-        Categories = await _categoriesRepository.ToList();
         if (ModelState.GetFieldValidationState("CategoryRemoveInput") == ModelValidationState.Valid)
         {
             if (CategoryRemoveInput.CategoryId!.Value == -1)
             {
                 ModelState.AddModelError("CategoryRemoveInput.CategoryId", "Nekategorizēto kategoriju nevar izdzēst!");
+                Categories = await _categoriesRepository.ToList();
                 return Page();    
             }
             var category = await _categoriesRepository.AsQueryable()
@@ -48,24 +48,24 @@ public class Dashboard : PageModel
             if (category is null)
             {
                 ModelState.AddModelError("CategoryRemoveInput.CategoryId", "Kategorija neēksistē!");
+                Categories = await _categoriesRepository.ToList();
                 return Page();
-            }
-
-            if (CategoryRemoveInput.DeleteSubcategories && category.SubCategories is List<ListingCategory> && category.SubCategories.Count > 0)
-            {
-                foreach (var subcat in category.SubCategories)
-                {
-                    await _categoriesRepository.Remove(subcat);
-                }
             }
             await _categoriesRepository.Remove(category);
         }
+        Categories = await _categoriesRepository.ToList();
         return Page();
     }
     public async Task<IActionResult> OnPostRenameCategoryAsync()
     {
         if (ModelState.GetFieldValidationState("CategoryRenameInput") == ModelValidationState.Valid)
         {
+            if (CategoryRenameInput.CategoryId!.Value == -1)
+            {
+                ModelState.AddModelError("CategoryRenameInput.CategoryId", "Nekategorizēto kategoriju nevar pārsaukt!");
+                Categories = await _categoriesRepository.ToList();
+                return Page();    
+            }
             var listing = await _categoriesRepository.AsQueryable()
                 .FirstOrDefaultAsync(c => c.Id == CategoryRenameInput.CategoryId!.Value);
             if (listing is null)
@@ -117,8 +117,6 @@ public class Dashboard : PageModel
     {
         [Required(ErrorMessage = "Kategorija ir nepieciešama!")]
         public int? CategoryId { get; set; } = null!;
-
-        public bool DeleteSubcategories { get; set; } = false;
     }
     public class CategoryRenameInputModel
     {

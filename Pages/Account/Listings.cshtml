@@ -1,2 +1,37 @@
 ﻿@page
 @model WebProject.Pages.Account.Listings
+
+<div class="py-3 h-100">
+    <div class="row g-5">
+        <div class="col-sm-10">
+            <h4 class="mb-3">Mani sludinājumi</h4>
+            <hr class="my-4">
+            <table class="table W-100">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Virsraksts</th>
+                        <th scope="col">Kategorija</th>
+                        <th scope="col">Cena</th>
+                        <th scope="col">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var listing in Model.UserListings)
+                    {
+                        var index = Model.UserListings.IndexOf(listing) + 1;
+                        <tr>
+                            <th scope="row">@index</th>
+                            <td>@listing.Title</td>
+                            <td>@listing.Category.Name</td>
+                            <td>@listing.DisplayPrice</td>
+                            <td>
+                                &nbsp; 
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
