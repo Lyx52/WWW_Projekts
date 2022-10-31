@@ -1,9 +1,10 @@
 ﻿@page
+@using Microsoft.AspNetCore.Authorization
 @model WebProject.Pages.Account.Listings
-
+@attribute [Authorize]
 <div class="py-3 h-100">
     <div class="row g-5">
-        <div class="col-sm-10">
+        <div class="col-sm-12">
             <h4 class="mb-3">Mani sludinājumi</h4>
             <hr class="my-4">
             <table class="table W-100">
@@ -23,10 +24,13 @@
                         <tr>
                             <th scope="row">@index</th>
                             <td>@listing.Title</td>
-                            <td>@listing.Category.Name</td>
+                            <td>@listing.Category!.Name</td>
                             <td>@listing.DisplayPrice</td>
-                            <td>
-                                &nbsp; 
+                            <td class="d-flex justify-content-end">
+                                <form asp-page-handler="RemoveListing">
+                                    @Html.Hidden("listingId", listing.Id)
+                                     <button id="btnRemoveListing" type="submit" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i> Dzēst</button>
+                                </form>
                             </td>
                         </tr>
                     }

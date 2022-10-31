@@ -121,6 +121,8 @@ else
             if ((aspect) < 1.3D || (aspect) > 1.8D)
             {
                 ValidationMessage = "Āttēla izšķirtspēja neatbilst prasībām 4:3 vai 16:9!";
+                _isUploading = false;
+                SelectedFile = null;
                 StateHasChanged();
                 return;
             }
@@ -129,9 +131,8 @@ else
             await image.SaveAsync(Path.Combine(Directory.GetCurrentDirectory(), savePath), new JpegEncoder());
             var entity = new ListingImage
             {
-                FilePath = $"\\{savePath}", IsUsed = false, CreatedBy = User, Created = DateTime.UtcNow
+                FilePath = $"\\{savePath}", IsUsed = true, CreatedByKey = User.Id, Created = DateTime.UtcNow
             };
-            await _imageRepository.Add(entity);
             Images.Add(entity);
             UploadedFiles.Add(SelectedFile);
             SelectedFile = null;

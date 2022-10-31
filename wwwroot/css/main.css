@@ -55,6 +55,7 @@ html {
     overflow-wrap: break-word;
     text-align: justify;
     max-height: 35vh !important;
+    white-space: pre-line !important;
 }
 .dropdown-menu li {
     position: relative;

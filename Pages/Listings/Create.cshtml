@@ -5,7 +5,8 @@
 @attribute [Authorize(Roles = "User,Admin")]
 
 <div class="py-3 listing-container">
-    <component type="typeof(CreateListingForm)" render-mode="Server" />
+    
+    <component type="typeof(CreateListingForm)" render-mode="Server"/>
     @Html.AntiForgeryToken()
 </div>
 @section Scripts

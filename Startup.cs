@@ -149,6 +149,7 @@ namespace WebProject
                 // Blazor access to listings controller path
                 options.MapBlazorHub("~/Listings/_blazor");
                 options.MapBlazorHub("~/Listings/Create/_blazor");
+                options.MapBlazorHub("~/Listings/Edit/_blazor");
                 options.MapRazorPages();
                 options.MapDefaultControllerRoute();
             });

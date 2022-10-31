@@ -34,7 +34,7 @@
                     <li class="messagebox dropdown-item p-3 bg-active-none">
                         <button class="btn d-flex w-100 justify-content-between bg-active-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMessage_@index" aria-expanded="false" aria-controls="collapseMessage_@index">
                             <h6 class="mb-1">
-                                @if (message.CreatedBy == currentUser)
+                                @if (message.CreatedByKey == currentUser.Id)
                                 {
                                     // Nosūtītās ziņas
                                     <i class="bi @(message.Unread ? "bi-send-fill" : "bi-send")"></i><span class="@(message.Unread ? "fw-bold" : "fw-normal")"> Uz: </span>@message.Recipient!.UserName
@@ -54,7 +54,7 @@
                                         @PrettyfyMessage(message.Text)
                                     </p>
                                 </div>
-                                @if (message.Recipient == currentUser)
+                                @if (message.RecipientKey == currentUser.Id)
                                 {
                                     <div class="card-footer d-flex w-100 justify-content-between">
                                         @{

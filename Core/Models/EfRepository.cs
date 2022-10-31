@@ -39,7 +39,11 @@ public class EfRepository<T> : IEntityRepository<T> where T : IdEntity
         _dbContext.Set<T>().Remove(entity);
         await _dbContext.SaveChangesAsync();
     }
-    
+    public async Task RemoveRange(ICollection<T> entities)
+    {
+        _dbContext.Set<T>().RemoveRange(entities);
+        await _dbContext.SaveChangesAsync();
+    }
     public async Task<List<T>> ToList(int offset = 0, int limit = -1)
     {
         var entitySet = _dbContext.Set<T>();

@@ -47,12 +47,35 @@
     </div>
 </EditForm>
 @code {
+
+    [Parameter]
+    public string? ListingIdUrl { get; set; }
+    
+    public int? ListingId { get; set; } = null;
+    
     private CreateListingModel _input { get; set; } = new ();
     private EditContext _editContext;
     private ApplicationUser _user { get; set; }
     protected int _selectedCategoryId { get; set; }
+    
     protected override async Task OnInitializedAsync()
     {
+        if (ListingId is not null)
+        {
+            var listing = await _listingRepository.AsQueryable()
+                .Include(l => l.CreatedBy)
+                .Include(l => l.Images)
+                .Include(l => l.Category)
+                .Where(l => l.Id == ListingId)
+                .FirstOrDefaultAsync();
+            if (listing is null)
+                NavigationManager.NavigateTo("/Index");
+            
+            _input.Category = listing!.Category;
+            _input.Title = listing.Title;
+            _input.Images = listing.Images;
+            _input.Price = listing.Price;
+        }
         _editContext = new EditContext(_input);
         var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
         var userClaim = authState.User;
@@ -69,12 +92,12 @@
             Description = _input.Description,
             Title = _input.Title,
             Images = _input.Images,
-            CreatedBy = _user,
+            CreatedByKey = _user.Id,
             Created = DateTime.UtcNow,
             Price = _input.Price,
-            Category = _input.Category
+            CategoryId = _input.Category!.Id
         };
-        listing.Images.ForEach(i => i.Listing = listing);
+        listing.Images!.ForEach(i => i.Listing = listing);
 
         await _listingRepository.Add(listing);
         NavigationManager.NavigateTo($"/Listings/Index/{listing.ListingUrlId}", true, true);
@@ -96,7 +119,7 @@
         public float Price { get; set; } = 0;
         
         [Required(ErrorMessage = "Kategorija ir nepieciešama!")]
-        public ListingCategory Category { get; set; } = null!;
+        public ListingCategory? Category { get; set; } = null!;
 
         public string PriceInput
         {
@@ -104,6 +127,6 @@
             set => Price = float.TryParse(value.Replace('.',','), NumberStyles.Currency, new CultureInfo("lv-LV"), out float output) ? (float)Math.Round(output, 2) : 0f;
         }
         [MinLength(1, ErrorMessage = "Nepieciešams vismaz viens attēls")]
-        public List<ListingImage> Images { get; set; } = new List<ListingImage>();
+        public List<ListingImage>? Images { get; set; } = new List<ListingImage>();
     }
 }

@@ -33,10 +33,12 @@ public class Listing : ContentEntity
     
     // Todo: Pievienojam kategoriju
     // [Required(ErrorMessage = "Kategorija ir nepieciešama!")]
-    public ListingCategory Category { get; set; }
+    public ListingCategory? Category { get; set; }
+    
+    [ForeignKey(nameof(Category))]
     public int? CategoryId { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public string ListingUrlId => DataEncoderService.Encode(BitConverter.GetBytes(Id));
-    public List<ListingImage> Images { get; set; } = new List<ListingImage>();
+    public List<ListingImage>? Images { get; set; } = new List<ListingImage>();
 }

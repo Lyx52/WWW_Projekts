@@ -20,9 +20,18 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ApplicationUser>()
-            .HasMany<Message>(user => user.Messages).WithOne(m => m.Recipient);
+            .HasMany<Message>(user => user.RecvMessages).WithOne(m => m.Recipient).HasForeignKey(m => m.RecipientKey);
         modelBuilder.Entity<ApplicationUser>()
-            .HasMany<Listing>(user => user.Listings).WithOne(l => l.CreatedBy);
+            .HasMany<Message>(user => user.SentMessages).WithOne(m => m.CreatedBy).HasForeignKey(m => m.CreatedByKey);
+        modelBuilder.Entity<ApplicationUser>()
+            .HasMany<Listing>(user => user.Listings).WithOne(l => l.CreatedBy).HasForeignKey(l => l.CreatedByKey);
+
+        modelBuilder.Entity<ListingImage>()
+            .HasOne<Listing>(li => li.Listing).WithMany(li => li.Images).HasForeignKey(li => li.ListingId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Listing>()
+            .HasMany<ListingImage>(l => l.Images).WithOne(li => li.Listing).HasForeignKey(li => li.ListingId)
+            .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<ListingCategory>()
             .HasData(new List<ListingCategory>()
             {
