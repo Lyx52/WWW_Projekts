@@ -34,7 +34,7 @@ public class Listing : ContentEntity
     // Todo: Pievienojam kategoriju
     // [Required(ErrorMessage = "Kategorija ir nepieciešama!")]
     public ListingCategory Category { get; set; }
-    public int CategoryId { get; set; } = 0;
+    public int? CategoryId { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public string ListingUrlId => DataEncoderService.Encode(BitConverter.GetBytes(Id));

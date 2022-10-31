@@ -1,4 +1,4 @@
-#define USING_INMEMORYDB
+//#define USING_INMEMORYDB
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore.InMemory;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Linq;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
 using WebProject.Core.Interfaces;
@@ -43,18 +44,19 @@ namespace WebProject
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.Strict; 
             });
-            services.AddDbContext<AppDbContext>(optionsBuilder =>
+            services.AddDbContextFactory<AppDbContext>(optionsBuilder =>
             {
                 #if USING_INMEMORYDB
                 optionsBuilder.UseInMemoryDatabase("AppDb");
-                #endif
-                
-            });
+                #else
+                var env = Environment.GetEnvironmentVariables();
+                optionsBuilder.UseNpgsql(
+                    $"Host=postgres;Username={(env["DbUser"])};Password={(env["DbPass"])};Database={(env["AppDbName"])}",
+                    opt => opt.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
+                #endif    
+            }, ServiceLifetime.Transient);
+
             services.AddMvc()
-            .AddRazorOptions(options =>
-            {
-                
-            })
             .AddRazorPagesOptions(options =>
             {
                 // TODO: Finish implementing error pages
@@ -62,7 +64,7 @@ namespace WebProject
                 options.Conventions.AddPageRoute("/Page404","/Shared/Error/Status404");
                 options.Conventions.AddPageRoute("/Page500","/Shared/Error/Status500");
             });
-            services.AddServerSideBlazor();
+            services.AddServerSideBlazor().AddCircuitOptions(x => x.DetailedErrors = true);
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 // TODO: Proper password configuration...
@@ -116,10 +118,9 @@ namespace WebProject
             services.AddScoped<IEntityRepository<Message>, EfRepository<Message>>();
         }
         
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, AppDbContext appDb, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public void Configure(AppDbContext db, IApplicationBuilder app, IHostingEnvironment env, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            appDb.Database.EnsureCreatedAsync().GetAwaiter().GetResult();
-            InitializeAuthorization(appDb, userManager, roleManager).GetAwaiter().GetResult();
+            InitializeAuthorization(db, userManager, roleManager).GetAwaiter().GetResult();
          
             if (env.IsDevelopment())
             {
@@ -131,6 +132,7 @@ namespace WebProject
             }
             // Add standard css/js/lib static files
             app.UseStaticFiles();
+            Directory.CreateDirectory("./Images");
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
@@ -146,6 +148,7 @@ namespace WebProject
                 options.MapBlazorHub();
                 // Blazor access to listings controller path
                 options.MapBlazorHub("~/Listings/_blazor");
+                options.MapBlazorHub("~/Listings/Create/_blazor");
                 options.MapRazorPages();
                 options.MapDefaultControllerRoute();
             });
@@ -154,7 +157,6 @@ namespace WebProject
         private static async Task InitializeAuthorization(AppDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             await db.Database.EnsureCreatedAsync();
-            
             // Izveidojam lietotāja konta tipu
             if (!await roleManager.RoleExistsAsync("User"))
             {

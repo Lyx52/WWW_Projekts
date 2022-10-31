@@ -3,6 +3,7 @@
 @using System.ComponentModel
 @using System.ComponentModel.DataAnnotations
 @using System.Globalization
+@using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
 @using WebProject.Core.Interfaces
@@ -13,7 +14,7 @@
 @inject IEntityRepository<ListingCategory> _categoryRepository
 
 <EditForm EditContext="@_editContext" class="row g-5" OnValidSubmit="CreateListing">
-    <DataAnnotationsValidator />
+    <DataAnnotationsValidator/>
     <div class="col-md-5 col-lg-4 order-sm-first order-md-last">
         <FileUpload Images="@_input.Images" User="_user"/>
     </div>
@@ -37,7 +38,7 @@
             </div>
             <div class="col-8">
                 <label for="listingCategory">Kategorija</label>
-                <CategoryDropdown Id="listingCategory"  @bind-Category="_input.Category" @bind-Category:event="SelectedCategoryChanged" />
+                <CategoryDropdown Id="listingCategory" @bind-Category="_input.Category" @bind-Category:event="SelectedCategoryChanged"/>
                 <ValidationMessage For="@(() => _input.Category)"/>
             </div>
         </div>

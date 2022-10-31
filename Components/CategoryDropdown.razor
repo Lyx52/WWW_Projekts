@@ -67,8 +67,8 @@
     protected override async Task OnInitializedAsync()
     {
         _rootCategory = await _categoryRepository.AsQueryable()
-            .Include(c => c.SubCategories) // First level
-            .ThenInclude(c => c.SubCategories) // Second level
+            .Include(c => c.SubCategories)! // First level
+            .ThenInclude(c => c.SubCategories)! // Second level
             .ThenInclude(c => c.SubCategories) // Third level
             .Where(c => c.Id == -1)
             .FirstOrDefaultAsync(); // Default category "Uncategorized" category

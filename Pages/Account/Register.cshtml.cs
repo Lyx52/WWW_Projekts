@@ -15,16 +15,18 @@ public class Register : PageModel
     private readonly ILogger<Register> _logger;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IEmailSenderService _emailSenderSender;
     [BindProperty]
     public RegistrationInputModel Input { get; set; }
     public string ReturnUrl { get; set; }
 
-    public Register(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<Register> logger, IEmailSenderService emailSenderService)
+    public Register(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<Register> logger, IEmailSenderService emailSenderService)
     {
         _logger = logger;
         _signInManager = signInManager;
         _userManager = userManager;
+        _roleManager = roleManager;
         _emailSenderSender = emailSenderService;
     }
     public void OnGet()
@@ -60,6 +62,7 @@ public class Register : PageModel
                 // TODO: Make a proper email structure.
                 await _emailSenderSender.SendEmailAsync(Input.Email, "Apstiprini savu e-pastu",
                     $"Lai apstiprinātu e-pastu spied uz \"Apstiprināt\" <a href='{HtmlEncoder.Default.Encode(confirmationUrl)}'>Apstiprināt</a>.");
+                
                 // Ieloggojamies kontā
                 await _userManager.AddToRoleAsync(newUser, "User");
                 await _signInManager.SignInAsync(newUser, isPersistent: false);

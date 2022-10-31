@@ -31,7 +31,12 @@ public class Dashboard : PageModel
         _logger = logger;
         _categoriesRepository = categories;
     }
-    
+
+    public async Task<IActionResult> OnGetAsync()
+    {
+        Categories = await _categoriesRepository.ToList();
+        return Page();
+    }
     public async Task<IActionResult> OnPostRemoveCategoryAsync()
     {
         if (ModelState.GetFieldValidationState("CategoryRemoveInput") == ModelValidationState.Valid)
@@ -107,10 +112,6 @@ public class Dashboard : PageModel
         }
         Categories = await _categoriesRepository.ToList();
         return Page();
-    }
-    public async void OnGetAsync()
-    {
-        Categories = await _categoriesRepository.ToList();
     }
 
     public class CategoryRemoveInputModel
