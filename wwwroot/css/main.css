@@ -48,6 +48,12 @@ html {
     -webkit-line-clamp: 4;
     overflow: hidden;
 }
+.scrollspy-privacy {
+    position: relative;
+    height: 250px;
+    margin-top: 0.5rem;
+    overflow: auto;
+}
 .listing-description {
     overflow-y: auto !important;
     overflow-x: hidden !important;

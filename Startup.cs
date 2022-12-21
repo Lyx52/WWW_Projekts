@@ -1,4 +1,4 @@
-//#define USING_INMEMORYDB
+#define USING_INMEMORYDB
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
