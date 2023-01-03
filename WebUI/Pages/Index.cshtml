@@ -1,0 +1,71 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using WebProject.Pages.Shared
+@using Infrastructure.Services
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<div class="mt-2 py-5">
+    <div class="container-fluid">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 @(Model.Listings.Count <= 0 ? "justify-content-center" : string.Empty)">
+            @if (Model.Listings.Count > 0)
+            {
+                @foreach (var listing in Model.Listings)
+                {
+                    <div class="col">
+                        <a asp-controller="Listings" asp-route-id="@listing.Encode()" class="text-decoration-none text-black">
+                            <div class="card shadow-sm d-flex flex-column align-items-stretch h-100">
+                                @{ await Html.RenderPartialAsync("Shared/ImageGalleryPartial", new ImageGalleryModel { Images = listing.Images, GalleryId = listing.Id }); }
+                                <div class="card-body album-listing-body d-flex flex-column justify-content-between">
+                                    <h5 class="fs-3 card-title fw-upper">@listing.Title</h5>
+                                    <p class="card-text truncated-text">
+                                        @listing.Description
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center flex-fill">
+                                        <strong class="fs-4">@listing.DisplayPrice</strong>
+                                        <small class="text-muted">@GetCreationDateString(listing.Created!.Value)&nbsp;</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            }
+            else
+            {
+                <h1 class="text-center fs-3">Sludinājumu nav!</h1>
+            }
+        </div>
+        <div class="row row-cols-1 pt-2">
+            <div class="col d-flex justify-content-end">
+                @if (Model.Listings.Count > 24)
+                {
+                    <nav aria-label="Listing navigation">
+                        <ul class="pagination">
+                            <li class="page-item"><a class="page-link  @(Model.PageNumber == 1 ? "disabled" : string.Empty)" href="@Model.PrevPage">Previous</a></li>
+                            <li class="page-item"><a class="page-link @(Model.PageNumber == Model.MaxPageNumber ? "disabled" : string.Empty)" href="@Model.NextPage">Next</a></li>
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@functions {
+    string GetCreationDateString(DateTime? dateTime)
+    {
+        if (!dateTime.HasValue)
+            return "&nbsp;";    
+        var delta = DateTime.UtcNow - dateTime.Value;
+        if (delta.TotalSeconds <= 60)
+        {
+            return $"{(int)delta.TotalSeconds} secs";    
+        }
+        if (delta.TotalMinutes <= 60)
+        {
+            return $"{(int)delta.TotalMinutes} mins";
+        }
+        return string.Empty;
+    }
+}

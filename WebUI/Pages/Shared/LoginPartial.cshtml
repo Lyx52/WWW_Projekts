@@ -1,0 +1,60 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Domain.Interfaces.Services
+@using Domain.Models
+
+@inject IMessageSenderService _messageSender
+@inject SignInManager<ApplicationUser> _signInManager
+@inject UserManager<ApplicationUser> _userManager
+@{
+    var user = await _userManager.GetUserAsync(User);
+}
+
+@if (user is not null && _signInManager.IsSignedIn(User))
+{
+    await Html.RenderPartialAsync("Shared/MessagesPartial", await _messageSender.GetAllMessages(user));
+    <li class="nav-item dropdown-center p-0 m-0">
+        <a class="nav-link dropdown-toggle text-black" href="#" id="loggedInDropdownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <em>Hello @_userManager.GetUserName(User)!</em>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loggedInDropdownMenu">
+            <li>
+                <form asp-controller="Account" asp-action="SignOut" method="post" id="logoutForm">
+                    <button type="submit" class="dropdown-item fw-bold text-black">Atslēgties</button>
+                </form>
+            </li>
+            <li>
+                <a class="dropdown-item fw-bold text-black" asp-page="/Account/Listings">
+                    <span aria-hidden="true"></span> Mani sludinājumi
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item fw-bold text-black" asp-page="/Account/Settings">
+                    <span aria-hidden="true"></span> Iestatījumi
+                </a>
+            </li>
+            @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdminLogin")).Succeeded)
+            {
+                <li>
+                    <a class="dropdown-item fw-bold text-black" asp-page="/Admin/Dashboard">
+                        <span aria-hidden="true"></span> Admin dashboard
+                    </a>
+                </li>
+            }
+        </ul>
+    </li>
+}
+else
+{
+    if (_signInManager.IsSignedIn(User))
+    {
+        await _signInManager.SignOutAsync();    
+    }
+    <li class="nav-item p-0 m-0">
+        <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Login">
+            <span aria-hidden="true"></span> Pieslēgties
+        </a>
+    </li>
+}

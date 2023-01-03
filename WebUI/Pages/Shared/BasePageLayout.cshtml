@@ -1,0 +1,95 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.AspNetCore.Identity
+@using WebProject.Components
+@using Microsoft.AspNetCore.Http.Features
+@* TODO: Create one generic color scheme *@
+<!DOCTYPE html>
+<html lang="lv">
+        <head>
+            <title>@ViewData["Title"]</title>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <meta http-equiv="x-ua-compatible" content="ie=edge">
+            <!-- Bootstrap CSS/icons -->
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+            <link rel="stylesheet" href="~/css/main.css" />
+        </head>
+        <body class="container-fluid d-flex flex-column min-vh-100">
+        <header class="row">
+            <div class="col-12">
+                <nav class="col-12 navbar navbar-expand-sm">
+                    <div class="container-fluid px-3">
+                        <a class="navbar-brand fs-4 m-0 text-black fw-bold" asp-page="/Index">Brand</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSelection" aria-controls="navbarSelection" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse justify-content-end" id="navbarSelection">
+                            <ul class="navbar-nav">
+                                <li class="nav-item p-0 me-md-3">
+                                    @* TODO: Implement listing searches *@
+                                    <form asp-page="/Index" method="post" asp-page-handler="SearchListing">
+                                        <div class="input-group my-auto">
+                                            <input id="search" name="search" type="text" class="form-control rounded-3" placeholder="Meklēt sludinājumu" aria-label="Meklēt sludinājumu" aria-describedby="btn-search">
+                                            <button btn="btn-submit-search" class="btn border-0" type="submit">
+                                                <i class="bi bi-search"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </li>
+                                <li class="nav-item p-0 m-0">
+                                    <a class="nav-link fw-bold text-black px-1" asp-page="/Listings/Create">
+                                        <span aria-hidden="true"></span> Izveidot sludinājumu
+                                    </a>
+                                </li>
+                                @* jquery nepieciesams pirms login partial *@
+                                <script src="~/lib/jquery/dist/jquery.min.js"></script>
+                                @{ await Html.RenderPartialAsync("Shared/LoginPartial"); }
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div id="toastContainer" class="ms-auto toast" role="alert" aria-live="polite" aria-atomic="true" style="">
+                <div class="toast-header">
+                    <strong id="toastContainerTitle" class="me-auto"></strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" data-bs-target="toastContainer" aria-label="Close"></button>
+                </div>
+                <div id="toastContainerBody" class="toast-body"></div>
+            </div>
+        </header>
+        <main class="row">
+            <div class="mx-md-auto col-12 col-md-10 py-3">
+                <div class="container-fluid">
+                    @RenderBody()
+                </div>
+            </div>
+            @* TODO: Fixup cookie toast  *@
+            <div class="toast toast-placement" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body">
+                    Mājaslapa izmanto sīkdatnes
+                    <div class="mt-2 pt-2 border-top d-flex justify-content-between">
+                        <button id="btnComplyToCookies" type="button" class="btn btn-primary btn-sm">Apstiprināt</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="toast">X</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="row mt-auto">
+            <div class="col-12 d-flex flex-wrap justify-content-between align-items-center px-2">
+                <p class="col-md-4 mb-0 text-black">© 2021 Company, Inc</p>
+        
+                <ul class="nav col-md-4 justify-content-end">
+                    <li class="nav-item"><a asp-area="" asp-page="/Index" class="nav-link px-2 text-black">Home</a></li>
+                    <li class="nav-item"><a asp-area="" asp-page="/Privacy" class="nav-link px-2 text-black">Privacy</a></li>
+                    <li class="nav-item"><a asp-area="" asp-page="/About" class="nav-link px-2 text-black">About</a></li>
+                </ul>
+            </div>
+        </footer>
+ 
+    </body>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
+    <script src="~/js/main.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</html>

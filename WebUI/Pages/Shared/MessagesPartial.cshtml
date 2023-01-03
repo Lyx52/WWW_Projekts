@@ -1,0 +1,123 @@
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.AspNetCore.DataProtection
+@using Domain.Interfaces.Services
+@using Domain.Models
+@inject IMessageSenderService _messageSender
+@inject SignInManager<ApplicationUser> _signInManager
+@inject UserManager<ApplicationUser> _userManager
+@inject IDataProtectionProvider _dataProtector
+@model List<Domain.Models.Message>
+@{
+    var currentUser = await _userManager.GetUserAsync(User);
+    var messageProtector = _dataProtector.CreateProtector("MessageProvider");
+}
+<li class="nav-item p-0 m-0">
+    <div class="dropdown-center">
+        <a class="nav-link fw-bold text-black px-1 dropdown-toggle position-relative" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+            <i class="bi bi-chat-left">
+                @if (Model.Count(m => m.Unread && m.Recipient!.Id == currentUser!.Id) > 0)
+                {
+                    <span class="position-absolute top-25 start-75 translate-middle p-1 bg-danger border border-light rounded-circle">
+                        <span class="visually-hidden">Jaunas ziņas!</span>
+                    </span>
+                }
+            </i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end overflow-auto message-list">
+            @if (Model.Count > 0)
+            {
+                @foreach (var message in Model)
+                {
+                    var index = Model.IndexOf(message);
+                    <li class="messagebox dropdown-item p-3 bg-active-none">
+                        <button class="btn d-flex w-100 justify-content-between bg-active-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMessage_@index" aria-expanded="false" aria-controls="collapseMessage_@index">
+                            <h6 class="mb-1">
+                                @if (message.CreatedByKey == currentUser.Id)
+                                {
+                                    // Nosūtītās ziņas
+                                    <i class="bi @(message.Unread ? "bi-send-fill" : "bi-send")"></i><span class="@(message.Unread ? "fw-bold" : "fw-normal")"> Uz: </span>@message.Recipient!.UserName
+                                }
+                                else
+                                {
+                                    // Saņemtās
+                                    <i class="bi @(message.Unread ? "bi-send-fill" : "bi-send")"></i><span class="@(message.Unread ? "fw-bold" : "fw-normal")"> No: </span>@message.CreatedBy!.UserName
+                                }
+                            </h6>
+                            <small class="text-muted">@GetMessageRecievedDateTime(message.Created)</small>
+                        </button>
+                        <div class="collapse" id="collapseMessage_@index">
+                            <div class="card">
+                                <div class="card-body overflow-auto">
+                                    <p class="text-wrap">
+                                        @PrettyfyMessage(message.Text)
+                                    </p>
+                                </div>
+                                @if (message.RecipientKey == currentUser.Id)
+                                {
+                                    <div class="card-footer d-flex w-100 justify-content-between">
+                                        @{
+                                            var pdata = messageProtector.Protect($"{message.CreatedBy!.Id}|{Context.Request.Path}");
+                                            <button onclick="openMessageModal('@pdata')" class="btn" data-bs-toggle="modal" data-bs-target="#messageModal">Atbildēt</button>
+                                            pdata = messageProtector.Protect($"{message.Id}|{Context.Request.Path}");
+                                        }
+                                        <form asp-controller="Message" asp-action="MarkAsRead">
+                                            @Html.Hidden("pdata", pdata)
+                                            <button id="btnMarkAsRead" type="submit" class="btn">Izlasīts</button>
+                                        </form>
+
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+            else
+            {
+                <li class="messagebox dropdown-item p-3 bg-active-none">Ziņu nav!</li>
+            }
+        </ul>
+    </div>
+</li>
+@{ await Html.RenderPartialAsync("Shared/MessageModalPartial"); }
+
+@functions
+{
+    public string GetMessageRecievedDateTime(DateTime? recv)
+    {
+        if (!recv.HasValue)
+            return "&nbsp;";    
+        var delta = DateTime.UtcNow - recv.Value;
+        if (delta.TotalSeconds < 60)
+        {
+            return $"{(int)delta.TotalSeconds} secs ago";    
+        }
+        if (delta.TotalMinutes < 60)
+        {
+            return $"{(int)delta.TotalMinutes} mins ago";
+        }
+        if (delta.TotalHours < 24)
+        {
+            return $"{(int)delta.TotalHours} hrs ago"; 
+        }
+        if (delta.TotalDays <= 30)
+        {
+            return $"{(int)delta.TotalDays} days ago";     
+        }
+
+        return string.Empty;
+    }
+
+    public HtmlString PrettyfyMessage(string? message)
+    {
+
+        if (message is null || message.Length == 0)
+            return HtmlString.Empty;
+        string? result = message.ToString();
+        result = result.Replace(System.Environment.NewLine, " ");
+
+        return new HtmlString(result);
+    }
+}

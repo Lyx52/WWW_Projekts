@@ -1,0 +1,40 @@
+@model ImageGalleryModel
+
+
+<div id="carouselSelectionIndicators_@Model.GalleryId" class="mx-auto carousel slide" data-bs-ride="true">
+    @if (Model.Images.Count > 1)
+    {
+        <div class="carousel-indicators">
+            @for (int i = 0; i < Model.Images.Count; i++)
+            {
+                if (i == 0)
+                {
+                    <button type="button" data-bs-target="#carouselSelectionIndicators_@Model.GalleryId" data-bs-slide-to="@i" aria-label="Slide @i" class="active" aria-current="true"></button>
+                    continue;
+                }
+                <button type="button" data-bs-target="#carouselSelectionIndicators_@Model.GalleryId" data-bs-slide-to="@i" aria-label="Slide @i"></button>
+            }
+        </div>
+    } 
+    <div class="carousel-inner">
+        @foreach (var image in Model.Images)
+        {
+            var index = Model.Images.IndexOf(image);
+            // pirmais ir aktīvs
+            <div class="carousel-item w-100 @(index == 0 ? "active" : "")">
+                <img src="@image.FilePath" class="w-100 img-responsive img rounded-2" alt="listing_img_@index">
+            </div>
+        }
+    </div>
+    @if (Model.Images.Count > 1)
+    {
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselSelectionIndicators_@Model.GalleryId" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselSelectionIndicators_@Model.GalleryId" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    }
+</div>
