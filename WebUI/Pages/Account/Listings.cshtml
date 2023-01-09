@@ -1,5 +1,6 @@
 ﻿@page
 @using Microsoft.AspNetCore.Authorization
+@using Infrastructure.Services
 @model WebProject.Pages.Account.Listings
 @attribute [Authorize]
 <div class="py-3 h-100">
@@ -26,11 +27,13 @@
                             <td>@listing.Title</td>
                             <td>@listing.Category!.Name</td>
                             <td>@listing.DisplayPrice</td>
-                            <td class="d-flex justify-content-end">
+                            <td class="d-flex justify-content-end hstack gap-2">
                                 <form asp-page-handler="RemoveListing">
                                     @Html.Hidden("listingId", listing.Id)
-                                     <button id="btnRemoveListing" type="submit" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i> Dzēst</button>
+                                    <button id="btnRemoveListing" type="submit" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i> Dzēst</button>
                                 </form>
+                                <div class="vr"></div>
+                                <a class="btn btn-outline-success" asp-page="/Listings/Edit" asp-route-id="@listing.Id.Encode()"><i class="bi bi-pencil-fill"></i> Rediģēt</a>
                             </td>
                         </tr>
                     }

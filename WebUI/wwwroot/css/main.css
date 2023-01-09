@@ -40,6 +40,11 @@ html {
 .message-list {
   max-height: 50vh !important;
 }
+/*.dropdown-hover:hover .dropdown-menu {*/
+/*    display: block;*/
+/*    margin-top: 0;*/
+/*    animation-delay: 100ms;*/
+/*}*/
 .truncated-text {
     text-overflow: ellipsis;
     text-align: justify;

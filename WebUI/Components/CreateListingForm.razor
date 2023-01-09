@@ -3,6 +3,7 @@
 @using System.ComponentModel.DataAnnotations
 @using System.Globalization
 @using System.Text.Encodings.Web
+@using System.Web
 @using Domain.Interfaces
 @using Domain.Models
 @using Infrastructure.Services
@@ -14,7 +15,7 @@
 @inject IEntityRepository<Listing> _listingRepository;
 @inject IEntityRepository<ListingCategory> _categoryRepository
 
-<EditForm EditContext="@_editContext" class="row g-5" OnValidSubmit="CreateListing">
+<EditForm EditContext="@_editContext" class="row g-5" OnValidSubmit="CreateOrSaveListing">
     <DataAnnotationsValidator/>
     <div class="col-md-5 col-lg-4 order-sm-first order-md-last">
         <FileUpload Images="@_input.Images" User="_user"/>
@@ -44,7 +45,10 @@
             </div>
         </div>
         <hr class="my-4">
-        <button class="w-100 btn btn-primary btn-lg" type="submit">Izveidot</button>
+        
+        <button class="w-100 btn btn-primary btn-lg" type="submit">
+            @(IsEditListing ? "Saglabāt" : "Izviedot")
+        </button>
     </div>
 </EditForm>
 @code {
@@ -53,7 +57,7 @@
     public string? ListingIdUrl { get; set; }
     
     public int? ListingId { get; set; } = null;
-    
+    public bool IsEditListing { get; set; } = false;
     private CreateListingModel _input { get; set; } = new ();
     private EditContext _editContext;
     private ApplicationUser _user { get; set; }
@@ -61,23 +65,6 @@
     
     protected override async Task OnInitializedAsync()
     {
-        if (ListingId is not null)
-        {
-            var listing = await _listingRepository.AsQueryable()
-                .Include(l => l.CreatedBy)
-                .Include(l => l.Images)
-                .Include(l => l.Category)
-                .Where(l => l.Id == ListingId)
-                .FirstOrDefaultAsync();
-            if (listing is null)
-                NavigationManager.NavigateTo("/Index");
-            
-            _input.Category = listing!.Category;
-            _input.Title = listing.Title;
-            _input.Images = listing.Images;
-            _input.Price = listing.Price;
-        }
-        _editContext = new EditContext(_input);
         var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
         var userClaim = authState.User;
         _user = await _userManager.GetUserAsync(userClaim);
@@ -85,11 +72,42 @@
         {
             NavigationManager.NavigateTo("/Account/Login");
         }
+        var parameters = HttpUtility.ParseQueryString(new Uri(NavigationManager.Uri).Query);
+        try
+        {
+            ListingId = parameters["id"]?.Decode();
+        }
+        catch (FormatException)
+        {
+            NavigationManager.NavigateTo("/Index");
+        }
+        if (ListingId is not null)
+        {
+            var listing = await _listingRepository.AsQueryable()
+                .Include(l => l.CreatedBy)
+                .Include(l => l.Images)
+                .Include(l => l.Category)
+                .Include(l => l.CreatedBy)
+                .Where(l => l.Id == ListingId && l.CreatedBy!.Id == _user!.Id)
+                .FirstOrDefaultAsync();
+            if (listing is null)
+                NavigationManager.NavigateTo("/Index");
+            IsEditListing = true;
+            _input.Id = listing!.Id;
+            _input.Category = listing.Category;
+            _input.Title = listing.Title;
+            _input.Images = listing.Images;
+            _input.Price = listing.Price;
+            _input.Description = listing.Description;
+        }
+        _editContext = new EditContext(_input);
+        StateHasChanged();
     }
-    private async Task CreateListing(EditContext context)
+    private async Task CreateOrSaveListing(EditContext context)
     {
         var listing = new Listing()
         {
+            Id = _input.Id ?? 0,
             Description = _input.Description,
             Title = _input.Title,
             Images = _input.Images,
@@ -99,12 +117,19 @@
             CategoryId = _input.Category!.Id
         };
         listing.Images!.ForEach(i => i.Listing = listing);
-
-        await _listingRepository.Add(listing);
+        if (IsEditListing)
+        {
+            await _listingRepository.Update(listing);
+        }
+        else
+        {
+            await _listingRepository.Add(listing);    
+        }
         NavigationManager.NavigateTo($"/Listings/Index/{listing.Encode()}", true, true);
     }
     private class CreateListingModel
     {
+        public int? Id { get; set; }
         [Required(ErrorMessage = "Virsraksts ir nepieciešams")]
         [MinLength(8, ErrorMessage = "Virsraksts nav pietiekami garš")]
         [DisplayName("Virsraksts")]

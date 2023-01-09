@@ -1,0 +1,14 @@
+﻿@page
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@attribute [ValidateAntiForgeryToken]
+@attribute [Authorize(Roles = "User,Admin")]
+
+<div class="py-3 listing-container">
+    <component type="typeof(CreateListingForm)" render-mode="Server"/>
+    @Html.AntiForgeryToken()
+</div>
+@section Scripts
+{
+    <script src="~/_framework/blazor.server.js"></script>
+}

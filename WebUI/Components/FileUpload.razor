@@ -23,12 +23,12 @@
 else
 {
     <ul class="list-group mb-3">
-        @foreach (var file in UploadedFiles)
+        @foreach (var file in Images)
         {
             <li class="list-group-item d-flex justify-content-between lh-sm">
-                <h6 class="my-0">@file.Name</h6>
+                <h6 class="my-0">@file.OriginalName</h6>
                 @{
-                    var index = UploadedFiles.IndexOf(file);
+                    var index = Images.FindIndex(f => f.OriginalName == file.OriginalName);
                 }
                 
                 <button @onclick="@(e => RemoveImage(index))" class="btn btn-danger" type="button"><i class="bi bi-trash"></i></button>
@@ -58,7 +58,6 @@ else
     public List<ListingImage> Images { get; set; }
     [Parameter]
     public ApplicationUser User { get; set; }
-    private List<IBrowserFile> UploadedFiles { get; set; } = new List<IBrowserFile>();
     private bool _isUploading { get; set; } = false;
     private bool _showFileInput { get; set; } = true;
     private string[] AcceptedFileExtensions = { "png", "jpg" };
@@ -131,10 +130,9 @@ else
             await image.SaveAsync(Path.Combine(Directory.GetCurrentDirectory(), savePath), new JpegEncoder());
             var entity = new ListingImage
             {
-                FilePath = $"\\{savePath}", IsUsed = true, CreatedByKey = User.Id, Created = DateTime.UtcNow
+                FilePath = $"\\{savePath}", IsUsed = true, CreatedByKey = User.Id, Created = DateTime.UtcNow, OriginalName = SelectedFile.Name
             };
             Images.Add(entity);
-            UploadedFiles.Add(SelectedFile);
             SelectedFile = null;
         }
         catch (Exception e)
@@ -165,7 +163,6 @@ else
     private void RemoveImage(int index)
     {
         Images.RemoveAt(index);
-        UploadedFiles.RemoveAt(index);
         StateHasChanged();    
     }
 }

@@ -15,11 +15,11 @@
 @if (user is not null && _signInManager.IsSignedIn(User))
 {
     await Html.RenderPartialAsync("Shared/MessagesPartial", await _messageSender.GetAllMessages(user));
-    <li class="nav-item dropdown-center p-0 m-0">
+    <li class="nav-item p-0 m-0 btn-group dropdown-hover">
         <a class="nav-link dropdown-toggle text-black" href="#" id="loggedInDropdownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <em>Hello @_userManager.GetUserName(User)!</em>
+            <i class="bi bi-list"></i>
         </a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loggedInDropdownMenu">
+        <ul class="dropdown-menu dropdown-menu-end" data-bs-popper="static" aria-labelledby="loggedInDropdownMenu">
             <li>
                 <form asp-controller="Account" asp-action="SignOut" method="post" id="logoutForm">
                     <button type="submit" class="dropdown-item fw-bold text-black">Atslēgties</button>
@@ -52,9 +52,17 @@ else
     {
         await _signInManager.SignOutAsync();    
     }
-    <li class="nav-item p-0 m-0">
-        <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Login">
-            <span aria-hidden="true"></span> Pieslēgties
+    <li class="nav-item d-none d-sm-block btn-group dropdown-hover">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle"></i>
         </a>
+        <ul class="dropdown-menu dropdown-menu-end" data-bs-popper="static">
+            <li><a class="dropdown-item fw-bold text-black" asp-page="/Account/Login">Pieslēgties</a></li>   
+            <li><a class="dropdown-item fw-bold text-black" asp-page="/Account/Register">Reģistrēties</a></li>
+        </ul>
+    </li>
+    <li class="nav-item p-0 m-0 d-block d-sm-none">
+        <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Login">Pieslēgties</a>    
+        <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Register">Reģistrēties</a>
     </li>
 }

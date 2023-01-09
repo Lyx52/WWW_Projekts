@@ -5,7 +5,7 @@
 <div class="dropdown">
   @if (_rootCategory is not null)
   {
-      <button @onclick="@(e => ShowMenu = !ShowMenu)" class="btn dropdown-toggle" type="button" id="dropdownMenuButton" aria-expanded="false">
+      <button @onclick="@(e => ShowMenu = !ShowMenu)" class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" aria-expanded="false">
         @(_selectedCategory is null ? "--Izvēlēties kategoriju--" : _selectedCategory.Name)
       </button>
       <ul class="dropdown-menu @(ShowMenu ? "show" : "hide")" aria-labelledby="dropdownMenuButton">
@@ -50,9 +50,8 @@
     
     [Parameter]
     public ListingCategory Category { get; set; }
-
-
-    private ListingCategory _selectedCategory { get; set; }
+    
+    private ListingCategory? _selectedCategory { get; set; }
     private bool ShowMenu { get; set; } = false;
     private ListingCategory? _rootCategory { get; set; }
     
@@ -66,12 +65,14 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        _selectedCategory = Category;
         _rootCategory = await _categoryRepository.AsQueryable()
             .Include(c => c.SubCategories)! // First level
             .ThenInclude(c => c.SubCategories)! // Second level
             .ThenInclude(c => c.SubCategories) // Third level
             .Where(c => c.Id == -1)
             .FirstOrDefaultAsync(); // Default category "Uncategorized" category
+        StateHasChanged();
     }
     
 }

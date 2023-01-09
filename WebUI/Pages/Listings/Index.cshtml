@@ -18,14 +18,14 @@
     <div class="container-fluid w-100">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-8">
-                @{ await Html.RenderPartialAsync("Shared/ImageGalleryPartial", new ImageGalleryModel { Images = Model.Listing!.Images, GalleryId = Model.Listing.Id }); }
+                @{ await Html.RenderPartialAsync("Shared/ImageGalleryPartial", new ImageGalleryModel { Images = Model!.Listing!.Images, GalleryId = Model.Listing.Id }); }
             </div>
             <div class="col-12 col-lg-4">
                 <div class="container-fluid px-2">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-1">
-                            <li class="breadcrumb-item">@Model.Listing.Category.ParentCategory!.ParentCategory!.Name</li>
-                            <li class="breadcrumb-item">@Model.Listing.Category.ParentCategory!.Name</li>
+                            <li class="breadcrumb-item">@Model.Listing.Category!.ParentCategory!.ParentCategory!.Name</li>
+                            <li class="breadcrumb-item">@Model.Listing.Category!.ParentCategory!.Name</li>
                             <li class="breadcrumb-item active" aria-current="page">@Model.Listing.Category.Name</li>
                         </ol>
                     </nav>
@@ -34,14 +34,14 @@
                         <div class="col d-flex align-items-start">
                             <div class="w-100">
                                 <h3 class="fs-2">Cena: @Model.Listing.DisplayPrice</h3>
-                                <p class="listing-description w-100">@(Html.DisplayTextFor<string>(m => (string)m.Listing!.Description))</p>
+                                <p class="listing-description w-100">@(Html.DisplayTextFor(m => m.Listing!.Description))</p>
 
                                 @* Rādām tikai authorizētiem lietotājiem *@
                                 @if (SignInManager.IsSignedIn(User))
                                 {
                                     // Nevaram nosūtīt sev 
                                     var user = await _userManager.GetUserAsync(User);
-                                    if (user is not null && Model.Listing.CreatedBy != user)
+                                    if (user is not null && Model.Listing.CreatedBy?.Id != user.Id)
                                     {
                                         // Parādām vai ziņa nosūtīta
                                         @if (Model.MessageSent)

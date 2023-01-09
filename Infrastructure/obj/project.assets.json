@@ -838,19 +838,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Lietotajs\\.nuget\\packages\\": {}
+    "C:\\Users\\Ikars\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Lietotajs\\Documents\\Personal\\Repositories\\WWW_Projekts\\Infrastructure\\Infrastructure.csproj",
+      "projectUniqueName": "C:\\Users\\Ikars\\Documents\\WWW_Projekts\\Infrastructure\\Infrastructure.csproj",
       "projectName": "Infrastructure",
-      "projectPath": "C:\\Users\\Lietotajs\\Documents\\Personal\\Repositories\\WWW_Projekts\\Infrastructure\\Infrastructure.csproj",
-      "packagesPath": "C:\\Users\\Lietotajs\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Lietotajs\\Documents\\Personal\\Repositories\\WWW_Projekts\\Infrastructure\\obj\\",
+      "projectPath": "C:\\Users\\Ikars\\Documents\\WWW_Projekts\\Infrastructure\\Infrastructure.csproj",
+      "packagesPath": "C:\\Users\\Ikars\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Ikars\\Documents\\WWW_Projekts\\Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Lietotajs\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Ikars\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -864,8 +864,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "C:\\Users\\Lietotajs\\Documents\\Personal\\Repositories\\WWW_Projekts\\Domain\\Domain.csproj": {
-              "projectPath": "C:\\Users\\Lietotajs\\Documents\\Personal\\Repositories\\WWW_Projekts\\Domain\\Domain.csproj"
+            "C:\\Users\\Ikars\\Documents\\WWW_Projekts\\Domain\\Domain.csproj": {
+              "projectPath": "C:\\Users\\Ikars\\Documents\\WWW_Projekts\\Domain\\Domain.csproj"
             }
           }
         }
@@ -901,7 +901,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.404\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }

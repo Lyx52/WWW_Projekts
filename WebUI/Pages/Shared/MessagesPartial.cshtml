@@ -17,7 +17,8 @@
     <div class="dropdown-center">
         <a class="nav-link fw-bold text-black px-1 dropdown-toggle position-relative" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
             <i class="bi bi-chat-left">
-                @if (Model.Count(m => m.Unread && m.Recipient!.Id == currentUser!.Id) > 0)
+                @if (Model.Count(m => 
+                    m.Unread && m.Recipient!.Id == currentUser!.Id) > 0)
                 {
                     <span class="position-absolute top-25 start-75 translate-middle p-1 bg-danger border border-light rounded-circle">
                         <span class="visually-hidden">Jaunas ziņas!</span>
@@ -62,10 +63,13 @@
                                             <button onclick="openMessageModal('@pdata')" class="btn" data-bs-toggle="modal" data-bs-target="#messageModal">Atbildēt</button>
                                             pdata = messageProtector.Protect($"{message.Id}|{Context.Request.Path}");
                                         }
-                                        <form asp-controller="Message" asp-action="MarkAsRead">
-                                            @Html.Hidden("pdata", pdata)
-                                            <button id="btnMarkAsRead" type="submit" class="btn">Izlasīts</button>
-                                        </form>
+                                        @if (message.Unread)
+                                        {
+                                            <form asp-controller="Message" asp-action="MarkAsRead">
+                                                @Html.Hidden("pdata", pdata)
+                                                <button id="btnMarkAsRead" type="submit" class="btn">Izlasīts</button>
+                                            </form>
+                                        }
 
                                     </div>
                                 }
