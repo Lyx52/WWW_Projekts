@@ -120,6 +120,8 @@ namespace WebProject
         
         public void Configure(AppDbContext db, IApplicationBuilder app, IHostingEnvironment env, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
+            if (!Directory.Exists("./Images"))
+                Directory.CreateDirectory("./Images");
             InitializeAuthorization(db, userManager, roleManager).GetAwaiter().GetResult();
          
             if (env.IsDevelopment())
@@ -132,12 +134,16 @@ namespace WebProject
             }
             // Add standard css/js/lib static files
             app.UseStaticFiles();
-            Directory.CreateDirectory("./Images");
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
                     Path.Combine(Directory.GetCurrentDirectory(), "Images")),
-                RequestPath = "/Images"
+                RequestPath = "/Images",
+                OnPrepareResponse = ctx =>
+                {
+                    // Images are cached for one week
+                    ctx.Context.Response.Headers.Append("Cache-Control", $"public, max-age={(60 * 60 * 24 * 7)}");
+                }
             });
             app.UseRouting();
             app.UseAuthentication();
