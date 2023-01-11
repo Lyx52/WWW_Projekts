@@ -68,8 +68,4 @@
     <_ContentIncludedByDefault Remove="wwwroot\lib\handlebars\handlebars.min.js" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Images" />
-  </ItemGroup>
-
 </Project>

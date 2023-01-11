@@ -7,7 +7,7 @@
 <div class="row justify-content-center">
     <form class="card col-12 col-lg-4 px-4 py-4 mt-5 border-0" asp-route-returnUrl="@Model.ReturnUrl" method="post">
         @Html.AntiForgeryToken()
-        <h1 class="fs-3 fw-bold text-center">Izveidot jaunu kontu</h1>
+        <h1 class="fs-2 text-primary text-center">Izveidot jaunu kontu</h1>
         <hr/>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-floating mb-2">
@@ -31,7 +31,7 @@
             <span asp-validation-for="Input.Username" class="text-danger"></span>
         </div>
         <hr/>
-        <button class="w-100 btn btn-lg btn-primary bg-filler border-0 text-black fw-bold" type="submit">Izveidot</button>
+        <button class="w-100 btn btn-lg btn-primary border-0" type="submit">Izveidot</button>
     </form>
 </div>
 

@@ -191,6 +191,25 @@ namespace WebProject
                 user = await userManager.FindByEmailAsync("user@email.com");
                 await userManager.AddToRoleAsync(user, "Admin");
             }
+            var categories = new List<string>
+            {
+                "Elektronika",
+                "Datori",
+                "Portatīvie datori"
+            };
+            var prevId = -1;
+            foreach (var category in categories)
+            {
+                var index = categories.IndexOf(category);
+                prevId = await db.AddCategory(category, index == 0 ? -1 : prevId);
+            }
+
+           
+            await db.SaveChangesAsync();
+            for (int i = 0; i < 100; i++)
+            {
+                await db.GenerateSampleListing();
+            }
         }
     }
 }

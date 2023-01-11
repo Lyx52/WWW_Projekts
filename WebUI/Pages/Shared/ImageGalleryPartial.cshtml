@@ -1,7 +1,7 @@
 @model ImageGalleryModel
 
 
-<div id="carouselSelectionIndicators_@Model.GalleryId" class="mx-auto carousel slide" data-bs-ride="true">
+<div id="carouselSelectionIndicators_@Model.GalleryId" class="mx-auto carousel slide rounded-2 bg-filler" data-bs-ride="true">
     @if (Model.Images.Count > 1)
     {
         <div class="carousel-indicators">

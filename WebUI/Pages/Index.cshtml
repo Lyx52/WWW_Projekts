@@ -15,16 +15,16 @@
                 {
                     <div class="col">
                         <a asp-controller="Listings" asp-route-id="@listing.Encode()" class="text-decoration-none text-black">
-                            <div class="card shadow-sm d-flex flex-column align-items-stretch h-100">
+                            <div class="card shadow-sm d-flex flex-column align-items-stretch h-100 bg-filler">
                                 @{ await Html.RenderPartialAsync("Shared/ImageGalleryPartial", new ImageGalleryModel { Images = listing.Images, GalleryId = listing.Id }); }
                                 <div class="card-body album-listing-body d-flex flex-column justify-content-between">
-                                    <h5 class="fs-3 card-title fw-upper">@listing.Title</h5>
+                                    <h5 class="fs-3 card-title text-primary">@listing.Title</h5>
                                     <p class="card-text truncated-text">
                                         @listing.Description
                                     </p>
                                     <div class="d-flex justify-content-between align-items-center flex-fill">
-                                        <strong class="fs-4">@listing.DisplayPrice</strong>
-                                        <small class="text-muted">@GetCreationDateString(listing.Created!.Value)&nbsp;</small>
+                                        <strong class="fs-4 text-primary">@listing.DisplayPrice</strong>
+                                        <small class="text-secondary">@GetCreationDateString(listing.Created!.Value)&nbsp;</small>
                                     </div>
                                 </div>
                             </div>
@@ -39,15 +39,22 @@
         </div>
         <div class="row row-cols-1 pt-2">
             <div class="col d-flex justify-content-end">
-                @if (Model.Listings.Count > 24)
-                {
-                    <nav aria-label="Listing navigation">
-                        <ul class="pagination">
-                            <li class="page-item"><a class="page-link  @(Model.PageNumber == 1 ? "disabled" : string.Empty)" href="@Model.PrevPage">Previous</a></li>
-                            <li class="page-item"><a class="page-link @(Model.PageNumber == Model.MaxPageNumber ? "disabled" : string.Empty)" href="@Model.NextPage">Next</a></li>
-                        </ul>
-                    </nav>
-                }
+                <nav aria-label="Listing navigation">
+                    <ul class="pagination">
+                        <li class="page-item"><a class="page-link  @(Model.PageNumber == 1 ? "disabled" : string.Empty)" href="@Model.PrevPage">Nākamā</a></li>
+                        @foreach (var pageNr in Enumerable.Range(1, 3))
+                        {
+                            var relPage = Math.Max(1, Model.PageNumber + (pageNr - 2) 
+                                                      + (Model.PageNumber == 1 ? 1 : 0));
+                            <li class="page-item">
+                                <a class="page-link @(Model.PageNumber == relPage ? "active" : string.Empty)" href="@Url.Page("/Index", new { listingPage = relPage, search = Model.SearchParam }) ">
+                                    @relPage
+                                </a>
+                            </li>    
+                        }
+                        <li class="page-item"><a class="page-link @(Model.PageNumber == Model.MaxPageNumber ? "disabled" : string.Empty)" href="@Model.NextPage">Iepriekšējā</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>

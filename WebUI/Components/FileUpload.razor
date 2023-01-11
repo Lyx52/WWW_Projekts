@@ -7,8 +7,8 @@
 @using SixLabors.ImageSharp.Formats.Jpeg
 @inject IEntityRepository<ListingImage> _imageRepository;
 <h4 class="d-flex justify-content-between align-items-center mb-3">
-    <span class="text-success">Augšupielādēt Attēlus</span>
-    <span id="imgUploadCount" class="badge bg-success rounded-pill">@Images.Count</span>
+    <span class="fs-3 text-primary">Augšupielādēt Attēlus</span>
+    <span id="imgUploadCount" class="badge bg-primary rounded-pill">@Images.Count</span>
 </h4>
 
 @if (_isUploading)
@@ -31,7 +31,7 @@ else
                     var index = Images.FindIndex(f => f.OriginalName == file.OriginalName);
                 }
                 
-                <button @onclick="@(e => RemoveImage(index))" class="btn btn-danger" type="button"><i class="bi bi-trash"></i></button>
+                <button @onclick="@(e => RemoveImage(index))" class="btn btn-secondary" type="button"><i class="bi bi-trash"></i></button>
             </li>
         }
     </ul>

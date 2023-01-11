@@ -53,16 +53,22 @@ else
         await _signInManager.SignOutAsync();    
     }
     <li class="nav-item d-none d-sm-block btn-group dropdown-hover">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <a class="nav-link dropdown-toggle text-primary" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle"></i>
         </a>
         <ul class="dropdown-menu dropdown-menu-end" data-bs-popper="static">
-            <li><a class="dropdown-item fw-bold text-black" asp-page="/Account/Login">Pieslēgties</a></li>   
-            <li><a class="dropdown-item fw-bold text-black" asp-page="/Account/Register">Reģistrēties</a></li>
+            <li><a class="dropdown-item text-primary" asp-page="/Account/Login">Pieslēgties</a></li>   
+            <li><a class="dropdown-item text-primary" asp-page="/Account/Register">Reģistrēties</a></li>
         </ul>
     </li>
     <li class="nav-item p-0 m-0 d-block d-sm-none">
-        <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Login">Pieslēgties</a>    
-        <a class="nav-link fw-bold text-black px-1" asp-page="/Account/Register">Reģistrēties</a>
+        <a class="nav-link text-primary px-1" asp-page="Account/Login">
+            <span aria-hidden="true"></span> Pieslēgties
+        </a>
+    </li>
+    <li class="nav-item p-0 m-0 d-block d-sm-none">
+        <a class="nav-link text-primary px-1" asp-page="Account/Register">
+            <span aria-hidden="true"></span> Reģistrēties
+        </a>
     </li>
 }
