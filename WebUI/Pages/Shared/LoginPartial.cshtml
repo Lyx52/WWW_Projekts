@@ -15,30 +15,35 @@
 @if (user is not null && _signInManager.IsSignedIn(User))
 {
     await Html.RenderPartialAsync("Shared/MessagesPartial", await _messageSender.GetAllMessages(user));
-    <li class="nav-item p-0 m-0 btn-group dropdown-hover">
-        <a class="nav-link dropdown-toggle text-black" href="#" id="loggedInDropdownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-list"></i>
+    <li id="mainMenuDropdown" class="nav-item p-0 m-0 btn-group">
+        <a class="nav-link dropdown-toggle text-primary" href="#" id="loggedInDropdownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-menu-down"></i>
         </a>
         <ul class="dropdown-menu dropdown-menu-end" data-bs-popper="static" aria-labelledby="loggedInDropdownMenu">
             <li>
-                <form asp-controller="Account" asp-action="SignOut" method="post" id="logoutForm">
-                    <button type="submit" class="dropdown-item fw-bold text-black">Atslēgties</button>
-                </form>
+                <a class="dropdown-item text-primary" asp-controller="Account" asp-action="SignOut">
+                    <span aria-hidden="true"></span> Atslēgties
+                </a>
             </li>
             <li>
-                <a class="dropdown-item fw-bold text-black" asp-page="/Account/Listings">
+                <a class="dropdown-item text-primary" asp-page="/Listings/Create">
+                    <span aria-hidden="true"></span> Izveidot sludinājumu
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item text-primary" asp-page="/Account/Listings">
                     <span aria-hidden="true"></span> Mani sludinājumi
                 </a>
             </li>
             <li>
-                <a class="dropdown-item fw-bold text-black" asp-page="/Account/Settings">
+                <a class="dropdown-item text-primary" asp-page="/Account/Settings">
                     <span aria-hidden="true"></span> Iestatījumi
                 </a>
             </li>
             @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdminLogin")).Succeeded)
             {
                 <li>
-                    <a class="dropdown-item fw-bold text-black" asp-page="/Admin/Dashboard">
+                    <a class="dropdown-item text-primary" asp-page="/Admin/Dashboard">
                         <span aria-hidden="true"></span> Admin dashboard
                     </a>
                 </li>
@@ -52,7 +57,7 @@ else
     {
         await _signInManager.SignOutAsync();    
     }
-    <li class="nav-item d-none d-sm-block btn-group dropdown-hover">
+    <li id="mainMenuDropdown" class="nav-item d-none d-sm-block btn-group dropdown-hover">
         <a class="nav-link dropdown-toggle text-primary" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle"></i>
         </a>

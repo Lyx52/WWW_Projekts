@@ -9,26 +9,26 @@
         @Html.AntiForgeryToken()
         <h1 class="fs-2 text-primary text-center">Izveidot jaunu kontu</h1>
         <hr/>
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="validation-message"></div>
         <div class="form-floating mb-2">
             <input asp-for="Input.Email" class="form-control" id="floatingEmail" placeholder="E-Pasts"/>
             <label asp-for="Input.Email" for="floatingEmail"></label>
-            <span asp-validation-for="Input.Email" class="text-danger"></span>
+            <span asp-validation-for="Input.Email" class="validation-message"></span>
         </div>
         <div class="form-floating mb-2">
             <input asp-for="Input.Password" class="form-control" id="floatingPassword" placeholder="Parole"/>
             <label asp-for="Input.Password" for="floatingPassword"></label>
-            <span asp-validation-for="Input.Password" class="text-danger"></span>
+            <span asp-validation-for="Input.Password" class="validation-message"></span>
         </div>
         <div class="form-floating mb-2">
             <input asp-for="Input.ConfirmPassword" class="form-control" id="floatingConfirmPassword" placeholder="Parole atkārtoti">
             <label asp-for="Input.ConfirmPassword" for="floatingConfirmPassword"></label>
-            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            <span asp-validation-for="Input.ConfirmPassword" class="validation-message"></span>
         </div>
         <div class="form-floating mb-1">
             <input asp-for="Input.Username" class="form-control" id="floatingUsername" placeholder="Lietotājvārds">
             <label asp-for="Input.Username" for="floatingUsername"></label>
-            <span asp-validation-for="Input.Username" class="text-danger"></span>
+            <span asp-validation-for="Input.Username" class="validation-message"></span>
         </div>
         <hr/>
         <button class="w-100 btn btn-lg btn-primary border-0" type="submit">Izveidot</button>

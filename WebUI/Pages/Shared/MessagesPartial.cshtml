@@ -13,9 +13,9 @@
     var currentUser = await _userManager.GetUserAsync(User);
     var messageProtector = _dataProtector.CreateProtector("MessageProvider");
 }
-<li class="nav-item p-0 m-0">
-    <div class="dropdown-center">
-        <a class="nav-link fw-bold text-black px-1 dropdown-toggle position-relative" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+<li class="nav-item p-0 m-0 me-3">
+    <div id="messageDropdown" class="dropdown">
+        <a class="nav-link fw-bold text-primary px-1 dropdown-toggle position-relative" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
             <i class="bi bi-chat-left">
                 @if (Model.Count(m => 
                     m.Unread && m.Recipient!.Id == currentUser!.Id) > 0)
@@ -26,7 +26,7 @@
                 }
             </i>
         </a>
-        <ul class="dropdown-menu dropdown-menu-end overflow-auto message-list">
+        <ul class="dropdown-menu dropdown-menu-end overflow-auto message-list" data-bs-popper="static">
             @if (Model.Count > 0)
             {
                 @foreach (var message in Model)

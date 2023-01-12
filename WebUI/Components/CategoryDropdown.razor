@@ -5,28 +5,28 @@
 <div class="dropdown">
   @if (_rootCategory is not null)
   {
-      <button @onclick="@(e => ShowMenu = !ShowMenu)" class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" aria-expanded="false">
+      <button @onclick="@(e => ShowMenu = !ShowMenu)" class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" aria-expanded="false">
         @(_selectedCategory is null ? "--Izvēlēties kategoriju--" : _selectedCategory.Name)
       </button>
       <ul class="dropdown-menu @(ShowMenu ? "show" : "hide")" aria-labelledby="dropdownMenuButton">
           @foreach (ListingCategory firstCat in _rootCategory.SubCategories)
           {
               <li>
-                  <a class="dropdown-item">
+                  <a class="dropdown-item text-primary">
                     @firstCat.Name &raquo;
                   </a>
                   <ul class="dropdown-menu dropdown-submenu">
                       @foreach (ListingCategory secondCat in firstCat.SubCategories)
                       {
                           <li>
-                              <a class="dropdown-item">
+                              <a class="dropdown-item text-primary">
                                 @secondCat.Name &raquo;
                               </a>
                               <ul class="dropdown-menu dropdown-submenu">
                                   @foreach (ListingCategory thirdCat in secondCat.SubCategories)
                                   {
                                       <li>
-                                          <a class="dropdown-item" @onclick="@(async (e) => await OnCategorySelected(thirdCat))">
+                                          <a class="dropdown-item text-primary" @onclick="@(async (e) => await OnCategorySelected(thirdCat))">
                                               <strong>@thirdCat.Name</strong>
                                           </a>
                                       </li>

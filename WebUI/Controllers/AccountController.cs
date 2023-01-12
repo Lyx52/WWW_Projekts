@@ -39,7 +39,7 @@ public class AccountController : Controller
         return RedirectToPage("/Index");
     }
 
-    [HttpPost]
+    [HttpGet]
     [AllowAnonymous]
     [Route("SignOut")]
     public async Task<IActionResult> SignOut()

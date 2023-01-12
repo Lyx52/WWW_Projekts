@@ -9,16 +9,16 @@
         @Html.AntiForgeryToken()
         <h1 class="fs-2 text-primary text-center">Pieslēgties</h1>
         <hr/>
-        <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
+        <div asp-validation-summary="ModelOnly" class="validation-message"></div>
         <div class="form-floating mb-2">
             <input asp-for="Input.EmailOrUsername" class="form-control" id="floatingEmailOrUsername" placeholder="E-Pasts vai Lietotājvārds"/>
             <label asp-for="Input.EmailOrUsername" for="floatingEmailOrUsername"></label>
-            <span asp-validation-for="Input.EmailOrUsername" class="text-danger"></span>
+            <span asp-validation-for="Input.EmailOrUsername" class="validation-message"></span>
         </div>
         <div class="form-floating mb-2">
             <input asp-for="Input.Password" class="form-control" id="floatingPassword" placeholder="Parole"/>
             <label asp-for="Input.Password" for="floatingPassword"></label>
-            <span asp-validation-for="Input.Password" class="text-danger"></span>
+            <span asp-validation-for="Input.Password" class="validation-message"></span>
         </div>
         <div class="d-flex justify-content-between">
             <div class="form-check form-switch">

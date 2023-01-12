@@ -7,7 +7,14 @@
     --main-fill-color: #e7e8eb !important;
     /* Validation messages */
     --main-validation-color: #f14c4c;
+    --bs-font-sans-serif: 'Roboto', sans-serif;
 }
+
+/** {*/
+/*    font-size:100%;*/
+/*    font:inherit;*/
+/*    font-family: "Roboto Light" !important;*/
+/*}*/
 .bg-filler {
   background: var(--main-fill-color) !important;
 }
@@ -30,9 +37,10 @@
     color: var(--main-secondary-color);
     opacity: 1;
 }
-.form-floating label {
+label {
     font-size: 16px;
     color: var(--main-primary-color) !important;
+    font-weight: 500;
 }
 .dropdown-toggle {
     opacity: 0.8;
@@ -64,6 +72,14 @@
     --bs-btn-active-border-color: var(--main-primary-color) !important;
     --bs-btn-disabled-bg: var(--main-primary-color) !important;
     --bs-btn-disabled-border-color: var(--main-primary-color) !important;
+}
+.btn-outline-primary {
+    --bs-btn-color: var(--main-primary-color) !important;
+    --bs-btn-border-color: var(--main-primary-color) !important;
+    --bs-btn-hover-bg: var(--main-primary-color) !important;
+    --bs-btn-hover-border-color: var(--main-primary-color) !important;
+    --bs-btn-active-bg: var(--main-primary-color) !important;
+    --bs-btn-active-border-color: var(--main-primary-color) !important;
 }
 .btn-secondary {
     --bs-btn-bg: var(--main-secondary-color) !important;
@@ -100,12 +116,22 @@
     transition-delay: 0.1s;
     transition: all 0.3s;
 }
+header {
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    opacity: 0.95;
+}
+#mainMenuDropdown ul {
+    width: 200px;
+}
 .dropdown-menu {
     --bs-dropdown-border-color: var(--main-primary-color) !important;
 }
-.dropdown-menu a{
+.dropdown-menu a {
     width: 90% !important;
     margin-left: 5% !important;
+    padding-left: 2.5% !important;
 }
 .dropdown-menu a:hover {
     border-radius: 0.5em !important;
@@ -129,17 +155,9 @@ hr {
 }
 
 /* Form validation styles */
-.form-submit-error {
-  color: var(--main-validation-color) !important;
-  font-weight: bold;
-  list-style: none;
-}
-.validation-message {
+.validation-message, .form-submit-error  {
     color: var(--main-validation-color) !important;
-}
-html {
-  font-size: 14px;
-  color: var(--main-primary-color) !important;
+    list-style: none;
 }
 .message-list {
   max-height: 50vh !important;

@@ -15,7 +15,7 @@
                 {
                     <div class="col">
                         <a asp-controller="Listings" asp-route-id="@listing.Encode()" class="text-decoration-none text-black">
-                            <div class="card shadow-sm d-flex flex-column align-items-stretch h-100">
+                            <div class="card shadow-sm d-flex flex-column align-items-stretch h-100 bg-filler">
                                 @{ await Html.RenderPartialAsync("Shared/ImageGalleryPartial", new ImageGalleryModel { Images = listing.Images, GalleryId = listing.Id }); }
                                 <div class="card-body album-listing-body d-flex flex-column justify-content-between">
                                     <h5 class="fs-3 card-title text-primary">@listing.Title</h5>

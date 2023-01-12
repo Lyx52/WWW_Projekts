@@ -37,16 +37,16 @@ else
     </ul>
 }
 <div class="card p-2 row">
-    <div class="input-group col-12">
+    <div class="input-group col-12 m-0 p-0 row">
         @if (_showFileInput)
         {
-            <InputFile class="form-control form-control-sm me-2 rounded" OnChange="@LoadFiles" />
+            <InputFile class="col-12 col-lg-8 form-control mb-2 mb-lg-0 form-control-sm me-0 me-lg-2 rounded" OnChange="@LoadFiles" />
         }
-        <button @onclick="UploadFileAsync" type="button" class="btn btn-secondary rounded lh-1">Augšupielādēt</button>
+        <button @onclick="UploadFileAsync" type="button" class="col-12 col-lg-4 btn btn-primary rounded lh-1 text-nowrap">Augšupielādēt</button>
     </div>
     <div class="col-12 pt-3">
-        <span class="text-danger">@ValidationMessage</span>
-        <p class="text-muted pt-1">
+        <span class="validation-message">@ValidationMessage</span>
+        <p class="text-secondary pt-1 px-1">
             Maksimālais failu izmērs @(MaxFileSize / (1024 * 1024))Mb<br/>
             Atbalstītie failu tipi: @string.Join(", ", AcceptedFileExtensions)
         </p>

@@ -67,5 +67,8 @@
     <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\LICENSE" />
     <_ContentIncludedByDefault Remove="wwwroot\lib\handlebars\handlebars.min.js" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\css\fonts" />
+  </ItemGroup>
 
 </Project>
