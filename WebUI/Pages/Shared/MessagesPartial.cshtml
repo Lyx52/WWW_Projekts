@@ -34,7 +34,7 @@
                     var index = Model.IndexOf(message);
                     <li class="messagebox dropdown-item p-3 bg-active-none">
                         <button class="btn d-flex w-100 justify-content-between bg-active-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMessage_@index" aria-expanded="false" aria-controls="collapseMessage_@index">
-                            <h6 class="mb-1">
+                            <h6 class="mb-1 text-secondary fs-6">
                                 @if (message.CreatedByKey == currentUser.Id)
                                 {
                                     // Nosūtītās ziņas
@@ -46,12 +46,12 @@
                                     <i class="bi @(message.Unread ? "bi-send-fill" : "bi-send")"></i><span class="@(message.Unread ? "fw-bold" : "fw-normal")"> No: </span>@message.CreatedBy!.UserName
                                 }
                             </h6>
-                            <small class="text-muted">@GetMessageRecievedDateTime(message.Created)</small>
+                            <small class="text-secondary">@GetMessageRecievedDateTime(message.Created)</small>
                         </button>
                         <div class="collapse" id="collapseMessage_@index">
                             <div class="card">
                                 <div class="card-body overflow-auto">
-                                    <p class="text-wrap">
+                                    <p class="text-wrap text-primary text-break">
                                         @PrettyfyMessage(message.Text)
                                     </p>
                                 </div>

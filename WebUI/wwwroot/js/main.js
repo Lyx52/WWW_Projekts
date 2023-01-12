@@ -40,6 +40,11 @@ $(function() {
     // Pievienojam dropdown hover
     addDropdownHover("#messageDropdown");
     addDropdownHover("#mainMenuDropdown");
+    $('#messageDropdown .dropdown-menu').mouseleave(function() {
+        // Aizveram visas ziņas
+        $('[id^=collapseMessage]').removeClass('show');
+    });
+    
 })
 
 const openMessageModal = function (pdata) {

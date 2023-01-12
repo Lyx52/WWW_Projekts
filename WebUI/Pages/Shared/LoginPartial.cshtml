@@ -35,11 +35,6 @@
                     <span aria-hidden="true"></span> Mani sludinājumi
                 </a>
             </li>
-            <li>
-                <a class="dropdown-item text-primary" asp-page="/Account/Settings">
-                    <span aria-hidden="true"></span> Iestatījumi
-                </a>
-            </li>
             @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdminLogin")).Succeeded)
             {
                 <li>

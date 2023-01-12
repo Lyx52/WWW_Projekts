@@ -18,25 +18,26 @@ public class AccountController : Controller
         _userManager = userManager;
         _signInManager = signInManager;
     }
-    
+
     [HttpGet]
     [AllowAnonymous]
     [Route("ConfirmEmail")]
     public async Task<IActionResult> ConfirmEmail(string userId, string code)
     {
-        // TODO: Fix email confirmation...
         // Pārbaudam vai pareizi parametri atsūtīti un vai lietotājs vispār eksistē
         if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
         {
-            return View("Error/Status400");
+            return StatusCode(400);
         }
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null || user.EmailConfirmed)
         {
-            return View("Error/Status400");
+            return StatusCode(400);
         }
         var result = await _userManager.ConfirmEmailAsync(user, code);
-        return RedirectToPage("/Index");
+        if (result.Succeeded)
+            return RedirectToPage("/Index");
+        return StatusCode(400);
     }
 
     [HttpGet]

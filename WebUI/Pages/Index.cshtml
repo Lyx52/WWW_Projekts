@@ -44,7 +44,14 @@
                         <li class="page-item"><a class="page-link  @(Model.PageNumber == 1 ? "disabled" : string.Empty)" href="@Model.PrevPage">Nākamā</a></li>
                         @foreach (var pageNr in new [] { -1, 0, 1 })
                         {
-                            var relPage = Math.Max(1, Model.PageNumber + pageNr + (Model.PageNumber == 1 ? 1 : 0));
+
+                            var relPage = Model.PageNumber + pageNr;
+                            
+                            // Ja esam pirmajā pieskaitām visām 1
+                            relPage += Model.PageNumber == 1 ? 1 : 0;
+                            
+                            // Ja atrodamies pēdējajā lapā, atņemt visām lpp -1
+                            relPage += Model.PageNumber == Model.MaxPageNumber ? -1 : 0;
                             
                             <li class="page-item">
                                 <a class="page-link @(Model.PageNumber == relPage ? "active" : string.Empty)" href="@Url.Page("/Index", new { listingPage = relPage, search = Model.SearchParam }) ">
@@ -64,7 +71,7 @@
     {
         if (!dateTime.HasValue)
             return "&nbsp;";    
-        var delta = DateTime.UtcNow - dateTime.Value;
+        var delta = DateTime.Now - dateTime.Value;
         if (delta.TotalSeconds <= 60)
         {
             return $"{(int)delta.TotalSeconds} secs";    

@@ -23,13 +23,13 @@
             <div class="col-12 col-lg-4">
                 <div class="container-fluid px-2">
                     <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-1">
+                        <ol class="breadcrumb mb-1 text-secondary">
                             <li class="breadcrumb-item">@Model.Listing.Category!.ParentCategory!.ParentCategory!.Name</li>
                             <li class="breadcrumb-item">@Model.Listing.Category!.ParentCategory!.Name</li>
                             <li class="breadcrumb-item active" aria-current="page">@Model.Listing.Category.Name</li>
                         </ol>
                     </nav>
-                    <h2 class="pb-2 border-bottom">@Model.Listing.Title</h2>
+                    <h2 class="pb-2 border-bottom text-break">@Model.Listing.Title</h2>
                     <div class="row row-cols-1 g-1">
                         <div class="col d-flex align-items-start">
                             <div class="w-100">

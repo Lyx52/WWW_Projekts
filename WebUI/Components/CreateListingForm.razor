@@ -93,21 +93,21 @@
             if (listing is null)
                 NavigationManager.NavigateTo("/Index");
             IsEditListing = true;
-            _input.Id = listing!.Id;
-            _input.Category = listing.Category;
-            _input.Title = listing.Title;
-            _input.Images = listing.Images;
-            _input.Price = listing.Price;
-            _input.Description = listing.Description;
+            _input.Model = listing!;
         }
         _editContext = new EditContext(_input);
         StateHasChanged();
     }
     private async Task CreateOrSaveListing(EditContext context)
     {
+        if (IsEditListing)
+        {
+            await _listingRepository.Update(_input.Model);
+            NavigationManager.NavigateTo("/Account/Listings", true, true);
+            return;
+        }
         var listing = new Listing()
         {
-            Id = _input.Id ?? 0,
             Description = _input.Description,
             Title = _input.Title,
             Images = _input.Images,
@@ -117,35 +117,44 @@
             CategoryId = _input.Category!.Id
         };
         listing.Images!.ForEach(i => i.Listing = listing);
-        if (IsEditListing)
-        {
-            await _listingRepository.Update(listing);
-        }
-        else
-        {
-            await _listingRepository.Add(listing);    
-        }
+        await _listingRepository.Add(listing);
         NavigationManager.NavigateTo($"/Listings/Index/{listing.Encode()}", true, true);
     }
     private class CreateListingModel
     {
-        public int? Id { get; set; }
+        public Listing Model { get; set; } = new();
         [Required(ErrorMessage = "Virsraksts ir nepieciešams")]
         [MinLength(8, ErrorMessage = "Virsraksts nav pietiekami garš")]
         [DisplayName("Virsraksts")]
-        public string Title { get; set; } = string.Empty;
+        public string Title
+        {
+            get => Model.Title;
+            set => Model.Title = value;
+        }
 
         [Required(ErrorMessage = "Apraksts ir nepieciešams")]
         [MinLength(20, ErrorMessage = "Apraksts nav pietiekami garš")]
         [DisplayName("Apraksts")]
-        public string Description { get; set; } = string.Empty;
+        public string Description
+        {
+            get => Model.Description;
+            set => Model.Description = value;
+        }
 
         [Required(ErrorMessage = "Cena ir nepieciešama")]
         [DisplayFormat(DataFormatString = "2dp")]
-        public float Price { get; set; } = 0;
+        public float Price
+        {
+            get => Model.Price;
+            set => Model.Price = value;
+        }
         
         [Required(ErrorMessage = "Kategorija ir nepieciešama!")]
-        public ListingCategory? Category { get; set; } = null!;
+        public ListingCategory? Category
+        {
+            get => Model.Category;
+            set => Model.Category = value;
+        }
 
         public string PriceInput
         {
@@ -153,6 +162,10 @@
             set => Price = float.TryParse(value.Replace('.',','), NumberStyles.Currency, new CultureInfo("lv-LV"), out float output) ? (float)Math.Round(output, 2) : 0f;
         }
         [MinLength(1, ErrorMessage = "Nepieciešams vismaz viens attēls")]
-        public List<ListingImage>? Images { get; set; } = new List<ListingImage>();
+        public List<ListingImage>? Images
+        {
+            get => Model.Images;
+            set => Model.Images = value;
+        }
     }
 }

@@ -66,6 +66,11 @@
     <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map" />
     <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\LICENSE" />
     <_ContentIncludedByDefault Remove="wwwroot\lib\handlebars\handlebars.min.js" />
+    <_ContentIncludedByDefault Remove="Pages\Shared\Error\400.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Shared\Error\404.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Shared\Error\500.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Error\Status400.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Error\Status500.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\css\fonts" />

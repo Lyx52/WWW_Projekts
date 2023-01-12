@@ -1,0 +1,26 @@
+﻿@page
+@{
+    ViewData["Title"] = "Bad request";
+}
+<div class="row">
+    <div class="col-12 vstack gap-3">
+        <h1 class="status-code rotate-animation">@Response.StatusCode!</h1>
+        <h1 class="status-code fs-1">
+            @switch (Response.StatusCode)
+            {
+                case 404: 
+                    @Html.Raw("Lapa nēeksistē!");
+                break;
+                case 400: 
+                    @Html.Raw("Nederīgs pieprasījums!");
+                break;
+                case 500:
+                    @Html.Raw("Veicot pieprasījumu radās problēma ar serveri!");
+                break;
+                default:
+                    @Html.Raw("Radās problēma veicot pieprasījumu!");
+                break;
+            }
+        </h1>
+    </div>
+</div>

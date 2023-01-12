@@ -56,14 +56,7 @@ namespace WebProject
                 #endif    
             }, ServiceLifetime.Transient);
 
-            services.AddMvc()
-            .AddRazorPagesOptions(options =>
-            {
-                // TODO: Finish implementing error pages
-                options.Conventions.AddPageRoute("/Page400", "/Shared/Error/Status400");
-                options.Conventions.AddPageRoute("/Page404","/Shared/Error/Status404");
-                options.Conventions.AddPageRoute("/Page500","/Shared/Error/Status500");
-            });
+            services.AddMvc();
             services.AddServerSideBlazor().AddCircuitOptions(x => x.DetailedErrors = true);
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -132,6 +125,9 @@ namespace WebProject
             {
                 app.UseExceptionHandler("/Error");
             }
+
+            app.UseStatusCodePagesWithReExecute("/Status");
+            
             // Add standard css/js/lib static files
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions
@@ -149,6 +145,7 @@ namespace WebProject
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCookiePolicy();
+            
             app.UseEndpoints(options =>
             {
                 options.MapBlazorHub();
