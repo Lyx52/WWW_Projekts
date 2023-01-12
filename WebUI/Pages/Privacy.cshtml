@@ -7,52 +7,70 @@
 <div class="py-3 h-100">
     <div class="row g-5">
         <div class="col-sm-12">
-            <h1 class="mb-3">@ViewData["Title"]</h1>
+            <h1 class="mb-3 text-primary fs-3">@ViewData["Title"]</h1>
             <hr class="my-4">
             <div class="row">
-                
-                <div class="col-8 row">
-                    <div class="accordion" id="accordionExample">
-                      <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingOne">
-                          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Informācija kuru mēs glabājam
-                          </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                          <div class="accordion-body">
-                            Kad jūs izveidojat lietotāja kontu mūsu platformā, jūs mums dodat savu personālo informāciju kā piemēram e-pastu, tālāk sazinoties ar trešās puses KMC (Know Your Customer) starpnieku mēs iegūstam jūsu vārda, uzvārda un personas koda SHA-1 sajauktu kontrolvērtību, mēs šo kontrolvērtību saglabājam lai izvairītos no duplikātu kontiem.
-                          </div>
+                <div class="col-12 col-xl-8 row">
+                    <div class="col-4">
+                        <div id="privacy-list" class="list-group">
+                            <a class="list-group-item text-primary list-group-item-action" href="#list-item-1">Privātuma politika</a>
+                            <a class="list-group-item text-primary list-group-item-action" href="#list-item-2">Ievāktā informācija</a>
+                            <a class="list-group-item text-primary list-group-item-action" href="#list-item-3">Informācijas pielietojums</a>
+                            <a class="list-group-item text-primary list-group-item-action" href="#list-item-4">Drošība</a>
+                            <a class="list-group-item text-primary list-group-item-action" href="#list-item-5">Informācijas apmaiņa</a>
+                            <a class="list-group-item text-primary list-group-item-action" href="#list-item-6">Izmaiņas politikā</a>
                         </div>
-                      </div>
-                      <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingTwo">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Accordion Item #2
-                          </button>
-                        </h2>
-                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                          <div class="accordion-body">
-                            <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                          </div>
+                    </div>
+                    <div class="col-8">
+                        <div data-bs-spy="scroll" data-bs-target="#privacy-list" data-bs-smooth-scroll="true" class="scrollspy-privacy" tabindex="0">
+                            <h4 id="list-item-1" class="text-primary fs-3 mt-3">Privātuma politika</h4>
+                            <p>
+                                Mūsu sludinājumu mājaslapa, IBUY Sludinājumi, ir apņēmies aizsargāt mūsu lietotāju privātumu.
+                                Mēs ievācam noteiktu personas informāciju no saviem lietotājiem, lai sniegtu viņiem informāciju
+                                labāko iespējamo pieredzi mūsu vietnē.
+                            </p>
+                            <h4 id="list-item-2" class="text-primary fs-3 mt-3">Ievāktā informācija</h4>
+                            <p>
+                                Mēs varam vākt no saviem lietotājiem šāda veida personas informāciju:
+                                <ul>
+                                    <li>Vārds</li>
+                                    <li>Kontaktinformācija (piemēram, e-pasta adrese, tālruņa numurs)</li>
+                                    <li>Finanšu informācija (piemēram, kredītkartes numurs, bankas konta informācija)</li>
+                                    <li>Identitātes verifikācijas informācija (piemēram, valsts izdots ID, pase, autovadītāja apliecība)</li>
+                                </ul>
+                            </p>
+                            <h4 id="list-item-3" class="text-primary fs-3 mt-3">Informācijas pielietojums</h4>
+                            <p>
+                                Mēs izmantojam jūsu informāciju, lai:
+                                <ul>
+                                    <li>Lai verificētu mūsu lietotāju identitāti</li>
+                                    <li>Spētu dot atbalstu krāpniecības upuriem</li>
+                                    <li>Sazinieties ar lietotājiem par viņu sludinājumiem un kontu</li>
+                                </ul>
+                                Mēs varam arī izmantot šo informāciju, lai uzlabotu mūsu vietni un pielāgotu to mūsu lietotāju vajadzībām.
+                            </p>
+                            <h4 id="list-item-4" class="text-primary fs-3 mt-3">Drošība</h4>
+                            <p>
+                                Mēs ļoti nopietni uztveram personas informācijas drošību un esam ieviesuši atbilstošus tehniskos un organizatoriskos 
+                                pasākumus, lai aizsargātu to no nesankcionētas piekļuves, ļaunprātīgas izmantošanas, izpaušanas,
+                                vai datu iznīcināšanas. Mēs arī regulāri pārskatām savu drošības praksi, lai nodrošinātu, ka tā vienmēr ir aktuāla.
+                            </p>
+                            <h4 id="list-item-5" class="text-primary fs-3 mt-3">Informācijas apmaiņa</h4>
+                            <p>
+                                Mēs neizpaudīsim personas informāciju ar trešas puses organizācijām, bez nepārprotamas piekrišanas no
+                                lietotājiem, izņemot gadījumus, kad to pieprasa likums vai lai aizsargātu SIA IBuy tiesības.
+                            </p>
+                            <h4 id="list-item-6" class="text-primary fs-3 mt-3">Izmaiņas politikā</h4>
+                            <p>
+                                Mēs paturam tiesību jebkurā laikā atjaunināt šo privātuma politiku un mēs informēsim lietotājus par
+                                jebkurām izmaiņām, publicējot atjaunināto politiku mūsu vietnē un nosūtot izmaiņas reģistrētiem
+                                lietotājiem.
+                            </p>
                         </div>
-                      </div>
-                      <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingThree">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Accordion Item #3
-                          </button>
-                        </h2>
-                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                          <div class="accordion-body">
-                            <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                          </div>
-                        </div>
-                      </div>
                     </div>
                 </div>
-                <div class="col-4">
-                    <img class="img-fluid rounded float-start" src="privacy.jpg" alt="Privacy policy"/>
+                <div class="col-4 d-none d-xl-block">
+                    <img class="img-fluid rounded float-start" src="~/staticimg/privacy.jpg" alt="Privacy policy"/>
                 </div>
             </div>    
         </div>

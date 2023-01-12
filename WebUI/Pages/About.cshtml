@@ -1,2 +1,74 @@
 @page
-<h1>About us</h1>
+@{
+    ViewData["Title"] = "Par mums";
+}
+
+<div class="h-100">
+    <div class="row g-5">
+        <div class="col-sm-12">
+            <h1 class="mb-3 text-primary text-center fs-1">@ViewData["Title"]</h1>
+            <hr class="my-4">
+            <div id="carouselAboutUsInterval" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active" data-bs-interval="10000">
+                        <div class="card container-fluid my-5 shadow-lg border-0 card-carousel rounded rounded-3">
+                            <div class="row pb-0 pe-lg-0 pt-lg-5 align-items-center">
+                                <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+                                    <h1 class="display-4 fw-bold lh-1">Kas mēs esam?</h1>
+                                    <p class="lead">
+                                        Mēs esam sludinājumu intuitīva mājaslapa, kura piedāvā plašu sludinājumu klāstu, sākot no īpašumiem un transportlīdzekļiem,
+                                        līdz darba piedāvājumiem un izklaides iespējām.
+                                    </p>
+                                </div>
+                                <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden img-crop-container">
+                                    <img class="mx-auto rounded border-1 rounded-3" src="~/staticimg/products.jpg" alt="" width="720">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item" data-bs-interval="10000">
+                        <div class="card container-fluid my-5 shadow-lg border-0 card-carousel rounded rounded-3">
+                            <div class="row pb-0 pe-lg-0 pt-lg-5 align-items-center">
+                                <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+                                    <h1 class="display-4 fw-bold lh-1">Vienmēr attīstamies</h1>
+                                    <p class="lead">
+                                        Mēs esam arī aizsākuši sadarbību ar dažādiem partneriem, lai nodrošinātu jums
+                                        plašāku sludinājumu klāstu un iespēju atrast to, ko vēlaties ātrāk un vieglāk.
+                                    </p>
+                                </div>
+                                <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden img-crop-container">
+                                    <img class="mx-auto rounded border-1 rounded-3" src="~/staticimg/collaboration.jpg" alt="" width="720">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item" data-bs-interval="10000">
+                        <div class="card container-fluid my-5 shadow-lg border-0 card-carousel rounded rounded-3">
+                            <div class="row pb-0 pe-lg-0 pt-lg-5 align-items-center">
+                                <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+                                    <h1 class="display-4 fw-bold lh-1">Vienmēr sniedzam atbalstu</h1>
+                                    <p class="lead">
+                                        Mēs esam gatavi atbildēt uz jebkādiem jautājumiem un ieteikt jums vislabāko risinājumu,
+                                        ja jums ir kādi jautājumi par mūsu pakalpojumiem vai sludinājumiem.
+                                        Lūdzu, sazinieties ar mums.
+                                    </p>
+                                </div>
+                                <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden img-crop-container">
+                                    <img class="mx-auto rounded border-1 rounded-3" src="~/staticimg/support.jpg" alt="" width="720">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#carouselAboutUsInterval" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#carouselAboutUsInterval" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                  </button>
+                </div>
+        </div>
+    </div>
+</div>
