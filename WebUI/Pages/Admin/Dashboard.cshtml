@@ -1,76 +1,261 @@
 ﻿@page
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.DataProtection
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IDataProtectionProvider _dataProtector
 @attribute [Authorize(Roles="Admin")]
 @attribute [ValidateAntiForgeryToken]
 @model WebProject.Pages.Admin.Dashboard
+@{
+    var messageProtector = _dataProtector.CreateProtector("MessageProvider");
+}
 <div class="py-3 h-100">
-    <div class="row g-5">
-        <div class="col-sm-12">
-            <h4 class="mb-3">Izveidot kategoriju</h4>
-            <hr class="my-4">
-            <form method="post" asp-page-handler="CreateCategory">
-                @Html.AntiForgeryToken()
-                <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
-                <div class="row g-3">
-                    <div class="col-12 input-group">
-                        @Html.DropDownListFor(m => m.CategoryCreateInput.ParentId, new SelectList(Model.Categories, "Id", "Name"), "--Virskategorija--", new { @class = "form-select" })
-                        <div class="form-floating">
-                            <input asp-for="CategoryCreateInput.Name" type="text" class="form-control" id="floatingCategoryInput" placeholder="Kategorijas nosaukums">
-                            <label for="floatingCategoryInput">Kategorijas nosaukums</label>
-                        </div>
-                        <button class="btn btn-outline-secondary" type="submit">Izveidot</button>
-                    </div>
-                    <div class="col-6">
-                        <span asp-validation-for="CategoryCreateInput.ParentId" class="text-danger"></span>
-                    </div>
-                    <div class="col-6">
-                        <span asp-validation-for="CategoryCreateInput.Name" class="text-danger"></span>
-                    </div>
-                </div>
-            </form>
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link text-primary @(Model.CurrentTab == "nav-category" ? "active" : string.Empty)" id="nav-category-tab" data-bs-toggle="tab" data-bs-target="#nav-category" type="button" role="tab" aria-controls="nav-category" aria-selected="@(Model.CurrentTab == "nav-category" ? "active" : "false")">Kategorijas</button>
+            <button class="nav-link text-primary @(Model.CurrentTab == "nav-users" ? "active" : string.Empty)" id="nav-users-tab" data-bs-toggle="tab" data-bs-target="#nav-users" type="button" role="tab" aria-controls="nav-users" aria-selected="@(Model.CurrentTab == "nav-users" ? "active" : "false")">Lietotāju konti</button>
+            <button class="nav-link text-primary @(Model.CurrentTab == "nav-listings" ? "active" : string.Empty)" id="nav-listings-tab" data-bs-toggle="tab" data-bs-target="#nav-listings" type="button" role="tab" aria-controls="nav-listings" aria-selected="@(Model.CurrentTab == "nav-listings" ? "active" : "false")">Sludinājumi</button>
         </div>
-        <div class="col-sm-12">
-            <h4 class="mb-3">Pārsaukt kategoriju</h4>
-            <hr class="my-4">
-            <form method="post" asp-page-handler="RenameCategory">
-                @Html.AntiForgeryToken()
-                <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
-                <div class="row g-3">
-                    <div class="col-12 input-group">
-                        @Html.DropDownListFor(m => m.CategoryRenameInput.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "--Virskategorija--", new { @class = "form-select" })
-                        <div class="form-floating">
-                            <input asp-for="CategoryRenameInput.Name" type="text" class="form-control" id="floatingCategoryToRenameInput" placeholder="Kategorijas nosaukums">
-                            <label for="floatingCategoryToRenameInput">Kategorijas nosaukums</label>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show @(Model.CurrentTab == "nav-category" ? "active" : string.Empty)" id="nav-category" role="tabpanel" aria-labelledby="nav-category-tab" tabindex="0">
+            <div class="row g-5">
+                <div class="col-sm-12">
+                    <h4 class="my-3 text-primary fs-4">Izveidot kategoriju</h4>
+                    <hr class="my-3">
+                    <form method="post" asp-page-handler="CreateCategory">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
+                        <div class="row g-3">
+                            <div class="col-12 input-group">
+                                @Html.DropDownListFor(m => m.CategoryCreateInput.ParentId, new SelectList(Model.Categories, "Id", "Name"), "--Virskategorija--", new { @class = "form-select" })
+                                <div class="form-floating">
+                                    <input asp-for="CategoryCreateInput.Name" type="text" class="form-control" id="floatingCategoryInput" placeholder="Kategorijas nosaukums">
+                                    <input asp-for="CurrentTab" value="nav-category" type="hidden"/>
+                                    <label for="floatingCategoryInput">Kategorijas nosaukums</label>
+                                </div>
+                                <button class="btn btn-outline-secondary" type="submit">Izveidot</button>
+                            </div>
+                            <div class="col-6">
+                                <span asp-validation-for="CategoryCreateInput.ParentId" class="validation-message"></span>
+                            </div>
+                            <div class="col-6">
+                                <span asp-validation-for="CategoryCreateInput.Name" class="validation-message"></span>
+                            </div>
                         </div>
-                        <button class="btn btn-outline-secondary" type="submit">Pārsaukt</button>
-                    </div>
-                    <div class="col-6">
-                        <span asp-validation-for="CategoryRenameInput.CategoryId" class="text-danger"></span>
-                    </div>
-                    <div class="col-6">
-                        <span asp-validation-for="CategoryRenameInput.Name" class="text-danger"></span>
-                    </div>
+                    </form>
                 </div>
-            </form>
+                <div class="col-sm-12">
+                    <h4 class="my-3 text-primary fs-4">Pārsaukt kategoriju</h4>
+                    <hr class="my-3">
+                    <form method="post" asp-page-handler="RenameCategory">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
+                        <div class="row g-3">
+                            <div class="col-12 input-group">
+                                @Html.DropDownListFor(m => m.CategoryRenameInput.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "--Virskategorija--", new { @class = "form-select" })
+                                <div class="form-floating">
+                                    <input asp-for="CategoryRenameInput.Name" type="text" class="form-control" id="floatingCategoryToRenameInput" placeholder="Kategorijas nosaukums">
+                                    <input asp-for="CurrentTab" value="nav-category" type="hidden"/>
+                                    <label for="floatingCategoryToRenameInput">Kategorijas nosaukums</label>
+                                </div>
+                                <button class="btn btn-outline-secondary" type="submit">Pārsaukt</button>
+                            </div>
+                            <div class="col-6">
+                                <span asp-validation-for="CategoryRenameInput.CategoryId" class="validation-message"></span>
+                            </div>
+                            <div class="col-6">
+                                <span asp-validation-for="CategoryRenameInput.Name" class="validation-message"></span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-12">
+                    <h4 class="my-3 text-primary fs-4">Dzēst kategoriju</h4>
+                    <hr class="my-3">
+                    <form method="post" asp-page-handler="RemoveCategory">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
+                        <div class="row g-3">
+                            <div class="col-12 input-group">
+                                @Html.DropDownListFor(m => m.CategoryRemoveInput.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "--Kategorija--", new { @class = "form-select" })
+                                <input asp-for="CurrentTab" value="nav-category" type="hidden"/>
+                                <button class="btn btn-danger" type="submit">Dzēst <i class="bi bi-trash"></i></button>
+                            </div>
+                            <div class="col-12">
+                                <span asp-validation-for="CategoryRemoveInput.CategoryId" class="validation-message"></span>
+                                <small class="text-danger"><i>Dzēšot kategoriju izdzēšas apakškategorijas!</i></small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="col-sm-12">
-            <h4 class="mb-3">Dzēst kategoriju</h4>
-            <hr class="my-4">
-            <form method="post" asp-page-handler="RemoveCategory">
-                @Html.AntiForgeryToken()
-                <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
-                <div class="row g-3">
-                    <div class="col-12 input-group">
-                        @Html.DropDownListFor(m => m.CategoryRemoveInput.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "--Kategorija--", new { @class = "form-select" })
-                        <button class="btn btn-danger" type="submit">Dzēst <i class="bi bi-trash"></i></button>
-                    </div>
-                    <div class="col-12">
-                        <span asp-validation-for="CategoryRemoveInput.CategoryId" class="text-danger"></span>
-                        <small class="text-danger"><i>Dzēšot kategoriju izdzēšas apakškategorijas!</i></small>
+        <div class="tab-pane fade show @(Model.CurrentTab == "nav-users" ? "active" : string.Empty)" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab" tabindex="0">
+            <div class="row g-5">
+                <div class="col-sm-12">
+                    <h4 class="my-3 text-primary fs-4">Meklēt lietotāju (Pēc lietotājvārda vai e-pasta)</h4>
+                    <hr class="my-3">
+                    <form method="post" asp-page-handler="SearchByKeyword">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
+                        <div class="row g-3">
+                            <div class="col-12 input-group">
+                                <div class="form-floating">
+                                    <input asp-for="SearchByKeywordInput.SearchKeyword" type="text" class="form-control" id="floatingUserKeyword" placeholder="Lietotāja vārds vai e-pasts">
+                                    <input asp-for="CurrentTab" value="nav-users" type="hidden"/>
+                                    <input asp-for="SearchByKeywordInput.SearchType" value="@Dashboard.SearchType.Users" type="hidden"/>
+                                    <label for="floatingUserKeyword">Lietotāja vārds vai e-pasts</label>
+                                </div>
+                                <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+                            </div>
+                            <div class="col-12">
+                                <span asp-validation-for="SearchByKeywordInput.SearchKeyword" class="validation-message"></span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            @if (Model.FoundUsers.Count > 0)
+            {
+                <div class="row g-5">
+                    <div class="col-sm-12">
+                        <div id="dashboard-table" class="overflow-table">
+                            <table class="table w-100">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Lietotājvārds</th>
+                                    <th scope="col">E-pasts</th>
+                                    <th scope="col">Bloķēts</th>
+                                    <th scope="col" class="w-25">&nbsp;</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                @foreach (var user in Model.FoundUsers)
+                                {
+                                    var index = Model.FoundUsers.IndexOf(user) + 1;
+                                    var blocked = user.LockoutEnd > DateTime.UtcNow;
+                                    <tr>
+                                        <th scope="row">@index</th>
+                                        <td>@user.UserName</td>
+                                        <td>@user.Email</td>
+                                        <td>@Html.Raw(blocked ? "bloķēts" : "aktīvs")</td>
+                                        <td>
+                                            <div class="d-flex justify-content-end hstack gap-2">
+                                                <form asp-page-handler="ChangeUserBlock">
+                                                    @Html.AntiForgeryToken()
+                                                    <input asp-for="SubmissionUserId" value="@user.Id" type="hidden"/>
+                                                    <input asp-for="CurrentTab" value="nav-users" type="hidden"/>
+                                                    <input asp-for="SearchByKeywordInput.SearchKeyword" value="@Model.SearchByKeywordInput.SearchKeyword" type="hidden"/>
+                                                    <input asp-for="SearchByKeywordInput.SearchType" value="@Dashboard.SearchType.Users" type="hidden" />
+                                                    <button id="btnUserChangeBlockState" type="submit" class="btn @(blocked ? "btn-outline-success" : "btn-outline-danger")">@Html.Raw(blocked ? "Atbloķēt" : "Bloķēt")</button>
+                                                </form>
+                                                <div class="vr"></div>
+                                                <form asp-page-handler="SearchByKeyword">
+                                                    @Html.AntiForgeryToken()
+                                                    <input asp-for="CurrentTab" value="nav-listings" type="hidden"/>
+                                                    <input asp-for="SearchByKeywordInput.SearchKeyword" value="@user.Email" type="hidden"/>
+                                                    <input asp-for="SearchByKeywordInput.SearchType" value="@Dashboard.SearchType.Listings" type="hidden"/>
+                                                    <button id="btnUserListings" type="submit" class="btn btn-outline-secondary"><i class="bi bi-search"></i> Sludinājumi</button>
+                                                </form>
+                                                <div class="vr"></div>
+                                                @{
+                                                    var pdata = messageProtector.Protect($"{user.Id}|{Request.Path}");
+                                                    <button onclick="openMessageModal('@pdata')" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#messageModal">
+                                                        Sūtīt ziņu <i class="bi bi-chat-dots"></i>
+                                                    </button>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </form>
+            }
+        </div>
+        <div class="tab-pane fade show @(Model.CurrentTab == "nav-listings" ? "active" : string.Empty)" id="nav-listings" role="tabpanel" aria-labelledby="nav-listings-tab" tabindex="0">
+              <div class="row g-5">
+                    <div class="col-sm-12">
+                        <h4 class="my-3 text-primary fs-4">Meklēt sludinājumu (Pēc virsraksta vai lietotājvārda)</h4>
+                        <hr class="my-3">
+                        <form method="post" asp-page-handler="SearchByKeyword">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="ModelOnly" class="form-submit-error"></div>
+                            <div class="row g-3">
+                                <div class="col-12 input-group">
+                                    <div class="form-floating">
+                                        <input asp-for="SearchByKeywordInput.SearchKeyword" type="text" class="form-control" id="floatingListingKeyword" placeholder="Sludinājuma virsraksts">
+                                        <input asp-for="CurrentTab" value="nav-listings" type="hidden"/>
+                                        <input asp-for="SearchByKeywordInput.SearchType" value="@Dashboard.SearchType.Listings" type="hidden" />
+                                        <label for="floatingListingKeyword">Sludinājuma virsraksts</label>
+                                    </div>
+                                    <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+                                </div>
+                                <div class="col-12">
+                                    <span asp-validation-for="SearchByKeywordInput.SearchKeyword" class="validation-message"></span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                @if (Model.FoundListings.Count > 0)
+                {
+                    <div class="row g-5">
+                        <div class="col-sm-12">
+                            <div id="dashboard-table" class="overflow-table">
+                                <table class="table w-100">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Lietotājs</th>
+                                        <th scope="col">Virsraksts</th>
+                                        <th scope="col">Kategorija</th>
+                                        <th scope="col">Cena</th>
+                                        <th scope="col" class="w-25">&nbsp;</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+    
+                                    @foreach (var listing in Model.FoundListings)
+                                    {
+                                        var index = Model.FoundListings.IndexOf(listing) + 1;
+                                        <tr>
+                                            <th scope="row">@index</th>
+                                            <td>@listing.CreatedBy!.UserName</td>
+                                            <td>@listing.Title</td>
+                                            <td>@listing.Category!.Name</td>
+                                            <td>@listing.DisplayPrice</td>
+                                            <td>
+                                                <div class="d-flex justify-content-end hstack gap-2">
+                                                    <form asp-page-handler="RemoveListing">
+                                                        @Html.AntiForgeryToken()
+                                                        <input asp-for="RemoveListingId" value="@listing.Id" type="hidden"/>
+                                                        <input asp-for="CurrentTab" value="nav-listings" type="hidden"/>
+                                                        <input asp-for="SearchByKeywordInput.SearchKeyword" value="@Model.SearchByKeywordInput.SearchKeyword" type="hidden"/>
+                                                        <button id="btnUserChangeBlockState" type="submit" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i> Dzēst</button>
+                                                    </form>
+                                                    <div class="vr"></div>
+                                                    @{
+                                                        var pdata = messageProtector.Protect($"{listing.CreatedBy!.Id}|{Request.Path}");
+                                                        <button onclick="openMessageModal('@pdata')" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#messageModal">
+                                                            Sūtīt ziņu <i class="bi bi-chat-dots"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
         </div>
     </div>
 </div>

@@ -23,26 +23,29 @@
 .card {
     --bs-card-border-color: var(--main-primary-color);
 }
-.listing-table {
+.overflow-table {
     overflow-y: auto;
     height: 75vh;    
 }
-.listing-table thead {
+#dashboard-table {
+    height: 50vh;
+}
+.overflow-table thead {
     position: sticky;
     top: 0;
     color: var(--main-primary-color);
     background: var(--main-fill-color);
     opacity: 0.9;    
 }
-.listing-table tr {
+.overflow-table tr {
     color: var(--main-primary-color);
     border-bottom: var(--main-secondary-color);
 }
-.listing-table tr:hover {
+.overflow-table tr:hover {
     background: var(--main-fill-color);
     color: var(--main-secondary-color);
 }
-.listing-table tr:nth-of-type(odd) {
+.overflow-table tr:nth-of-type(even) {
     background: var(--main-fill-color);
 }
 /*thead*/

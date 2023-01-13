@@ -178,7 +178,8 @@ namespace WebProject
                 await userManager.CreateAsync(new ApplicationUser() {
                     UserName = "admin",
                     Email = "admin@email.com",
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    LockoutEnd = DateTimeOffset.MinValue.ToUniversalTime()
                 }, "parole123");
                 user = await userManager.FindByEmailAsync("admin@email.com");
                 await userManager.AddToRoleAsync(user, "Admin");
@@ -189,7 +190,8 @@ namespace WebProject
                 await userManager.CreateAsync(new ApplicationUser() {
                     UserName = "user",
                     Email = "user@email.com",
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    LockoutEnd = DateTimeOffset.MinValue.ToUniversalTime()
                 }, "parole123");
                 user = await userManager.FindByEmailAsync("user@email.com");
                 await userManager.AddToRoleAsync(user, "Admin");

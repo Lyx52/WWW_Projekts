@@ -8,7 +8,7 @@
         <div class="col-sm-12">
             <h4 class="mb-3 text-primary">Mani sludinājumi</h4>
             <hr class="my-4">
-            <div class="listing-table">
+            <div class="overflow-table">
                 <table class="table w-100">
                     <thead>
                     <tr>
@@ -16,41 +16,40 @@
                         <th scope="col">Virsraksts</th>
                         <th scope="col">Kategorija</th>
                         <th scope="col">Cena</th>
-                        <th scope="col">&nbsp;</th>
+                        <th scope="col" class="w-25">&nbsp;</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @if (Model.UserListings.Count > 0)
-                    {
-                        @foreach (var listing in Model.UserListings)
+                        @if (Model.UserListings.Count > 0)
                         {
-                            var index = Model.UserListings.IndexOf(listing) + 1;
+                            @foreach (var listing in Model.UserListings)
+                            {
+                                var index = Model.UserListings.IndexOf(listing) + 1;
+                                <tr>
+                                    <th scope="row">@index</th>
+                                    <td>@listing.Title</td>
+                                    <td>@listing.Category!.Name</td>
+                                    <td>@listing.DisplayPrice</td>
+                                    <td>
+                                        <div class="d-flex justify-content-end hstack gap-2">
+                                            <form asp-page-handler="RemoveListing">
+                                                @Html.AntiForgeryToken()
+                                                @Html.Hidden("listingId", listing.Id)
+                                                <button id="btnRemoveListing" type="submit" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i> Dzēst</button>
+                                            </form>
+                                            <div class="vr"></div>
+                                            <a class="btn btn-outline-success" asp-page="/Listings/Edit" asp-route-id="@listing.Id.Encode()"><i class="bi bi-pencil-fill"></i> Rediģēt</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }    
+                        }
+                        else
+                        {
                             <tr>
-                                <th scope="row">@index</th>
-                                <td>@listing.Title</td>
-                                <td>@listing.Category!.Name</td>
-                                <td>@listing.DisplayPrice</td>
-                                <td>
-                                    <div class="d-flex justify-content-end hstack gap-2">
-                                        <form asp-page-handler="RemoveListing">
-                                            @Html.AntiForgeryToken()
-                                            @Html.Hidden("listingId", listing.Id)
-                                            <button id="btnRemoveListing" type="submit" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i> Dzēst</button>
-                                        </form>
-                                        <div class="vr"></div>
-                                        <a class="btn btn-outline-success" asp-page="/Listings/Edit" asp-route-id="@listing.Id.Encode()"><i class="bi bi-pencil-fill"></i> Rediģēt</a>
-                                    </div>
-                                </td>
+                                <td colspan="5" class="text-center text-secondary fw-bold">Sludinājumu nav!</td>
                             </tr>
-                        }    
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="5" class="text-center text-secondary fw-bold">Sludinājumu nav!</td>
-                        </tr>
-                    }
-                    
+                        }
                     </tbody>
                 </table>
             </div>
