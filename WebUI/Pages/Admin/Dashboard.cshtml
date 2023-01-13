@@ -34,7 +34,7 @@
                                     <input asp-for="CurrentTab" value="nav-category" type="hidden"/>
                                     <label for="floatingCategoryInput">Kategorijas nosaukums</label>
                                 </div>
-                                <button class="btn btn-outline-secondary" type="submit">Izveidot</button>
+                                <button class="btn btn-outline-primary" type="submit">Izveidot</button>
                             </div>
                             <div class="col-6">
                                 <span asp-validation-for="CategoryCreateInput.ParentId" class="validation-message"></span>
@@ -59,7 +59,7 @@
                                     <input asp-for="CurrentTab" value="nav-category" type="hidden"/>
                                     <label for="floatingCategoryToRenameInput">Kategorijas nosaukums</label>
                                 </div>
-                                <button class="btn btn-outline-secondary" type="submit">Pārsaukt</button>
+                                <button class="btn btn-outline-primary" type="submit">Pārsaukt</button>
                             </div>
                             <div class="col-6">
                                 <span asp-validation-for="CategoryRenameInput.CategoryId" class="validation-message"></span>
@@ -158,12 +158,12 @@
                                                     <input asp-for="CurrentTab" value="nav-listings" type="hidden"/>
                                                     <input asp-for="SearchByKeywordInput.SearchKeyword" value="@user.Email" type="hidden"/>
                                                     <input asp-for="SearchByKeywordInput.SearchType" value="@Dashboard.SearchType.Listings" type="hidden"/>
-                                                    <button id="btnUserListings" type="submit" class="btn btn-outline-secondary"><i class="bi bi-search"></i> Sludinājumi</button>
+                                                    <button id="btnUserListings" type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Sludinājumi</button>
                                                 </form>
                                                 <div class="vr"></div>
                                                 @{
                                                     var pdata = messageProtector.Protect($"{user.Id}|{Request.Path}");
-                                                    <button onclick="openMessageModal('@pdata')" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#messageModal">
+                                                    <button onclick="openMessageModal('@pdata')" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
                                                         Sūtīt ziņu <i class="bi bi-chat-dots"></i>
                                                     </button>
                                                 }
@@ -242,7 +242,7 @@
                                                     <div class="vr"></div>
                                                     @{
                                                         var pdata = messageProtector.Protect($"{listing.CreatedBy!.Id}|{Request.Path}");
-                                                        <button onclick="openMessageModal('@pdata')" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#messageModal">
+                                                        <button onclick="openMessageModal('@pdata')" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
                                                             Sūtīt ziņu <i class="bi bi-chat-dots"></i>
                                                         </button>
                                                     }

@@ -30,6 +30,11 @@
 #dashboard-table {
     height: 50vh;
 }
+.form-select {
+    color: var(--main-primary-color);
+    background-color: #fff;
+    border: 1px solid var(--main-primary-color);
+}
 .overflow-table thead {
     position: sticky;
     top: 0;
@@ -48,12 +53,6 @@
 .overflow-table tr:nth-of-type(even) {
     background: var(--main-fill-color);
 }
-/*thead*/
-
-
-/*div*/
-/*overflow-y: auto;*/
-/*height: 75vh;*/
 
 .table-hover > tbody > tr:hover {
     color: var(--main-primary-color) !important;
