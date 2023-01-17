@@ -7,40 +7,59 @@
     --main-fill-color: #e7e8eb !important;
     /* Validation messages */
     --main-validation-color: #f14c4c;
+    
+    /*Iestatām bootstrap fontu*/
     --bs-font-sans-serif: 'Roboto', sans-serif;
 }
 
+/*************************/
+/*Lapas specifiskie stili*/
+/*************************/
+
+/*Headeris vienmēr seko lapas augšdaļā*/
+header {
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    opacity: 0.95;
+}
+
+/*fona krāsa ar filler krāsu*/
 .bg-filler {
     background: var(--main-fill-color) !important;
 }
+/*fona krāsa ar primary krāsu*/
 .bg-primary {
     background: var(--main-primary-color) !important;
     color: #fff;
 }
+/*fona krāsa ar secondary krāsu*/
 .bg-secondary {
     background: var(--main-secondary-color) !important;
 }
-.card {
-    --bs-card-border-color: var(--main-primary-color);
+
+/*Teksts kas izmanto primary krāsu*/
+.text-primary {
+    font-size: 16px;
+    color: var(--main-primary-color) !important;
 }
+/*Teksts kas izmanto secondary krāsu*/
+.text-secondary {
+    font-size: 14px;
+    color: var(--main-secondary-color) !important;
+}
+
+/*tabula ar noteiktu augstumu(izmanto overflow)*/
 .overflow-table {
     overflow-y: auto;
-    height: 75vh;    
-}
-#dashboard-table {
-    height: 50vh;
-}
-.form-select {
-    color: var(--main-primary-color);
-    background-color: #fff;
-    border: 1px solid var(--main-primary-color);
+    height: 75vh;
 }
 .overflow-table thead {
     position: sticky;
     top: 0;
     color: var(--main-primary-color);
     background: var(--main-fill-color);
-    opacity: 0.9;    
+    opacity: 0.9;
 }
 .overflow-table tr {
     color: var(--main-primary-color);
@@ -53,15 +72,143 @@
 .overflow-table tr:nth-of-type(even) {
     background: var(--main-fill-color);
 }
+#dashboard-table {
+    height: 50vh;
+}
 
+/*Ziņojumu saraksta max augstums*/
+.message-list {
+    max-height: 50vh !important;
+}
+/*Sludinājumu skatalogā aprautais apraksts*/
+.truncated-text {
+    text-overflow: ellipsis;
+    text-align: justify;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+}
+
+/*Paša sludinājuma skata apraksts*/
+.listing-description {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    inline-size: 100%;
+    overflow-wrap: break-word;
+    text-align: justify;
+    max-height: 35vh !important;
+    white-space: pre-line !important;
+}
+
+/*Logo animācija*/
+.rotate-animation:hover {
+    transform: rotate(5deg);
+    transition-delay: 0.1s;
+    transition: all 0.3s;
+}
+
+/*Noteikts pamata platums galvenajai izvelnei*/
+#mainMenuDropdown ul {
+    width: 200px;
+}
+
+/*Nomainīt lauzuma līnijas krāsu*/
+hr {
+    border-top: 1px solid var(--main-secondary-color) !important;
+}
+
+/*Sludinajuma galerijas min/max izmērs*/
+.album-listing-body {
+    max-height: 14em;
+    min-height: max-content;
+}
+.listing-container {
+    height: 100%;
+}
+
+
+/*Bildes kas vienmēr būs 16:9 aspektā*/
+.img {
+    object-fit: contain;
+    aspect-ratio: 16/9;
+}
+/* Saņemto nosūtīto ziņu bloks */
+.messagebox {
+    min-width: 350px !important;
+}
+
+/* Validācijas stili*/
+.validation-message, .form-submit-error  {
+    color: var(--main-validation-color) !important;
+    list-style: none;
+}
+
+.bg-active-none:not(:disabled):not(:disabled):active {
+    background-color: transparent;
+}
+/*Statusa koda teksts kļūdas lapās*/
+.status-code {
+    text-align: center;
+    font-weight: bold;
+    font-size: 100px;
+    color: var(--main-primary-color) !important;
+}
+.card-carousel {
+    min-height: 600px;
+}
+/*Privātuma politikas scrollspy komponents*/
+.scrollspy-privacy {
+    position: relative;
+    height: 300px;
+    overflow: auto;
+}
+
+/* Platuma pārtraukumi */
+/* <= sm */
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+    .album-listing-body {
+        max-height: 18em;
+    }
+}
+/* <= md */
+@media only screen and (max-width: 995px) {
+    .img-crop-container {
+        height: 500px;
+        width: 100%;
+        background-size: cover;
+        background-position: center;
+        align-content: end;
+        display: flex;
+    }
+    .img-crop-container img {
+        width: 100%;
+    }
+}
+
+/*********************************/
+/*Bootstrap satvara modifikācijas*/
+/*********************************/
+
+.card {
+    --bs-card-border-color: var(--main-primary-color);
+}
+/*Table hover krāsas nomaiņa*/
 .table-hover > tbody > tr:hover {
     color: var(--main-primary-color) !important;
 }
 
-/* Bootstrap Input */
 .form-control {
     border: 1px solid var(--main-primary-color) !important;
     color: var(--main-primary-color);
+}
+.form-select {
+    color: var(--main-primary-color);
+    background-color: #fff;
+    border: 1px solid var(--main-primary-color);
 }
 .form-control::placeholder {
     color: var(--main-secondary-color);
@@ -72,12 +219,15 @@ label, .text-primary::placeholder {
     color: var(--main-primary-color) !important;
     font-weight: 500;
 }
+/* Dropdown poga tiek izcelta ar peles kursoru */
 .dropdown-toggle {
     opacity: 0.8;
 }
 .dropdown-toggle:hover {
     opacity: 1.0;
 }
+
+/*Bootstrap slēdža checkbox komponenta krāsu modifikācija*/
 .form-switch .form-check-input:checked {
     background-color: var(--main-primary-color) !important;
     border: 1px solid var(--main-primary-color) !important;
@@ -93,6 +243,7 @@ label, .text-primary::placeholder {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23837b6a'/%3e%3c/svg%3e");
     border: 1px solid var(--main-primary-color) !important;
 }
+/*Bootstrap primary pogu krāsu modifikācija*/
 .btn-primary {
     --bs-btn-bg: var(--main-primary-color) !important;
     --bs-btn-border-color: var(--main-primary-color) !important;
@@ -103,6 +254,7 @@ label, .text-primary::placeholder {
     --bs-btn-disabled-bg: var(--main-primary-color) !important;
     --bs-btn-disabled-border-color: var(--main-primary-color) !important;
 }
+/*Bootstrap pogu robežu krāsu modifikācija*/
 .btn-outline-primary {
     --bs-btn-color: var(--main-primary-color) !important;
     --bs-btn-border-color: var(--main-primary-color) !important;
@@ -111,6 +263,7 @@ label, .text-primary::placeholder {
     --bs-btn-active-bg: var(--main-primary-color) !important;
     --bs-btn-active-border-color: var(--main-primary-color) !important;
 }
+/*Bootstrap secondary pogu krāsu modifikācija*/
 .btn-secondary {
     --bs-btn-bg: var(--main-secondary-color) !important;
     --bs-btn-border-color: var(--main-secondary-color) !important;
@@ -121,6 +274,7 @@ label, .text-primary::placeholder {
     --bs-btn-disabled-bg: var(--main-secondary-color) !important;
     --bs-btn-disabled-border-color: var(--main-secondary-color) !important;
 }
+/*Bootstrap lapošanas krāsu modifikācija*/
 .pagination {
     --bs-pagination-color: var(--main-primary-color);
     --bs-pagination-active-bg: var(--main-primary-color);
@@ -132,34 +286,23 @@ label, .text-primary::placeholder {
     --bs-pagination-disabled-border-color: var(--main-primary-color);
     --bs-pagination-disabled-color: var(--main-primary-color);
 }
-.page-link:hover {
-    border: 1px solid var(--main-primary-color);
-}
-.disabled {
-    opacity: 0.75 !important;
-}
+/*Bootstrap navigācijas ikonas krāsa*/
 .navbar {
     --bs-navbar-toggler-border-color: var(--main-primary-color);
 }
-.rotate-animation:hover {
-    transform: rotate(5deg);
-    transition-delay: 0.1s;
-    transition: all 0.3s;
-}
-header {
-    position: sticky;
-    top: 0;
-    z-index: 9999;
-    opacity: 0.95;
-}
-
-
-#mainMenuDropdown ul {
-    width: 200px;
-}
+/*Bootstrap dropdown robežas krāsa*/
 .dropdown-menu {
     --bs-dropdown-border-color: var(--main-primary-color) !important;
 }
+/*Bootstrap lapošanas linkiem tiek izcelta robeža ar primāro krāsu*/
+.page-link:hover {
+    border: 1px solid var(--main-primary-color);
+}
+/* atslēgti elementi ir 75% caurspīdīgi */
+.disabled {
+    opacity: 0.75 !important;
+}
+
 .dropdown-menu a {
     width: 90% !important;
     margin-left: 5% !important;
@@ -173,44 +316,7 @@ header {
     border-color: var(--main-primary-color) !important;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px var(--main-primary-color);
 }
-hr {
-    border-top: 1px solid var(--main-secondary-color) !important;
-}
-
-.text-primary {
-    font-size: 16px;
-    color: var(--main-primary-color) !important;
-}
-.text-secondary {
-    font-size: 14px;
-    color: var(--main-secondary-color) !important;
-}
-
-/* Form validation styles */
-.validation-message, .form-submit-error  {
-    color: var(--main-validation-color) !important;
-    list-style: none;
-}
-.message-list {
-    max-height: 50vh !important;
-}
-.truncated-text {
-    text-overflow: ellipsis;
-    text-align: justify;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
-    overflow: hidden;
-}
-.listing-description {
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    inline-size: 100%;
-    overflow-wrap: break-word;
-    text-align: justify;
-    max-height: 35vh !important;
-    white-space: pre-line !important;
-}
+/* Kategoriju dropdown izvēlne  */
 .dropdown-menu li {
     position: relative;
 }
@@ -224,9 +330,11 @@ hr {
     right: 100%;
     left: auto;
 }
+/* dropdown hover */
 .dropdown-menu > li:hover > .dropdown-submenu {
     display: block;
 }
+
 /*cNomainām carousel kontroļu krāsu uz 2b2b2b */
 .carousel-control-prev-icon {
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='6a7283' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E");
@@ -238,32 +346,15 @@ hr {
 .carousel-indicators [data-bs-target] {
     background-color: var(--main-secondary-color) !important;
 }
-.album-listing-body {
-    max-height: 14em;
-    min-height: max-content;
-}
-.listing-container {
-    height: 100%;
-}
 
-.img {
-    object-fit: contain;
-    aspect-ratio: 16/9;
-}
-/* Saņemto nosūtīto ziņu bloks */
-.messagebox {
-    min-width: 350px !important;
-}
-
+/* aktīvā saraksta grupa izcelta */
 .list-group .active {
     color: #fff !important;
     background: var(--main-primary-color);
     border: 0;
 }
-.bg-active-none:not(:disabled):not(:disabled):active {
-    background-color: transparent;
-}
-/* toast ziņojumi*/
+
+/* toast ziņojumi parādas kreisajā apakšējā daļā */
 .toast {
     position: sticky;
     bottom: 1%;
@@ -271,42 +362,7 @@ hr {
     z-index:9999;
 }
 
-/* sm */
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-    .album-listing-body {
-        max-height: 18em;
-    }
-}
+/* aktīvais breadkrumb ar lielāku fontu */
 .breadcrumb-item .active {
     font-weight: 500;
-}
-.status-code {
-    text-align: center;
-    font-weight: bold;
-    font-size: 100px;
-    color: var(--main-primary-color) !important;
-}
-.card-carousel {
-    min-height: 600px;
-}
-@media only screen and (max-width: 995px) {
-    .img-crop-container {
-        height: 500px;
-        width: 100%;
-        background-size: cover;
-        background-position: center;
-        align-content: end;
-        display: flex;
-    }
-    .img-crop-container img {
-        width: 100%;
-    }
-}
-.scrollspy-privacy {
-    position: relative;
-    height: 300px;
-    overflow: auto;
 }

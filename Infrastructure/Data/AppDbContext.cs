@@ -87,7 +87,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             CategoryId = category.Id,
             Price = Random.Shared.NextSingle() * 200,
             CreatedBy = user,
-            Created = DateTime.Now,
+            Created = DateTime.Now.AddMinutes(-Random.Shared.Next(0, 30)),
             CreatedByKey = user.Id,
             Images = images
         };

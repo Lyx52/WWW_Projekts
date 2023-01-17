@@ -51,7 +51,7 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                             </div>
                                         }
-
+                                        // Iekodējam sūtītāja id un atgriešanās ceļu
                                         var pdata = messageProtector.Protect($"{Model.Listing.CreatedBy.Id}|{Request.Path}");
                                         <button onclick="openMessageModal('@pdata')" type="button" class="float-end btn btn-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
                                             Sūtīt ziņu <i class="bi bi-chat-dots"></i>

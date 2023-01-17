@@ -19,6 +19,7 @@ public class Listings : PageModel
         _listingImageRepository = listingImageRepository;
     }
     public List<Listing> UserListings { get; set; } = new List<Listing>();
+    // Kontrolieris kas atbildīgs par lietotāja sludinājumu izgūšanu
     public async Task<IActionResult> OnGetAsync()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -32,7 +33,7 @@ public class Listings : PageModel
             .ToListAsync();
         return Page();
     }
-
+    // Formu kontrolieris kas atbildīgs par sludinājuma dzēšanu no lietotāja puses
     public async Task<IActionResult> OnPostRemoveListingAsync(int? listingId)
     {
         var user = await _userManager.GetUserAsync(User);

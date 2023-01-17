@@ -29,7 +29,7 @@ public class Login : PageModel
     {
         
     }
-    
+    // Formu kontrolieris kas atbildīgs par lietotāju pieslēgšanu
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
         returnUrl = returnUrl ?? Url.Content("~/Index");

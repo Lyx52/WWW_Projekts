@@ -36,9 +36,11 @@ public class MessageController : Controller
         {
             var user = await _userManager.GetUserAsync(User);
             // messageId|redirectUrl
+            // Atkodējam datus
             var data = _dataProtector.Unprotect(pdata).Split("|");
             if (user is not null && Int32.TryParse(data[0], out int id))
             {
+                // Ja lietotājs eksistē mēģinam atzīmēt ka ziņa ir lasīta
                 await _messageSender.MarkAsRead(id);
             }
             else
@@ -68,12 +70,15 @@ public class MessageController : Controller
             var sender = await _userManager.GetUserAsync(User);
             
             // recipientId|returnUrl(optional)
+            // Atkodējam datus
             var data = _dataProtector.Unprotect(pdata).Split("|");
             
             if (sender is not null)
             {
+                // Atrodam saņēmēju
                 var recipient = await _userManager.FindByIdAsync(data[0]);
                 
+                // Ja eksistē nosūtām ziņu
                 if (recipient is not null)
                     await _messageSender.SendMessage(message, sender, recipient);
                 

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
+// Modeļu abstraktācija, kas veikt datubāzes pamata funkcijas
 public class EfRepository<T> : IEntityRepository<T> where T : IdEntity
 {
     private readonly AppDbContext _dbContext;

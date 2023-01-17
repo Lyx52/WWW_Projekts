@@ -35,7 +35,6 @@ public class Index : PageModel
         // Ja ziņojums nosūtīts, parādīt paziņojumu lietotājam
         MessageSent = sentSuccess.HasValue && sentSuccess.Value;
         
-        // TODO: FIX 400/404!
         // Ja nav dots parametrs atgriežam badrequest
         if (!RouteData.Values.ContainsKey("listingId"))
             return BadRequest();

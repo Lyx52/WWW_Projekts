@@ -69,17 +69,24 @@
 @functions {
     string GetCreationDateString(DateTime? dateTime)
     {
+        // Nav datums
         if (!dateTime.HasValue)
             return "&nbsp;";    
+        
+        // Atšķirība starp sistēmas un ievades laiku
         var delta = DateTime.Now - dateTime.Value;
+        // Ja mazāk vai vienāds tad parādīt Now
+        if (delta.TotalSeconds <= 5)
+            return "Now";
+        
+        // Ja mazāk vai vienāds par 60 sekundēm tad parādīt sekundes
         if (delta.TotalSeconds <= 60)
-        {
-            return $"{(int)delta.TotalSeconds} secs";    
-        }
+            return $"{(int)delta.TotalSeconds} secs";
+        
+        // Ja mazāk vai vienāds par 60 minūtēm tad parādīt minūtes
         if (delta.TotalMinutes <= 60)
-        {
             return $"{(int)delta.TotalMinutes} mins";
-        }
+        
         return string.Empty;
     }
 }

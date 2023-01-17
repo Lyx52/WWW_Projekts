@@ -55,6 +55,8 @@ public class Dashboard : PageModel
         Categories = await _categoriesRepository.ToList();
         return Page();
     }
+    
+    // Formu kontrolieris kas atbildīgs par kategoriju dzēšanu
     public async Task<IActionResult> OnPostRemoveCategoryAsync()
     {
         if (ModelState.GetFieldValidationState("CategoryRemoveInput") == ModelValidationState.Valid)
@@ -79,6 +81,7 @@ public class Dashboard : PageModel
         Categories = await _categoriesRepository.ToList();
         return Page();
     }
+    // Formu kontrolieris kas atbildīgs par kategoriju pārsaukšanu
     public async Task<IActionResult> OnPostRenameCategoryAsync()
     {
         if (ModelState.GetFieldValidationState("CategoryRenameInput") == ModelValidationState.Valid)
@@ -105,6 +108,7 @@ public class Dashboard : PageModel
         Categories = await _categoriesRepository.ToList();
         return Page();
     }
+    // Formu kontrolieris kas atbildīgs par kategoriju izveidi
     public async Task<IActionResult> OnPostCreateCategoryAsync()
     {
         if (ModelState.GetFieldValidationState("CategoryCreateInput") == ModelValidationState.Valid)
@@ -131,7 +135,7 @@ public class Dashboard : PageModel
         Categories = await _categoriesRepository.ToList();
         return Page();
     }
-
+    // Formu kontrolieris kas atbildīgs par lietotāju un sludinājumu meklēšanu
     public async Task<IActionResult> OnPostSearchByKeywordAsync()
     {
         if (ModelState.GetFieldValidationState("SearchByKeywordInput") == ModelValidationState.Valid)
@@ -149,6 +153,7 @@ public class Dashboard : PageModel
         
         return Page();
     }
+    // Formu kontrolieris kas atbildīgs par lietotāju bloķēšanu
     public async Task<IActionResult> OnPostChangeUserBlockAsync()
     {
         if (ModelState.GetFieldValidationState("SubmissionUserId") == ModelValidationState.Valid)
@@ -167,6 +172,7 @@ public class Dashboard : PageModel
 
         return Page();
     }
+    // Formu kontrolieris kas atbildīgs par sludinājumu dzēšanu
     public async Task<IActionResult> OnPostRemoveListingAsync()
     {
         if (ModelState.GetFieldValidationState("RemoveListingId") == ModelValidationState.Valid)
@@ -182,7 +188,7 @@ public class Dashboard : PageModel
 
         return Page();
     }
-    
+    // Formu kontrolieris kas atbildīgs par lietotāju atrašanu
     public async Task<List<ApplicationUser>> FindUsers(string keyword)
     {
         return await _dbContext.Set<ApplicationUser>().Where(user =>

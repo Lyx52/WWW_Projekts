@@ -10,7 +10,7 @@
     <span class="fs-3 text-primary">Augšupielādēt Attēlus</span>
     <span id="imgUploadCount" class="badge bg-primary rounded-pill">@Images.Count</span>
 </h4>
-
+@* Neātļaut ievietot failus kamēr tiek augšupielādēts fails *@
 @if (_isUploading)
 {
     <div class="d-inline-flex">
@@ -22,6 +22,8 @@
 }
 else
 {
+    
+    @* Attēlot augšupielādētos failus ar orģinālajiem nosaukumiem *@
     <ul class="list-group mb-3">
         @foreach (var file in Images)
         {
@@ -36,6 +38,8 @@ else
         }
     </ul>
 }
+
+@* Augšupielādes forma *@
 <div class="card p-2 row">
     <div class="input-group col-12 m-0 p-0 row">
         @if (_showFileInput)
@@ -68,13 +72,18 @@ else
     
     private void LoadFiles(InputFileChangeEventArgs e)
     {
+        // Veicam attēla faila validāciju
         ValidationMessage = string.Empty;
+        
+        // Atļautais izmērs
         if (e.File.Size > MaxFileSize)
         {
             ValidationMessage = "Izvēlētais fails ir pārāk liels!";
             ClearFileInput();
             return;
         }
+        
+        // Paplšinājums
         if (!AcceptedFileExtensions.Any(ext => e.File.Name.EndsWith(ext)))
         {
             ValidationMessage = "Izvēlētais fails nav atbalstīts!";
@@ -101,7 +110,8 @@ else
             int bytesRead = 0;
             int totalRead = 0;
             var buffer = new byte[MaxFileSize];
-
+            
+            // Veicam augšupielādi atmiņā
             while ((bytesRead = await readStream.ReadAsync(buffer)) != 0)
             {
                 totalRead += bytesRead;
@@ -113,6 +123,8 @@ else
                 StateHasChanged();
             }
             imgStream.Seek(0, SeekOrigin.Begin);
+            
+            // Ielādējam ImageSharp
             var image = await Image.LoadAsync(imgStream);
             
             double aspect = (double)image.Width / (double)image.Height;
@@ -127,7 +139,13 @@ else
             }
             var savedFileName = $"{GetRandomFileName()}.jpg";
             var savePath = Path.Combine("Images", savedFileName);
-            await image.SaveAsync(Path.Combine(Directory.GetCurrentDirectory(), savePath), new JpegEncoder());
+            
+            // Saglabājam kā Jpeg attēlu izmantojot 90% kvalitāti
+            await image.SaveAsync(Path.Combine(Directory.GetCurrentDirectory(), savePath), new JpegEncoder()
+            {
+                Quality = 90
+            });
+
             var entity = new ListingImage
             {
                 FilePath = $"\\{savePath}", IsUsed = true, CreatedByKey = User.Id, Created = DateTime.UtcNow, OriginalName = SelectedFile.Name
@@ -145,6 +163,7 @@ else
 
     private void ClearFileInput()
     {
+        // Attiestatām failu ievadi, pēc augšupielādes
         _showFileInput = false;
         StateHasChanged();
         _showFileInput = true;
@@ -152,6 +171,7 @@ else
     }
     private static string GetRandomFileName()
     {
+        // Ģenerējam nejaušu nosaukumu
         Span<char> chars = stackalloc char[8];
         for (int i = 0; i < chars.Length; i++)
         {
@@ -162,6 +182,7 @@ else
 
     private void RemoveImage(int index)
     {
+        // Dzēšam attēlu no interfeisa
         Images.RemoveAt(index);
         StateHasChanged();    
     }

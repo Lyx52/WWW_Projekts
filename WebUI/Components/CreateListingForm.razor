@@ -61,7 +61,6 @@
     private CreateListingModel _input { get; set; } = new ();
     private EditContext _editContext;
     private ApplicationUser _user { get; set; }
-    protected int _selectedCategoryId { get; set; }
     
     protected override async Task OnInitializedAsync()
     {
@@ -100,6 +99,7 @@
     }
     private async Task CreateOrSaveListing(EditContext context)
     {
+        // Ja esam rediģēšanas režīmā, atjauninām datus
         if (IsEditListing)
         {
             await _listingRepository.Update(_input.Model);
@@ -112,7 +112,7 @@
             Title = _input.Title,
             Images = _input.Images,
             CreatedByKey = _user.Id,
-            Created = DateTime.UtcNow,
+            Created = DateTime.Now,
             Price = _input.Price,
             CategoryId = _input.Category!.Id
         };

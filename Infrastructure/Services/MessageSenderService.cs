@@ -21,11 +21,13 @@ public class MessageSenderService : IMessageSenderService
 
     public async Task SendMessage(string message, ApplicationUser sender, ApplicationUser recipient)
     {
+        // Nosūtām ziņu
         await _messageRepository.Add(new Message() { Created = DateTime.UtcNow, Text = message, CreatedByKey = sender.Id, RecipientKey = recipient.Id });
     }
 
     public async Task<List<Message>> GetReceivedMessages(ApplicationUser? user, int offset = 0, int limit = -1)
     {
+        // Ja lietotājs eksistē pievienot tam saņemtu ziņu
         if (user is null)
             return new List<Message>();
         return await _messageRepository
@@ -35,6 +37,7 @@ public class MessageSenderService : IMessageSenderService
     }
     public async Task<List<Message>> GetSentMessages(ApplicationUser user, int offset = 0, int limit = -1)
     {
+        // Iegūt nosūtītās ziņas
         return await _messageRepository
             .AsQueryable().Include(m => m.CreatedBy)
             .Where(m => m.CreatedByKey == user.Id)
@@ -42,6 +45,7 @@ public class MessageSenderService : IMessageSenderService
     }
     public async Task<List<Message>> GetAllMessages(ApplicationUser? user, int offset = 0, int limit = -1)
     {
+        // Iegūt visas nosūtītās un saņemtās ziņas
         if (user is null)
             return new List<Message>();
         return await _messageRepository
@@ -54,6 +58,7 @@ public class MessageSenderService : IMessageSenderService
 
     public async Task<Message?> GetMessageById(int id)
     {
+        // Iegūt ziņu pēc identifikatora
         return await _messageRepository
             .AsQueryable()
             .Include(m => m.CreatedBy)
@@ -63,6 +68,7 @@ public class MessageSenderService : IMessageSenderService
     }
     public async Task MarkAsRead(int? messageId)
     {
+        // Atzīmēt ziņu kā lasītu
         var msg = await _messageRepository.AsQueryable()
             .Include(m => m.Recipient)
             .Where(m => m.Id == messageId).FirstOrDefaultAsync();

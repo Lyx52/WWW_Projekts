@@ -11,12 +11,13 @@ $(function() {
     let dropdowns = Array();
     const addDropdownHover = function(id)
     {
-        dropdowns.push(id);
         const dropdownMenu = $(`${id} .dropdown-menu`);
         
         const dropdownToggle = $(`${id} .dropdown-toggle`);
-        if (!dropdownMenu || !dropdownToggle) return;
         
+        // Ja lapā netika atrasti šie elementi ignorējam...
+        if (!dropdownMenu || !dropdownToggle) return;
+        dropdowns.push(id);
         dropdownToggle.on('hidden.bs.dropdown', function() {
             // Nepieciešams lai ja lietotājs uzspiež uz hover toggle, dropdown-menu-end turpinātu darboties
             $(`${id} .dropdown-menu`).attr('data-bs-popper', 'static');
@@ -26,6 +27,7 @@ $(function() {
             // Paslēpt visus dropdownus, ja id nav vienāds ar pašreizējo iterācijas id
             dropdowns.forEach((_id) => 
             {
+                // Neslēpjam tikai dropdown kas izsauca notikumu
                 if (_id !== id)
                 {
                     $(`${_id} .dropdown-menu`).hide("fast");    
