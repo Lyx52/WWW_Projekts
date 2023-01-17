@@ -36,9 +36,10 @@ namespace WebProject
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        // Servisu konfigurācija
         public void ConfigureServices(IServiceCollection services)
         {
+            // Sīkdatņu konfigurācija
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;
@@ -57,10 +58,12 @@ namespace WebProject
             }, ServiceLifetime.Transient);
 
             services.AddMvc();
+            // Blazor servera puses serviss
             services.AddServerSideBlazor().AddCircuitOptions(x => x.DetailedErrors = true);
+            
+            // Identitātes datubāze
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                // TODO: Proper password configuration...
                 options.Password.RequiredLength = 6;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
@@ -73,14 +76,13 @@ namespace WebProject
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
             
-            // TODO add bad response handlers redirect to error pages
-            
-            // Add authorization policies
+            // Autorizācijas serviss un politikas
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireUserLogin", c => c.RequireRole("User", "Admin"));
                 options.AddPolicy("RequireAdminLogin", c => c.RequireRole("Admin"));
             });
+            // Autentifikācijas serviss un konfigurācija
             services
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => {
@@ -101,10 +103,18 @@ namespace WebProject
                     options.SlidingExpiration = true;
                 });
             services.AddAuthorizationCore();
+            // Formu autentifikācijas serviss
             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
             services.AddRazorPages();
+            
+            // E-pasta sūtīšanas serviss
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
+            
+            // Ziņu apmaiņas serviss
             services.AddScoped<IMessageSenderService, MessageSenderService>();
+            
+            
+            // Datubāžu modeļu servisi
             services.AddScoped<IEntityRepository<ListingCategory>, EfRepository<ListingCategory>>();
             services.AddScoped<IEntityRepository<Listing>, EfRepository<Listing>>();
             services.AddScoped<IEntityRepository<ListingImage>, EfRepository<ListingImage>>();
@@ -113,6 +123,7 @@ namespace WebProject
         
         public void Configure(AppDbContext db, IApplicationBuilder app, IHostingEnvironment env, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
+            // Izveidojam Images direktoriju
             if (!Directory.Exists("./Images"))
                 Directory.CreateDirectory("./Images");
             InitializeAuthorization(db, userManager, roleManager).GetAwaiter().GetResult();
@@ -137,7 +148,7 @@ namespace WebProject
                 RequestPath = "/Images",
                 OnPrepareResponse = ctx =>
                 {
-                    // Images are cached for one week
+                    // Kešojam bildes
                     ctx.Context.Response.Headers.Append("Cache-Control", $"public, max-age={(60 * 60 * 24 * 7)}");
                 }
             });
@@ -149,7 +160,7 @@ namespace WebProject
             app.UseEndpoints(options =>
             {
                 options.MapBlazorHub();
-                // Blazor access to listings controller path
+                // Blazor nepieciešamie faili
                 options.MapBlazorHub("~/Listings/_blazor");
                 options.MapBlazorHub("~/Listings/Create/_blazor");
                 options.MapBlazorHub("~/Listings/Edit/_blazor");
@@ -160,6 +171,9 @@ namespace WebProject
 
         private static async Task InitializeAuthorization(AppDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
+            /*
+             * Inicializācija kas domāta testa videi
+             */
             await db.Database.EnsureCreatedAsync();
             // Izveidojam lietotāja konta tipu
             if (!await roleManager.RoleExistsAsync("User"))

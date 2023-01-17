@@ -31,6 +31,7 @@ public class Register : PageModel
     {
         
     }
+    // Formu kontrolieris kas atbildīgs par lietotāju reģistrēšanu
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
         returnUrl = returnUrl ?? Url.Content("~/Index");

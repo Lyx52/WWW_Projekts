@@ -9,20 +9,24 @@
         @(_selectedCategory is null ? "--Izvēlēties kategoriju--" : _selectedCategory.Name)
       </button>
       <ul class="dropdown-menu @(ShowMenu ? "show" : "hide")" aria-labelledby="dropdownMenuButton">
+          
+          @* Pirmā līmeņa kategorija *@
           @foreach (ListingCategory firstCat in _rootCategory.SubCategories)
           {
               <li>
                   <a class="dropdown-item text-primary">
-                    @firstCat.Name &raquo;
+                      @firstCat.Name &raquo;
                   </a>
                   <ul class="dropdown-menu dropdown-submenu">
+                      @* Otrā līmeņa kategorija *@
                       @foreach (ListingCategory secondCat in firstCat.SubCategories)
                       {
                           <li>
                               <a class="dropdown-item text-primary">
-                                @secondCat.Name &raquo;
+                                  @secondCat.Name &raquo;
                               </a>
                               <ul class="dropdown-menu dropdown-submenu">
+                                  @* Trešā līmeņa kategorija *@
                                   @foreach (ListingCategory thirdCat in secondCat.SubCategories)
                                   {
                                       <li>

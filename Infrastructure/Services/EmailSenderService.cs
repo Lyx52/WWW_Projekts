@@ -14,6 +14,7 @@ public class EmailSenderService : IEmailSenderService
 
     public Task SendEmailAsync(string email, string title, string message)
     {
+        // TODO: Pievienot e-pasta sūtīšanu
         _logger.LogInformation("Email sent {string} -> {string}", email, message);
         return Task.Delay(100);
     }
